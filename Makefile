@@ -60,7 +60,12 @@ UB = /usr/bin/
 CC = gcc
 CFLAGS = -g -O3
 
-all: $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)bruiteur
+TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)bruiteur
+
+all: $(TARGETS)
+
+clean:
+	rm -f $(TARGETS)
 
 $(BIN)1col2col : $(OBJ)1col2col.o $(OBJ)stio_sbr.o  
 	$(CC) $(CFLAGS) -o $(BIN)1col2col $(OBJ)1col2col.o $(OBJ)stio_sbr.o -lm
@@ -263,3 +268,5 @@ $(UB)XtGraph: $(BIN)XtGraph
 
 $(UB)bruiteur: $(BIN)bruiteur
 	cp $(BIN)bruiteur $(UB)bruiteur
+
+.PHONY: all clean
