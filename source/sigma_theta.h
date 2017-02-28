@@ -1,0 +1,79 @@
+/*   sigma_theta.h                                F. Vernotte - 2010/10/25  */
+/*   Declaration of global variables and functions for sigma_theta.c        */
+/*                                                                          */
+/*                                                   - SIGMA-THETA Project  */
+/*                                                                          */
+/* Copyright or © or Copr. Université de Franche-Comté, Besançon, France    */
+/* Contributor: François Vernotte, UTINAM/OSU THETA (2012/07/17)            */
+/* Contact: francois.vernotte@obs-besancon.fr                               */
+/*                                                                          */
+/* This software, SigmaTheta, is a collection of computer programs for      */
+/* time and frequency metrology.                                            */
+/*                                                                          */
+/* This software is governed by the CeCILL license under French law and     */
+/* abiding by the rules of distribution of free software.  You can  use,    */
+/* modify and/ or redistribute the software under the terms of the CeCILL   */
+/* license as circulated by CEA, CNRS and INRIA at the following URL        */
+/* "http://www.cecill.info".                                                */
+/*                                                                          */
+/* As a counterpart to the access to the source code and  rights to copy,   */
+/* modify and redistribute granted by the license, users are provided only  */
+/* with a limited warranty  and the software's author,  the holder of the   */
+/* economic rights,  and the successive licensors  have only  limited       */
+/* liability.                                                               */
+/*                                                                          */
+/* In this respect, the user's attention is drawn to the risks associated   */
+/* with loading,  using,  modifying and/or developing or reproducing the    */
+/* software by the user in light of its specific status of free software,   */
+/* that may mean  that it is complicated to manipulate,  and  that  also    */
+/* therefore means  that it is reserved for developers  and  experienced    */
+/* professionals having in-depth computer knowledge. Users are therefore    */
+/* encouraged to load and test the software's suitability as regards their  */
+/* requirements in conditions enabling the security of their systems and/or */
+/* data to be ensured and,  more generally, to use and operate it in the    */
+/* same conditions as regards security.                                     */
+/*                                                                          */
+/* The fact that you are presently reading this means that you have had     */
+/* knowledge of the CeCILL license and that you accept its terms.           */
+/*                                                                          */
+/*                                                                          */
+
+#define ST_VERSION 2.2
+
+struct conf_int
+    {
+    double inf_bound;
+    double mean;
+    double sup_bound;
+    };
+
+double coeff[10], ortau[10], log_inc;
+double *T, *Y;
+char st_version[]="2.2";
+char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[6], flag_variance, flag_log_inc;
+int ntau;
+
+int init_flag();
+double tchebyfit(long);
+double adev_y(int, int);
+double mdev_y(int, int);
+int serie_dev(int, double *, double *);
+int resol(int, double *, double*);
+double interpo(double, int);
+int relatfit(int, double *, double *, double *, int);
+double sw(double, int);
+double sx(double, int, int);
+double sz(double, int, int);
+double BasicSum(int, int, int, int, int);
+void avardof(int , double *, int *, double *);
+double cdf_rayleigh(double , double);
+double dcdfr(double x, double nu);
+struct conf_int raylconfint(double);
+struct conf_int raylconfint1s(double);
+int load_ykt(char *);
+int load_adev(char *, double *, double *);
+int load_coef(char *);
+int load_1col(char *);
+int load_3col(char *, double *, double *, double *);
+int load_7col(char *, double *, double *, double *, double *, double *, double *, double *);
+int gener_gplt(char *, int, double *, double *, double *);

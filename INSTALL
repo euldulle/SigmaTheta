@@ -1,0 +1,152 @@
+SigmaTheta project
+===========================================================
+
+Copyright or © or Copr. Université de Franche-Comté, Besançon, France
+Contributor: François Vernotte, UTINAM/OSU THETA (2012/07/17)
+Contact: francois.vernotte@obs-besancon.fr
+
+This software, SigmaTheta, is a collection of computer programs for
+time and frequency metrology. 
+
+This software is governed by the CeCILL license under French law and
+abiding by the rules of distribution of free software.  You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+
+
+Installation Instructions
+=========================
+
+SigmaTheta follows the standard GNU installation procedure. 
+
+To compile SigmaTheta you will need the gnu gcc C-compiler 
+and the GSL library (Gnu Scientific Library, see 
+http://www.gnu.org/software/gsl/).
+
+gnuplot must also be installed on the computer in order to run 
+SigmaTheta (see http://www.gnuplot.info/)
+
+After unpacking the distribution the Makefiles will build 
+the binaries using the make command,
+
+  make
+
+If you intend to place the binaries into the /usr/bin/ 
+directory, tape as root:
+
+  make install
+
+
+Testing Procedure
+=================
+
+You can then test the main program by typing,
+
+  SigmaTheta data/noisetest.ykt nt.adv
+
+The following data should be printed on screen:
+
+# Tau       	 Adev       	 Adev unbiased	 2.5 % bound 	 16 % bound 	 84 % bound 	 97.5 % bound
+1.000000e+01 	 1.197733e-13 	 1.197744e-13 	 1.187259e-13 	 1.192479e-13 	 1.203057e-13 	 1.208416e-13
+2.000000e+01 	 8.829017e-14 	 8.829141e-14 	 8.736413e-14 	 8.782532e-14 	 8.876248e-14 	 8.923860e-14
+4.000000e+01 	 7.059869e-14 	 7.060044e-14 	 6.961975e-14 	 7.010666e-14 	 7.110121e-14 	 7.160914e-14
+8.000000e+01 	 6.097397e-14 	 6.097718e-14 	 5.975092e-14 	 6.035782e-14 	 6.160938e-14 	 6.225482e-14
+1.600000e+02 	 5.610205e-14 	 5.610791e-14 	 5.453124e-14 	 5.530834e-14 	 5.693093e-14 	 5.777847e-14
+3.200000e+02 	 5.592835e-14 	 5.594001e-14 	 5.374473e-14 	 5.482040e-14 	 5.710631e-14 	 5.832227e-14
+6.400000e+02 	 5.859137e-14 	 5.861581e-14 	 5.541425e-14 	 5.697008e-14 	 6.035944e-14 	 6.220999e-14
+1.280000e+03 	 6.637842e-14 	 6.643389e-14 	 6.141097e-14 	 6.382377e-14 	 6.926665e-14 	 7.235172e-14
+2.560000e+03 	 7.979208e-14 	 7.996169e-14 	 7.319470e-14 	 7.637713e-14 	 8.371312e-14 	 8.770678e-14
+5.120000e+03 	 1.044337e-13 	 1.048817e-13 	 9.260177e-14 	 9.826423e-14 	 1.119410e-13 	 1.197595e-13
+1.024000e+04 	 1.453530e-13 	 1.466231e-13 	 1.230141e-13 	 1.335937e-13 	 1.609114e-13 	 1.776816e-13
+2.048000e+04 	 2.130606e-13 	 2.169265e-13 	 1.691634e-13 	 1.896766e-13 	 2.480491e-13 	 2.879138e-13
+4.096000e+04 	 3.165560e-13 	 3.289879e-13 	 2.302015e-13 	 2.699127e-13 	 4.008118e-13 	 5.065411e-13
+8.192000e+04 	 5.543153e-13 	 6.062195e-13 	 3.561559e-13 	 4.458463e-13 	 8.230734e-13 	 1.232155e-12
+1.638400e+05 	 1.075158e-12 	 1.387381e-12 	 5.732358e-13 	 8.007483e-13 	 2.389639e-12 	 5.724227e-12
+3.276800e+05 	 1.943544e-12 	 3.668176e-12 	 8.671105e-13 	 1.383235e-12 	 9.626581e-12 	 6.201880e-11
+# Asymptote coefficients:
+# tau^-1   	 tau^-1/2 	 tau^0    	 tau^1/2  	 tau^1
+2.174317e-25 	 9.832043e-26 	 2.319278e-27 	 1.501548e-30 	 3.418445e-35 
+
+
+Moreover, 2 files should be created: nt.adv.gnu and nt.adv.ps. 
+The first one is a gnuplot command file which should contain:
+
+set terminal postscript landscape enhanced color solid "Helvetica" 18
+set output "nt.adv.ps"
+set logscale xy
+set grid
+set key left
+set xrange[5.946e+00:5.511e+05]
+set yrange[2.774e-14:1.250e-10]
+set title "nt.adv"
+set xlabel "Integration time {/Symbol t} [s]"
+set ylabel "ADEV {/Symbol s}_y({/Symbol t})"
+set line style 1 pt 2 lc 7 lw 3
+set line style 2 pt 2 lc 7 lw 2
+set line style 3 pt 6 lc 2 lw 3
+set label "Sigma Theta 1.1" at 5.097e+05,3.306e-14 right font "Helvetica,10"
+plot "nt.adv" using 1:2:4:7 title "95 % confidence interval" with yerrorbars ls 2 , "nt.adv" using 1:2:5:6 title "68 % confidence interval" with yerrorbars ls 1 , "nt.adv" using 1:3 title "unbiased estimates" with points ls 3, sqrt(2.174317e-25/x**2+9.832043e-26/x+2.319278e-27+1.501548e-30*x+3.418445e-35*x**2) notitle with line lt 1 lw 2, sqrt(2.174317e-25/x**2) title "4.7e-13 {/Symbol t}^{-1} " with line lt 2, sqrt(9.832043e-26/x) title "3.1e-13 {/Symbol t}^{-1/2}" with line lt 3, sqrt(2.319278e-27) title "4.8e-14      " with line lt 4, sqrt(1.501548e-30*x) title "1.2e-15 {/Symbol t}^{1/2} " with line lt 5, sqrt(3.418445e-35*x**2) title "5.8e-18 {/Symbol t}    " with line lt 6
+exit
+
+The second one is a postscript file which can be opened with ghostview. The graph should look as the reference one located in the file "reference.ps".
+
+You may also test the equivalent bourne shell script by typing:
+
+  ./STshell data/noisetest.ykt nt2.adv
+
+and verify that the files nt.adv and nt2.adv are the same, as well as nt.adv.gnu and nt2.adv.gnu, and nt.adv.ps and nt2.adv.ps.
+
+Finally, you may check the other bourne shell:
+
+  ./STshell2 data/noisetest.ykt nt3.adv
+
+and make sure that the files nt.adv and nt3.adv are the same, as well as nt.adv.gnu and nt3.adv.gnu, and nt.adv.ps and nt3.adv.ps.
+
+If all these tests are positive, you can be sure that the SigmaTheta set is properly installed.
+
+Another way of checking the installation is by generating a noise with bruiteur and computing its Allan deviation:
+
+  bruiteur flicker < mk_flicker.rep
+  SigmaTheta flicker.ykt flicker.adev
+
+The file flicker.adev should look like:
+
+# Tau       	 Adev       	 Adev unbiased	 2.5 % bound 	 16 % bound 	 84 % bound 	 97.5 % bound
+1.000000e+00 	 1.267586e+00 	 1.267758e+00 	 1.227232e+00 	 1.247166e+00 	 1.289042e+00 	 1.311052e+00
+2.000000e+00 	 1.234548e+00 	 1.234828e+00 	 1.184427e+00 	 1.209102e+00 	 1.261672e+00 	 1.289709e+00
+4.000000e+00 	 1.198849e+00 	 1.199365e+00 	 1.132847e+00 	 1.165157e+00 	 1.235642e+00 	 1.274182e+00
+8.000000e+00 	 1.190866e+00 	 1.191872e+00 	 1.101276e+00 	 1.144785e+00 	 1.243000e+00 	 1.298711e+00
+1.600000e+01 	 1.236560e+00 	 1.238643e+00 	 1.109742e+00 	 1.170655e+00 	 1.315016e+00 	 1.401426e+00
+3.200000e+01 	 1.194315e+00 	 1.198360e+00 	 1.072455e+00 	 1.130944e+00 	 1.269760e+00 	 1.347666e+00
+6.400000e+01 	 1.185212e+00 	 1.193365e+00 	 1.020497e+00 	 1.098803e+00 	 1.295993e+00 	 1.413830e+00
+1.280000e+02 	 1.130846e+00 	 1.146931e+00 	 9.189788e-01 	 1.018454e+00 	 1.291450e+00 	 1.470555e+00
+2.560000e+02 	 1.075108e+00 	 1.107906e+00 	 8.065422e-01 	 9.307041e-01 	 1.318418e+00 	 1.612557e+00
+5.120000e+02 	 1.004451e+00 	 1.075839e+00 	 6.729765e-01 	 8.236511e-01 	 1.403832e+00 	 1.968065e+00
+1.024000e+03 	 6.686291e-01 	 8.040981e-01 	 3.787698e-01 	 5.095008e-01 	 1.263986e+00 	 2.493070e+00
+2.048000e+03 	 8.967642e-01 	 1.692521e+00 	 4.000906e-01 	 6.382338e-01 	 4.441769e+00 	 2.861589e+01
+
+Differences of a few percent are entirely normal since this is noise simulation. Viewing the postcript file flicker.adev.ps should reveal adev values following a horizontal asymptote around ~1.3.
+
+François Vernotte, 2015/10/26
+

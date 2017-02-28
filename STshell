@@ -1,0 +1,3 @@
+#!/bin/sh
+./ADev $1 > /tmp/adev.tmp
+./uncertainties /tmp/adev.tmp $2

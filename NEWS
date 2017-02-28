@@ -1,0 +1,22 @@
+SigmaTheta software set
+=======================
+
+Copyright or © or Copr. Université de Franche-Comté, Besançon, France
+Contributor: François Vernotte, UTINAM/OSU THETA (2012/07/17)
+Contact: francois.vernotte@obs-besancon.fr
+
+This software, SigmaTheta, is a collection of computer programs for
+time and frequency metrology. 
+
+This software is governed by the CeCILL license under French law and
+abiding by the rules of distribution of free software.  You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+NEWS
+----
+What is new in SigmaTheta-2.2.0 (2015/10/26):
+* PDev: implementation of the Parabolic deviation (see arXiv:1506.00687)
+* bruiteur: power law + drift noise simulator
+
