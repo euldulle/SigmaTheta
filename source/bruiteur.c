@@ -186,22 +186,22 @@ main(int argc, char *argv[])
 	    fiptxt = fopen(nxtfich,"w");
 	    fprintf(fiptxt,"%% %s\n",nxtfich);
 	    fprintf(fiptxt,"%% Sequence of simulated time error samples x(t).\n");
-	    fprintf(fiptyk,"%% Inverse of the low cut-off frequency:...... %24ld\n",nbr_dat);
-	    fprintf(fiptyk,"%% Data number:............................... %24ld\n",nbr_stat);
-	    fprintf(fiptyk,"%% Sampling step:............................. %24.16le\n",tau0);
-	    fprintf(fiptyk,"%% h-3  (1/f3 coef.):......................... %24.16le\n",hm3);
-	    fprintf(fiptyk,"%% h-2  (1/f2 coef.):......................... %24.16le\n",hm2);
-	    fprintf(fiptyk,"%% h-1  (1/f coef.):.......................... %24.16le\n",hm1);
-	    fprintf(fiptyk,"%% h0   (constant coef.):..................... %24.16le\n",h0);
-	    fprintf(fiptyk,"%% h+1  (f coef.):............................ %24.16le\n",hp1);
-	    fprintf(fiptyk,"%% h+2  (f2 coef.):........................... %24.16le\n",hp2);
-	    fprintf(fiptyk,"%% C1 (linear frequency drift coef.):......... %24.16le\n",C1);
-	    fprintf(fiptyk,"%% C0 (constant frequency drift coef.):....... %24.16le\n",C0);
-	    fprintf(fiptyk,"%% Initialization seed of the random sequence: %24ld\n",GR);
-	    fprintf(fiptyk,"%% Beginning at sample:....................... %24ld\n",debut);
-	    fprintf(fiptyk,"%% ____________________________________________________________________\n");
+	    fprintf(fiptxt,"%% Inverse of the low cut-off frequency:...... %24ld\n",nbr_dat);
+	    fprintf(fiptxt,"%% Data number:............................... %24ld\n",nbr_stat);
+	    fprintf(fiptxt,"%% Sampling step:............................. %24.16le\n",tau0);
+	    fprintf(fiptxt,"%% h-3  (1/f3 coef.):......................... %24.16le\n",hm3);
+	    fprintf(fiptxt,"%% h-2  (1/f2 coef.):......................... %24.16le\n",hm2);
+	    fprintf(fiptxt,"%% h-1  (1/f coef.):.......................... %24.16le\n",hm1);
+	    fprintf(fiptxt,"%% h0   (constant coef.):..................... %24.16le\n",h0);
+	    fprintf(fiptxt,"%% h+1  (f coef.):............................ %24.16le\n",hp1);
+	    fprintf(fiptxt,"%% h+2  (f2 coef.):........................... %24.16le\n",hp2);
+	    fprintf(fiptxt,"%% C1 (linear frequency drift coef.):......... %24.16le\n",C1);
+	    fprintf(fiptxt,"%% C0 (constant frequency drift coef.):....... %24.16le\n",C0);
+	    fprintf(fiptxt,"%% Initialization seed of the random sequence: %24ld\n",GR);
+	    fprintf(fiptxt,"%% Beginning at sample:....................... %24ld\n",debut);
+	    fprintf(fiptxt,"%% ____________________________________________________________________\n");
 	    for(i=0;i<nbr_stat;++i)
-	        fprintf(fiptyk,"%24.16le \t %24.16le\n",((double)(debut+i))*tau0,x[debut+i]);
+	        fprintf(fiptxt,"%24.16le \t %24.16le\n",((double)(debut+i))*tau0,x[debut+i]);
 	    fclose(fiptxt);
 	    }
 	free(x);
