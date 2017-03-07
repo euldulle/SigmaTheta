@@ -203,15 +203,8 @@ $(OBJ)bruiteur.o : $(SOURCE)bruiteur.c $(SOURCE)filtre.h
 $(OBJ)filtre.o : $(SOURCE)filtre.c
 	$(CC) $(CFLAGS) -c -o $(OBJ)filtre.o $(SOURCE)filtre.c
 
-install: ~/.SigmaTheta.conf ~/.randinit2 $(TARGETS)
+install: $(TARGETS)
 	$(INSTALL) -c -m 755 $(TARGETS) $(INSTALLDIR)
 
-~/.SigmaTheta.conf: $(BIN).SigmaTheta.conf
-	cp $(BIN).SigmaTheta.conf ~/.SigmaTheta.conf
-
-~/.randinit2: $(BIN).randinit2
-	cp $(BIN).randinit2 ~/.randinit2
-	chown vernotte ~/.randinit2
-	chgrp vernotte ~/.randinit2
 
 .PHONY: all clean install
