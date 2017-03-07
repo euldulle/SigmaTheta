@@ -56,7 +56,8 @@
 BIN = ./
 OBJ = obj/
 SOURCE = source/
-UB = /usr/bin/
+INSTALLDIR = /usr/local/bin/
+INSTALL = install
 CC = gcc
 CFLAGS = -g -O3
 
@@ -202,7 +203,8 @@ $(OBJ)bruiteur.o : $(SOURCE)bruiteur.c $(SOURCE)filtre.h
 $(OBJ)filtre.o : $(SOURCE)filtre.c
 	$(CC) $(CFLAGS) -c -o $(OBJ)filtre.o $(SOURCE)filtre.c
 
-install: ~/.SigmaTheta.conf ~/.randinit2 $(UB)1col2col $(UB)X2Y $(UB)DriRem $(UB)SigmaTheta $(UB)ADev $(UB)MDev $(UB)HDev $(UB)PDev $(UB)uncertainties $(UB)RaylConfInt $(UB)Asymptote $(UB)Asym2Alpha $(UB)AVarDOF $(UB)ADUncert $(UB)ADGraph $(UB)PSDGraph $(UB)YkGraph $(UB)XtGraph $(UB)bruiteur
+install: ~/.SigmaTheta.conf ~/.randinit2 $(TARGETS)
+	$(INSTALL) -c -m 755 $(TARGETS) $(INSTALLDIR)
 
 ~/.SigmaTheta.conf: $(BIN).SigmaTheta.conf
 	cp $(BIN).SigmaTheta.conf ~/.SigmaTheta.conf
@@ -212,61 +214,4 @@ install: ~/.SigmaTheta.conf ~/.randinit2 $(UB)1col2col $(UB)X2Y $(UB)DriRem $(UB
 	chown vernotte ~/.randinit2
 	chgrp vernotte ~/.randinit2
 
-$(UB)1col2col: $(BIN)1col2col
-	cp $(BIN)1col2col $(UB)1col2col
-
-$(UB)X2Y: $(BIN)X2Y
-	cp $(BIN)X2Y $(UB)X2Y
-
-$(UB)DriRem: $(BIN)DriRem 
-	cp $(BIN)DriRem $(UB)DriRem
-
-$(UB)SigmaTheta: $(BIN)SigmaTheta
-	cp $(BIN)SigmaTheta $(UB)SigmaTheta
-
-$(UB)ADev: $(BIN)ADev
-	cp $(BIN)ADev $(UB)ADev
-
-$(UB)MDev: $(BIN)MDev
-	cp $(BIN)MDev $(UB)MDev
-
-$(UB)HDev: $(BIN)HDev
-	cp $(BIN)HDev $(UB)HDev
-
-$(UB)PDev: $(BIN)PDev
-	cp $(BIN)PDev $(UB)PDev
-
-$(UB)uncertainties: $(BIN)uncertainties
-	cp $(BIN)uncertainties $(UB)uncertainties
-
-$(UB)RaylConfInt: $(BIN)RaylConfInt
-	cp $(BIN)RaylConfInt $(UB)RaylConfInt
-
-$(UB)Asymptote: $(BIN)Asymptote
-	cp $(BIN)Asymptote $(UB)Asymptote
-
-$(UB)Asym2Alpha: $(BIN)Asym2Alpha
-	cp $(BIN)Asym2Alpha $(UB)Asym2Alpha
-
-$(UB)AVarDOF: $(BIN)AVarDOF
-	cp $(BIN)AVarDOF $(UB)AVarDOF
-
-$(UB)ADUncert: $(BIN)ADUncert
-	cp $(BIN)ADUncert $(UB)ADUncert
-
-$(UB)ADGraph: $(BIN)ADGraph
-	cp $(BIN)ADGraph $(UB)ADGraph
-
-$(UB)PSDGraph: $(BIN)PSDGraph
-	cp $(BIN)PSDGraph $(UB)PSDGraph
-
-$(UB)YkGraph: $(BIN)YkGraph
-	cp $(BIN)YkGraph $(UB)YkGraph
-
-$(UB)XtGraph: $(BIN)XtGraph
-	cp $(BIN)XtGraph $(UB)XtGraph
-
-$(UB)bruiteur: $(BIN)bruiteur
-	cp $(BIN)bruiteur $(UB)bruiteur
-
-.PHONY: all clean
+.PHONY: all clean install
