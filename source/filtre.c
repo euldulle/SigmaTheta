@@ -158,34 +158,18 @@ long init_rnd(long graine)
 	char *homepath;
 	char filepath[255];
 
-	homepath=getenv("HOME");
-	if (homepath!=NULL)
-	{
-		strncpy(filepath, homepath, sizeof(filepath));
-		strncat(filepath, "/.randinit2",sizeof(filepath));
-	}
-	else
-		strncpy(filepath,".randinit2",sizeof(filepath)); /* If the environment variable $HOME   */
-/* is not set, the .randinit2 file is searched in the current directory.	      */
-	if (graine) x0=graine; /* If 'graine' not equal to 0, it will be used for     */
-/* initializing the generator rather than using the value contained in the file	      */
-/* "$HOME/exe/.randinit2".                                                            */
-	else
+	strncpy(filepath, "/dev/urandom",sizeof(filepath));
+	
+	rifich=fopen(filepath,"r");
+	if (rifich==NULL)
 		{
-		rifich=fopen(filepath,"r");
-		if (rifich==NULL)
-			{
-			printf("File %s not found.\n",homepath);
-			exit(-1);
-			}
-		fscanf(rifich,"%ld",&x0);
-		fclose(rifich);
-		x1=x0+1;
-		if (x1>RAND_MAX-2) x1=2;
-		rifich=fopen(filepath,"w");
-		fprintf(rifich,"%ld\n",x1);
-		fclose(rifich);
+		printf("File %s not found.\n",filepath);
+		exit(-1);
 		}
+	fread(&x0, sizeof(x0), 1, rifich);
+	fclose(rifich);
+	x1=x0+1;
+
 	srand(x0);
 	return(x0);
         }
