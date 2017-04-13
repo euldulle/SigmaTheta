@@ -156,19 +156,23 @@ long init_rnd(long graine)
 	long x0,x1;
 	FILE *rifich;
 	char *homepath;
+	char filepath[255];
 
 	homepath=getenv("HOME");
 	if (homepath!=NULL)
-		strcat(homepath, "/.randinit2");
+	{
+		strncpy(filepath, homepath, sizeof(filepath));
+		strncat(filepath, "/.randinit2",sizeof(filepath));
+	}
 	else
-		strcpy(homepath,".randinit2"); /* If the environment variable $HOME   */
+		strncpy(filepath,".randinit2",sizeof(filepath)); /* If the environment variable $HOME   */
 /* is not set, the .randinit2 file is searched in the current directory.	      */
 	if (graine) x0=graine; /* If 'graine' not equal to 0, it will be used for     */
 /* initializing the generator rather than using the value contained in the file	      */
 /* "$HOME/exe/.randinit2".                                                            */
 	else
 		{
-		rifich=fopen(homepath,"r");
+		rifich=fopen(filepath,"r");
 		if (rifich==NULL)
 			{
 			printf("File %s not found.\n",homepath);
@@ -178,7 +182,7 @@ long init_rnd(long graine)
 		fclose(rifich);
 		x1=x0+1;
 		if (x1>RAND_MAX-2) x1=2;
-		rifich=fopen(homepath,"w");
+		rifich=fopen(filepath,"w");
 		fprintf(rifich,"%ld\n",x1);
 		fclose(rifich);
 		}
