@@ -147,10 +147,7 @@ long fft(long n,int type)
 /*	Subroutines for generating random noises.			     */
 /*						FV	1989/02/21	     */
 
-/* Initialization of the random number generator:			     */
-/* The file "$HOME/.randinit2" contains the last used 'seed'.		     */
-/* It is incremented and stored then the generator is initialized with the   */ 
-/* new seed (=former+1).						     */
+/* Initialization of the random number generator using /dev/urandom	     */
 long init_rnd(long graine)
 	{
 	long x0,x1;
