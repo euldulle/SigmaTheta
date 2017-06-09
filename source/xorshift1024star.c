@@ -8,6 +8,7 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 
 #include <stdint.h>
 #include <string.h>
+#include "splitmix64.h"
 
 /* This is a fast, top-quality generator. If 1024 bits of state are too
    much, try a xoroshiro128+ generator.
@@ -20,15 +21,22 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    a 64-bit seed, we suggest to seed a splitmix64 generator and use its
    output to fill s. */
 
-uint64_t s[16]; 
-int p;
+uint64_t xorshift1024_s[16]; 
+int xorshift1024_p;
 
-uint64_t next(void) {
-	const uint64_t s0 = s[p];
-	uint64_t s1 = s[p = (p + 1) & 15];
+void xorshift1024_init64(uint64_t x) {
+	splitmix64_init(x);
+	for(int i = 0; i < 16; i++) {
+		xorshift1024_s[i] = splitmix64_next();
+	}
+}
+
+uint64_t xorshift1024_next(void) {
+	const uint64_t s0 = xorshift1024_s[xorshift1024_p];
+	uint64_t s1 = xorshift1024_s[xorshift1024_p = (xorshift1024_p + 1) & 15];
 	s1 ^= s1 << 31; // a
-	s[p] = s1 ^ s0 ^ (s1 >> 11) ^ (s0 >> 30); // b,c
-	return s[p] * UINT64_C(1181783497276652981);
+	xorshift1024_s[xorshift1024_p] = s1 ^ s0 ^ (s1 >> 11) ^ (s0 >> 30); // b,c
+	return xorshift1024_s[xorshift1024_p] * UINT64_C(1181783497276652981);
 }
 
 
@@ -36,7 +44,7 @@ uint64_t next(void) {
    to 2^512 calls to next(); it can be used to generate 2^512
    non-overlapping subsequences for parallel computations. */
 
-void jump(void) {
+void xorshift1024_jump(void) {
 	static const uint64_t JUMP[] = { 0x84242f96eca9c41d,
 		0xa3c65b8776f96855, 0x5b34a39f070b5837, 0x4489affce4f31a1e,
 		0x2ffeeb0a48316f40, 0xdc2d9891fe68c022, 0x3659132bb12fea70,
@@ -50,10 +58,10 @@ void jump(void) {
 		for(int b = 0; b < 64; b++) {
 			if (JUMP[i] & UINT64_C(1) << b)
 				for(int j = 0; j < 16; j++)
-					t[j] ^= s[(j + p) & 15];
-			next();
+					t[j] ^= xorshift1024_s[(j + xorshift1024_p) & 15];
+			xorshift1024_next();
 		}
 
 	for(int j = 0; j < 16; j++)
-		s[(j + p) & 15] = t[j];
+		xorshift1024_s[(j + xorshift1024_p) & 15] = t[j];
 }
