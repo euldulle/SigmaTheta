@@ -43,6 +43,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
+#include "xorshift1024star.h"
 
 #define DIRECT 1
 #define INVERSE 0
@@ -167,7 +169,7 @@ long init_rnd(long graine)
 	fclose(rifich);
 	x1=x0+1;
 
-	srand(x0);
+	xorshift1024_init64(x0);
 	return(x0);
         }
 
@@ -183,7 +185,7 @@ int N;
 
 	x=(double)0;
 	for (i=0;i<N;++i)
-		x+=(double)rand();
+		x+=(double)xorshift1024_next();
 	x=(x-vm_gauss)/sigma_gauss;
 	return(x);
 	}		
@@ -198,8 +200,8 @@ double gausseq(long nbr_dat,int graine)
 
 	GR=init_rnd(graine);
 	ordre=16;
-	vm_gauss=((double)ordre)*((double)RAND_MAX)/((double)2); /* Average of 'ordre' numbers between 0 and 'RAND_MAX' */
-	sigma_gauss=sqrt( ((double)ordre) * ((double)RAND_MAX) * ((double)(RAND_MAX-2)) / ((double)6) ); /* RMS of 'ordre' numbers between 0 and 'RAND_MAX' */
+	vm_gauss=((double)ordre)*((double)UINT64_MAX)/((double)2); /* Average of 'ordre' numbers between 0 and 'UINT64_MAX' */
+	sigma_gauss=sqrt( ((double)ordre) * ((double)UINT64_MAX) * ((double)(UINT64_MAX-2)) / ((double)6) ); /* RMS of 'ordre' numbers between 0 and 'UINT64_MAX' */
 	for(i=0;i<nbr_dat;++i)
 	    {
 	    x[i]=(double)gauss(ordre);

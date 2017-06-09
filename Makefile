@@ -123,7 +123,7 @@ $(BIN)YkGraph : $(OBJ)ykgraph.o $(OBJ)stio_sbr.o
 $(BIN)XtGraph : $(OBJ)xtgraph.o $(OBJ)stio_sbr.o 
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
-$(BIN)bruiteur : $(OBJ)bruiteur.o $(OBJ)filtre.o
+$(BIN)bruiteur : $(OBJ)bruiteur.o $(OBJ)filtre.o $(OBJ)splitmix64.o $(OBJ)xorshift1024star.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 $(OBJ)1col2col.o : $(SOURCE)1col2col.c $(SOURCE)sigma_theta.h
