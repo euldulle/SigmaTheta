@@ -21,8 +21,8 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    a 64-bit seed, we suggest to seed a splitmix64 generator and use its
    output to fill s. */
 
-uint64_t xorshift1024_s[16]; 
-int xorshift1024_p;
+static uint64_t xorshift1024_s[16];
+static int xorshift1024_p;
 
 void xorshift1024_init64(uint64_t x) {
 	splitmix64_init(x);

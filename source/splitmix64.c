@@ -19,7 +19,7 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    computations) or xorshift1024* (for massively parallel computations)
    generator. */
 
-uint64_t splitmix64_state; /* The state can be seeded with any value. */
+static uint64_t splitmix64_state; /* The state can be seeded with any value. */
 
 void splitmix64_init(uint64_t x) {
 	splitmix64_state = x;
