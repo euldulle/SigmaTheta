@@ -51,7 +51,7 @@
 
 double *x, *y;
 double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
-double tau0, vm_gauss, sigma_gauss;
+double tau0;
 long GR;
 char st_version[]="2.2";
 

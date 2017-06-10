@@ -45,13 +45,14 @@
 #include <math.h>
 #include <stdint.h>
 #include "xorshift1024star.h"
+#include "ziggurat.h"
 
 #define DIRECT 1
 #define INVERSE 0
 
 extern double *x, *y;
 extern double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
-extern double tau0, vm_gauss, sigma_gauss;
+extern double tau0;
 extern long GR;
 
 /*	   This subroutine performs the Fourier transform of   		*/
@@ -174,22 +175,6 @@ long init_rnd(long graine)
         }
 
 
-/*	Generation of a Gaussian random number by averaging N uniformly     */
-/* distributed random numbers (application of the central limit theorem).   */
-double gauss(N)
-int N;
-	{
-	int i;
-	double x;
-
-
-	x=(double)0;
-	for (i=0;i<N;++i)
-		x+=(double)xorshift1024_next();
-	x=(x-vm_gauss)/sigma_gauss;
-	return(x);
-	}		
-		
 
 /*  Generation of a sequence of 'nbr_dat' Gaussian random numbers, centered */
 /*  and with unity rms.                                                     */
@@ -199,12 +184,9 @@ double gausseq(long nbr_dat,int graine)
 	double xm,x2m,var,sig;
 
 	GR=init_rnd(graine);
-	ordre=16;
-	vm_gauss=((double)ordre)*((double)UINT64_MAX)/((double)2); /* Average of 'ordre' numbers between 0 and 'UINT64_MAX' */
-	sigma_gauss=sqrt( ((double)ordre) * ((double)UINT64_MAX) * ((double)(UINT64_MAX-2)) / ((double)6) ); /* RMS of 'ordre' numbers between 0 and 'UINT64_MAX' */
 	for(i=0;i<nbr_dat;++i)
 	    {
-	    x[i]=(double)gauss(ordre);
+	    x[i]=ojr_next_normal();
 	    y[i]=(double)0;
 	    }
 /*  We check that the RMS is one:                         		    */
