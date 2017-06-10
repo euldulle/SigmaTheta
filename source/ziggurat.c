@@ -37,6 +37,23 @@ static inline double ojr_to_double(uint64_t x) {
     return u.d - 1.0;
 }
 
+static uint64_t byte_rand_source = 0;
+static uint8_t byte_rand = 0;
+
+static inline uint8_t ojr_next_byte(void) {
+    uint8_t r;
+
+    if(byte_rand == 0) {
+	byte_rand_source = xorshift1024_next() >> 8; // lowest 3 bits are less random than other, discard them
+	byte_rand = 7;
+    }
+    r = (uint8_t)(byte_rand_source & 0xff);
+    byte_rand_source >>= 8;
+    byte_rand--;
+
+    return r;
+}
+
 
 double ojr_next_exponential(void) {
     uint64_t r;
@@ -45,8 +62,8 @@ double ojr_next_exponential(void) {
 
     while (1) {
         r = xorshift1024_next();
-        i = r & 0xFF;
         r = (r >> 8) & 0xFFFFFFFFFFFFFULL;
+        i = ojr_next_byte();
 
 #ifdef INTEGER_COMPARE
         if (r < zeri[i]) {
@@ -58,7 +75,7 @@ double ojr_next_exponential(void) {
 
         if (u0 < zer[i]) return u0 * zex[i];
 #endif
-        if (0 == i) return ZER256 - log(ojr_to_double(xorshift1024_next()));
+        if (0 == i) return ZER256 - log(ojr_to_double(xorshift1024_next() >> 8));
 
 #ifdef INTEGER_COMPARE
 	u0 = ojr_to_double(r);
@@ -66,7 +83,7 @@ double ojr_next_exponential(void) {
         x = u0 * zex[i];
         f0 = exp(x - zex[i]);
         f1 = exp(x - zex[i+1]);
-        if (f1 + ojr_to_double(xorshift1024_next()) * (f0 - f1) < 1.0) return x;
+        if (f1 + ojr_to_double(xorshift1024_next() >> 8) * (f0 - f1) < 1.0) return x;
     }
 }
 
@@ -77,10 +94,10 @@ double ojr_next_normal(void) {
 
     while (1) {
         do {
-            r = xorshift1024_next();
-            sign = (int)r & 1;
-            i = (r >> 1) & 0x7F;
-            r >>= 12;
+            r = xorshift1024_next() >> 12;
+	    i = ojr_next_byte();
+            sign = i & 1;
+            i = (i >> 1) & 0x7F;
         } while (sign && 0LL == r);
 
 #ifdef INTEGER_COMPARE
@@ -96,8 +113,8 @@ double ojr_next_normal(void) {
 #endif
         if (0 == i) {
             do {
-                x = log(ojr_to_double(xorshift1024_next())) / ZNR128;
-                y = log(ojr_to_double(xorshift1024_next()));
+                x = log(ojr_to_double(xorshift1024_next() >> 8)) / ZNR128;
+                y = log(ojr_to_double(xorshift1024_next() >> 8));
             } while (-2.0 * y < x * x);
             return sign ? x - ZNR128 : ZNR128 - x;
         }
@@ -109,6 +126,6 @@ double ojr_next_normal(void) {
 #endif
         f0 = exp(-0.5 * (znx[i] * znx[i] - x * x));
         f1 = exp(-0.5 * (znx[i+1] * znx[i+1] - x * x));
-        if (f1 + ojr_to_double(xorshift1024_next()) * (f0 - f1) < 1.0) return x;
+        if (f1 + ojr_to_double(xorshift1024_next() >> 8) * (f0 - f1) < 1.0) return x;
     }
 }
