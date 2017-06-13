@@ -44,108 +44,19 @@
 #include <string.h>
 #include <math.h>
 #include <stdint.h>
+#include <complex.h>
+#include <fftw3.h>
 #include "xorshift1024star.h"
 #include "ziggurat.h"
 
 #define DIRECT 1
 #define INVERSE 0
 
-extern double *x, *y;
+extern double *x;
+fftw_complex *freq_x;
 extern double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
 extern double tau0;
 extern long GR;
-
-/*	   This subroutine performs the Fourier transform of   		*/
-/*	   the double tables x[] and y[] containing 			*/
-/*	   respectively the real and the imaginary parts of 		*/
-/*	   the input signal. The result is sent to x[] (real		*/
-/*	   part) and y[] (imaginary part).				*/
-/*	                                                     		*/
-/*	   The data number n and the type (DIRECT or INVERSE)		*/
-/*	   are given by the input parameters. The output is 		*/
-/*	   the number of computed frequencies.				*/
-/*	                                                     		*/
-/*	F.VERNOTTE                                         1987/12/04	*/
-/*	                                   modified by FV, 1989/02/21	*/
-
-long fft(long n,int type)
-	{
-	double tempr,tempi,wr,wi,pi,theta,signe;
-	unsigned long nn,m,i,fn,j,mmax,istep;
-
-/*	FFT directe ou FFT inverse					*/
-	
-	if (type)
-	    signe=(double)-1;	/* direct FFT	*/
-	else
-	    signe=(double)1;	/* inverse FFT	*/
-
-/*	   Is n a power of 2 ?		                  		*/
-
-	tempr = log((double)n)/log((double)2);
-	j = (long) (tempr + .5);
-	if (tempr != j)	
-		n =(long)(pow((double)2,(double)j)+.1);
-	pi = ((double)4)*atan((double)1);
-	fn = n;
-
-/*	   Binary inversion of the elements of table X     		*/
-
-	j = 0;	
-	for (i=0; i<n; ++i)
-		{
-		if (i < j)
-			{
-			tempr = x[j] ;
-			tempi = y[j] ;
-			x[j]  = x[i] ;
-			y[j]  = y[i] ;
-			x[i]  = tempr;
-			y[i]  = tempi;
-			}
-		m = n/2.;
-		while (j >= m)
-			{
-			j = j-m;
-			m = (m+1)/2.;
-			}
-		j = j+m;
-		}
-
-/*	   COOLEY - TUKEY algorithm                     		*/
-
-	mmax = 1;
-	while (mmax < n)
-		{
-		istep = 2*mmax;
-		for (m=0; m<mmax; ++m)
-			{
-			theta = signe*pi*((double)m)/((double)mmax);
-			wr = cos(theta);
-			wi = sin(theta);
-			for (i=m; i<n; i+=istep)
-                        	{
-                        	j = i+mmax;
-        	               	tempr = wr*x[j]-wi*y[j];
-                        	tempi = wi*x[j]+wr*y[j];
-                        	x[j]  = x[i]-tempr;
-                        	y[j]  = y[i]-tempi;
-                        	x[i]  = x[i]+tempr;
-                        	y[i]  = y[i]+tempi;
-                        	}
-			}
-        	mmax = istep;
-        	}
-
-/*	   Normalization                                       		*/
-
-	for (i=0; i<fn; ++i)
-	       {
-	       x[i]/=sqrt((double)fn);
-	       y[i]/=sqrt((double)fn);
-	       }
-	return (fn);
-	}
 
 /*	Subroutines for generating random noises.			     */
 /*						FV	1989/02/21	     */
@@ -187,7 +98,6 @@ double gausseq(long nbr_dat,int graine)
 	for(i=0;i<nbr_dat;++i)
 	    {
 	    x[i]=ojr_next_normal();
-	    y[i]=(double)0;
 	    }
 /*  We check that the RMS is one:                         		    */
 	xm=x2m=(double)0;
@@ -218,37 +128,44 @@ double gausseq(long nbr_dat,int graine)
 void filtreur(long nbr_dat, double tau0)
 	{
 	long i,limite,saut,finsaut;
-	double x2m,Ri,R2i,Rx,pi,cor,ksx,rho,phi;
+	double x2m,Ri,R2i,Rx,cor,ksx,rho,phi, one_over_nbr;
+	fftw_plan p_forward, p_backward;
 
 	limite=nbr_dat/2;
-	pi=((double)4)*atan((double)1); /* Computation of pi.		    */
+	one_over_nbr = 1/((double)nbr_dat);
+
 	if ((hm3)||(hm2)||(hm1)||(hp1)||(hp2)) /* If only white noise is    */
 /* needed, we don't have to filter the sequence!                            */
 		{
-		fft(nbr_dat,DIRECT);
+		freq_x = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * limite);
+		p_forward = fftw_plan_dft_r2c_1d(nbr_dat, x, freq_x, FFTW_ESTIMATE);
+		p_backward = fftw_plan_dft_c2r_1d(nbr_dat, freq_x, x, FFTW_ESTIMATE);
+		fftw_execute(p_forward);
+
 		cor=sqrt(h0/tau0);
-		x[0]*=cor; /* Filtering of the null frequency amplitude:              */
-		y[0]*=cor; /* only h0 is used for avoiding to multiply or divide this */
+		freq_x[0] *= cor * one_over_nbr; /* Filtering of the null frequency amplitude:              */
+		/* only h0 is used for avoiding to multiply or divide this */
 /* amplitude by 0 with respectively positive and negative exponents of the power      */
 /* laws. This amplitude corresponds to the mean of the sequence and should not be set */
 /* to 0.									      */
 		for(i=1;i<limite;++i)
 			{
-			cor=((double)i)/((double)nbr_dat);
+			cor=((double)i) * one_over_nbr;
 			Ri=cor/tau0;
 			R2i=Ri*Ri;
-			Rx=sqrt(fabs((double)(hm3/R2i/Ri + hm2/R2i + hm1/Ri + h0 + hp1*Ri + hp2*R2i))/tau0);
-			x[i]*=Rx;           /* "positive" frequencies */
-			y[i]*=Rx;
-			x[nbr_dat-i]*=Rx;   /* "negative" frequencies */
-			y[nbr_dat-i]*=Rx;
+			Rx=sqrt(fabs((double)(hm3/R2i/Ri + hm2/R2i + hm1/Ri + h0 + hp1*Ri + hp2*R2i))/tau0) * one_over_nbr;
+			freq_x[i]*=Rx;           /* "positive" frequencies */
 			}
 		Ri=((double).5)/tau0;
 		R2i=Ri*Ri;
-		Rx=sqrt(fabs((double)(hm3/R2i/Ri + hm2/R2i + hm1/Ri + h0 + hp1*Ri + hp2*R2i))/tau0);
-		x[limite]*=Rx;
-		y[limite]*=Rx;
-		fft(nbr_dat,INVERSE); /* After filtering, the inverse FFT is computed.*/
+		Rx = sqrt(fabs((double)(hm3/R2i/Ri + hm2/R2i + hm1/Ri + h0 + hp1*Ri + hp2*R2i))/tau0) * one_over_nbr;
+		freq_x[limite] *= Rx;
+
+		fftw_execute(p_backward); /* After filtering, the inverse FFT is computed.*/
+
+		fftw_destroy_plan(p_forward);
+		fftw_destroy_plan(p_backward);
+		fftw_free(freq_x);
 		}
 	else
 		if ((h0!=1)||(tau0!=1))

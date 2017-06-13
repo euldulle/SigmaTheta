@@ -60,6 +60,10 @@ INSTALLDIR = /usr/local/bin/
 INSTALL = install
 CC = gcc
 CFLAGS = -g -O3
+# link statically against libfftw3
+#FFTW3 = -static -lfftw3
+# link dynamically against libfftw3
+FFTW3 = -lfftw3
 
 TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)bruiteur
 
@@ -124,7 +128,7 @@ $(BIN)XtGraph : $(OBJ)xtgraph.o $(OBJ)stio_sbr.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 $(BIN)bruiteur : $(OBJ)bruiteur.o $(OBJ)filtre.o $(OBJ)splitmix64.o $(OBJ)xorshift1024star.o $(OBJ)ziggurat.o
-	$(CC) $(CFLAGS) -o $@ $^ -lm
+	$(CC) $(CFLAGS) -o $@ $^ $(FFTW3) -Wl,-Bdynamic -lm
 
 $(OBJ)1col2col.o : $(SOURCE)1col2col.c $(SOURCE)sigma_theta.h
 

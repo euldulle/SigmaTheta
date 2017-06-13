@@ -49,7 +49,7 @@
 			   /* software package since the 2.2 release (2015) */
 #define DATAMAX 67108864   /* Maximum sequence size 			    */
 
-double *x, *y;
+double *x;
 double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
 double tau0;
 long GR;
@@ -104,8 +104,7 @@ main(int argc, char *argv[])
 	nbr_dat=(long)pow((double)2,(double)nbr_dat);
 	printf("Low cut-off frequency: 1/%ld.\n",nbr_dat);
 	x=(double *)malloc(nbr_dat*sizeof(double)); 
-	y=(double *)malloc(nbr_dat*sizeof(double)); 
-	if ((x==NULL)||(y==NULL))
+	if ((x==NULL))
 		{
 		printf("Not enough memory for %ld data\n",nbr_dat);
 		exit(-1);
@@ -205,7 +204,6 @@ main(int argc, char *argv[])
 	    fclose(fiptxt);
 	    }
 	free(x);
-	free(y);
 	}
 
 
