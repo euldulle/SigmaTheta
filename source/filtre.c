@@ -138,6 +138,11 @@ void filtreur(long nbr_dat, double tau0)
 /* needed, we don't have to filter the sequence!                            */
 		{
 		freq_x = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * limite);
+		if (!(freq_x))
+		{
+			printf("Not enough memory for %ld data\n",nbr_dat);
+			exit(-1);
+		}
 		p_forward = fftw_plan_dft_r2c_1d(nbr_dat, x, freq_x, FFTW_ESTIMATE);
 		p_backward = fftw_plan_dft_c2r_1d(nbr_dat, freq_x, x, FFTW_ESTIMATE);
 		fftw_execute(p_forward);
