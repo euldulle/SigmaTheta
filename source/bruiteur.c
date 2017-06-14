@@ -65,7 +65,7 @@ void usage(void)
     printf("Sigma-Theta %s 2015 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
     }
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 /* Simulation of time error x(t) samples and/or frequency deviation yk      */
 /* samples.								    */
 /* The samples are assumed to be composed of 5 power law noises from 	    */
@@ -204,6 +204,8 @@ main(int argc, char *argv[])
 	    fclose(fiptxt);
 	    }
 	free(x);
+
+	return 0;
 	}
 
 
