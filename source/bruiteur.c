@@ -47,7 +47,7 @@
 
 #define ST_VERSION 2.2 	   /* bruiteur is included in the SigmaTheta        */
 			   /* software package since the 2.2 release (2015) */
-#define DATAMAX 67108864   /* Maximum sequence size 			    */
+#define DATAMAX 2147483648  /* Maximum sequence size 2**31  */
 
 double *x;
 double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
