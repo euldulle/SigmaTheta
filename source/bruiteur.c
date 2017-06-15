@@ -43,17 +43,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <sys/sysinfo.h>
 #include "filtre.h"
 
 #define ST_VERSION 2.2 	   /* bruiteur is included in the SigmaTheta        */
 			   /* software package since the 2.2 release (2015) */
-#define DATAMAX 2147483648  /* Maximum sequence size 2**31  */
 
 double *x;
 double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
 double tau0;
 long GR;
 char st_version[]="2.2";
+
+struct sysinfo sinfo;
 
 void usage(void)
 /* Help message */
@@ -91,15 +93,28 @@ int main(int argc, char *argv[])
 		{
 		strcpy(fifich,*++argv);
 		}
+	// get sysinfo to determine memory size
+	if(sysinfo(&sinfo))
+	{
+		printf("sysinfo failed, something is wrong, seriously wrong!\n");
+		exit(1);
+	}
 	strcpy(nxtfich,mod_nom(fifich,suffxt));
 	strcpy(nykfich,mod_nom(fifich,suffyk));
 
 	hm3=hm2=hm1=h0=hp1=hp2=C1=C0=(double)0;
-	printf("Inverse of the low cut-off frequency (power of 2, < %d): ",DATAMAX);
+	printf("Inverse of the low cut-off frequency (power of 2, < %ld): ", sinfo.totalram/2/(32+8));
 /* For generating a sequence of N samples with a low cut-off frequency much lower than 1/(N tau0), we generate a sequence of M samples; we keep only a subsequence of N consecutive data (the beginning is randomly chosen). The M-N other data are sent to the trash!                                                   */
 	scanf("%ld",&nbr_dat);
 	if (nbr_dat<4) nbr_dat=4;
-	if (nbr_dat>DATAMAX) nbr_dat=DATAMAX;
+	// ensure that the allocated data is smaller than half of total memory
+	// in order to avoid heavy swapping
+	if (nbr_dat * (32+8) * 2 >sinfo.totalram)
+	{
+		printf("\n\nError: Requested number of samples would require to store data more than\nhalf the total RAM size\n");
+		printf("Aborting to prevent the system from comming to a grinding halt\n");
+		exit(1);
+	}
 	nbr_dat=(long)ceil(log((double)nbr_dat)/log((double)2));
 	nbr_dat=(long)pow((double)2,(double)nbr_dat);
 	printf("Low cut-off frequency: 1/%ld.\n",nbr_dat);
