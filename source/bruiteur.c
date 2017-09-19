@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
 	hm3=hm2=hm1=h0=hp1=hp2=C1=C0=(double)0;
 	printf("Inverse of the low cut-off frequency (power of 2, < %d): ",DATAMAX);
-/* For generating a sequence of N samples with a low cut-off frequency much lower than 1/(N tau0), we generate a sequence of M samples; we keep only a subsequence of N consecutive data (the beginning is randomly chosen). The M-N other data are sent to the trash!                                                   */
+/* For generating a sequence of N samples with a low cut-off frequency much lower than 1/(N tau0), we generate a sequence of M samples; we keep only a subsequence of N consecutive data (the beginning is randomly chosen). The M-N other data are sent to the trash! */
 	scanf("%ld",&nbr_dat);
 	if (nbr_dat<4) nbr_dat=4;
 	if (nbr_dat>DATAMAX) nbr_dat=DATAMAX;
