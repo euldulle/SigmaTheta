@@ -82,6 +82,8 @@ long init_rnd(long graine)
 	x1=x0+1;
 
 	xorshift1024_init64(x0);
+	srand(x0);	/* rand() must also be initialized since it is used in
+			bruiteur for setting of the beginning of the subsequence.  */
 	return(x0);
         }
 
