@@ -94,20 +94,19 @@ long init_rnd(long graine)
 double gausseq(long nbr_dat,int graine)
 	{
 	long int i,ordre;
-	double xm,x2m,var,sig;
+	double knorm,xm,x2m,var,sig;
 
 	GR=init_rnd(graine);
-	for(i=0;i<nbr_dat;++i)
-	    {
-	    x[i]=ojr_next_normal();
-	    }
-/*  We check that the RMS is one:                         		    */
+	knorm=((double)1)/sqrt((double)2);	/* knorm is set to 1/sqrt(2) in such a way
+						that the one-sided PSD is equal to 1 */
 	xm=x2m=(double)0;
 	for(i=0;i<nbr_dat;++i)
 	    {
+	    x[i]=knorm*ojr_next_normal();
 	    xm+=(double)x[i];
 	    x2m+=((double)x[i])*((double)x[i]);
 	    }
+/*  We check that the RMS is one:                         		    */
 	xm/=(double)nbr_dat;
 	x2m/=(double)nbr_dat;
 	var=x2m-xm*xm;
