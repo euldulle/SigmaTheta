@@ -307,12 +307,12 @@ int init_flag()
 	    if (!strcmp(tg,"ON\n"))
 		{
 	        flag_variance=1;
-		printf("MVAR ON  -> flag_variance=%d flag_slopes[0]=%d\n",flag_variance,flag_slopes[0]);
+//		printf("MVAR ON  -> flag_variance=%d flag_slopes[0]=%d\n",flag_variance,flag_slopes[0]);
 		}
 	    else
 		{
 		flag_slopes[0]=0;
-		printf("MVAR OFF -> flag_variance=%d flag_slopes[0]=%d\n",flag_variance,flag_slopes[0]);
+//		printf("MVAR OFF -> flag_variance=%d flag_slopes[0]=%d\n",flag_variance,flag_slopes[0]);
 		}
 	    }
 	flag_log_inc=1;

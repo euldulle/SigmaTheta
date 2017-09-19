@@ -152,22 +152,22 @@ int main(int argc, char *argv[])
 	    if (fsw)
 		{ 
 		flag_variance=fv;
-		printf("flag_variance=%d\n",flag_variance);
+//		printf("flag_variance=%d\n",flag_variance);
 		}
 	    if (flag_variance&1)
 		{
 		flag_slopes[0]=1;
-		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
+//		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
 		}
 	    else
 		{
 		flag_slopes[0]=0;
-		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
+//		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
 		}
 	    if (flag_variance==3)
 		flag_conf=0;
-	    for (i=0;i<6;++i) printf("%d ",flag_slopes[i]);
-	    printf("\n");
+/*	    for (i=0;i<6;++i) printf("%d ",flag_slopes[i]);
+	    printf("\n");*/
 	    N=serie_dev(nto, tau, dev);
 	    for(i=0;i<N;++i) avar[i]=dev[i]*dev[i];
 	    err=relatfit(N,tau,avar,tau,6);
