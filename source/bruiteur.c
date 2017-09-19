@@ -43,6 +43,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "filtre.h"
 #include "sigma_theta.h"
 
@@ -77,8 +78,9 @@ int main(int argc, char *argv[])
 	char fifich[64],rep;
 	long i,ordre,nbr_dat,nbr_stat,debut;
 	int nb_seq,is;
-	double mx,m2x,sigx,sigy,di,dx,dN,SX,SY,SXY,SX2,den,num,a0,a1,kdb;
+	double mx,m2x,sigx,sigy,di,dx,dN,SX,SY,SXY,SX2,den,num,a0,a1,kdb,cpu_time;
 	double Sm,Sm2,Ssig,Ssig2,Sa0,Sa02,Sa1,Sa12,adjsig,Sadj,Sadj2,un,deux,six;
+	clock_t start, end;
 
 	if (argc!=2)
         	{
@@ -138,11 +140,15 @@ int main(int argc, char *argv[])
 	printf("\tC0 (constant frequency drift coef.): ");
 	scanf("%lf",&C0);
 
+//	start=clock();
 	kdb=((double)(nbr_dat-nbr_stat))/((double)RAND_MAX);/*Maximum value of the beginning index.*/
 	adjsig=gausseq(nbr_dat,0); /* Generation of a unity white noise sequence. */
        	filtreur(nbr_dat,tau0); /* Filtering of the sequence.                           */
        	if (nbr_dat==nbr_stat) debut = 0;
        	else debut = (long int) (rand()*kdb); /* Setting of the beginning of the subsequence.  */
+/*	end=clock();
+	cpu_time=((double)(end-start))/CLOCKS_PER_SEC;
+	printf("CPU time: %.6f s\n",cpu_time);*/
        	printf("Beginning at sample %ld\n",debut);
 
 	printf("\nFor storing:\n");
