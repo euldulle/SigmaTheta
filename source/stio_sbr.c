@@ -305,9 +305,15 @@ int init_flag()
 	    {
 	    strcpy(tg,&gm[25]);
 	    if (!strcmp(tg,"ON\n"))
+		{
 	        flag_variance=1;
+		printf("MVAR ON  -> flag_variance=%d flag_slopes[0]=%d\n",flag_variance,flag_slopes[0]);
+		}
 	    else
+		{
 		flag_slopes[0]=0;
+		printf("MVAR OFF -> flag_variance=%d flag_slopes[0]=%d\n",flag_variance,flag_slopes[0]);
+		}
 	    }
 	flag_log_inc=1;
 	log_inc=(double)2; /* default value: tau increment by octave */

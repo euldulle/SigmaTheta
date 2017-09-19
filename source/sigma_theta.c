@@ -77,10 +77,11 @@ int main(int argc, char *argv[])
     {
     int i,j,nto,N,err,alpha[256];
     double tsas,asympt,tau[256], dev[256], avar[256], edf[256], bmin[256], bmax[256],bi1s[256],bx1s[256],adc[256],w[256];
-    char fv, command[32], source[256], outfile[256];
+    char fsw, fv, command[32], source[256], outfile[256];
     struct conf_int rayl;
     FILE *ofd;
 
+    fsw=0;
     if ((argc<3)||(argc>4))
         {
         usage();
@@ -99,6 +100,7 @@ int main(int argc, char *argv[])
 			{
 			if ((!strcmp(command,"-a"))||(!strcmp(command,"-m"))||(!strcmp(command,"-h"))||(!strcmp(command,"-p"))) 
 				{
+				fsw=1;
 				switch(command[1])
 					{
 					case 'p':
@@ -147,9 +149,25 @@ int main(int argc, char *argv[])
 	    err=init_flag();
 	    if (err==-1) printf("# ~/.SigmaTheta.conf not found, default values selected\n");
 	    if (err==-2) printf("# ~/.SigmaTheta.conf improper, default values selected\n");
-	    flag_variance=fv;
+	    if (fsw)
+		{ 
+		flag_variance=fv;
+		printf("flag_variance=%d\n",flag_variance);
+		}
+	    if (flag_variance&1)
+		{
+		flag_slopes[0]=1;
+		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
+		}
+	    else
+		{
+		flag_slopes[0]=0;
+		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
+		}
 	    if (flag_variance==3)
 		flag_conf=0;
+	    for (i=0;i<6;++i) printf("%d ",flag_slopes[i]);
+	    printf("\n");
 	    N=serie_dev(nto, tau, dev);
 	    for(i=0;i<N;++i) avar[i]=dev[i]*dev[i];
 	    err=relatfit(N,tau,avar,tau,6);
