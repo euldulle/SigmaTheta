@@ -1,5 +1,6 @@
 /*   filtre.c                       F. Vernotte - First release: 1994/02/02 */
 /*					    Sigma-Theta version: 2015/10/26 */
+/*                                    Modified by Attila Kinali: 2017/06/11 */
 /*   Filtering subroutines of bruiteur 					    */
 /*                                                                          */
 /*                                                   - SIGMA-THETA Project  */

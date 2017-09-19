@@ -1,5 +1,6 @@
 /*   bruiteur.c                     F. Vernotte - First release: 1994/02/02 */
 /*					    Sigma-Theta version: 2015/10/26 */
+/*                                    Modified by Attila Kinali: 2017/06/11 */
 /*   Simulation of time error x(t) and/or frequency deviation yk samples    */
 /*                                                                          */
 /*                                                   - SIGMA-THETA Project  */
