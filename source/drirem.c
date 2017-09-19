@@ -55,7 +55,7 @@ void usage(void)
     printf("The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.\n\n");
     printf("The output file TARGET contains a 2-column table with the same time values in the first column and the normalized frequency deviation measurements from which the linear drift was removed in the second column.\n\n");
     printf("The coefficients a and b of the drift (equation y=a.x+b) are given in the header of the TARGET file.\n\n");
-    printf("Sigma-Theta %s 2010 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

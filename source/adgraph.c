@@ -57,7 +57,7 @@ void usage(void)
     printf("The file DevFILE.gnu is generated for invoking gnuplot.\n");
     printf("The file DevFILE.ps is the postscript file of the gnuplot graph.\n\n");
     printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
-    printf("Sigma-Theta %s 2014 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

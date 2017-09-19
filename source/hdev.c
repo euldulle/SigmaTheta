@@ -55,7 +55,7 @@ void usage(void)
     printf("The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.\n\n");
     printf("A 2-column table containing tau values (integration time) in the first column and Hadamard deviation measurements in the second column is sent to the standard output.\n\n");
     printf("A redirection should be used for saving the results in a TARGET file: HDeV SOURCE > TARGET\n\n");
-    printf("Sigma-Theta %s 2015 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

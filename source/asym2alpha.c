@@ -56,7 +56,7 @@ void usage(void)
     printf("The input file FitFILE contains the 6 asymptote coefficients (from tau^-3/2 to tau^+1) in a 1-line 6-column table.\n\n");
     printf("A a 2-column table with tau values in the first column and the dominating power law noise (from alpha=-2 to +2) in the second column is sent to the standard output.\n\n");
     printf("A redirection should be used for saving the results in a TARGET file: Asym2Alpha DevFILE FitFILE > TARGET\n\n");
-    printf("Sigma-Theta %s 2014 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

@@ -65,7 +65,7 @@ void usage(void)
     printf("\t7th column: 97.5 %% bound.\n\n");
     printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
     printf("A redirection should be used for saving the results in a TARGET file: ADUncert AdevFILE EdfFILE > TARGET\n\n");
-    printf("Sigma-Theta %s 2014 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

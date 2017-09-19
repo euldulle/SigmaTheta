@@ -70,7 +70,7 @@ void usage(void)
     printf("If the option '-m' is selected, the modified Allan variance is invoked. \n");
     printf("If the option '-h' is selected, the Hadamard variance is invoked. \n");
     printf("If the option '-p' is selected, the Parabolic variance is invoked. \n");
-    printf("Otherwise, the classical Allan variance is invoked.\n\n");    printf("Sigma-Theta %s 2015 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Otherwise, the classical Allan variance is invoked.\n\n");    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

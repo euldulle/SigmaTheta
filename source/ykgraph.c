@@ -56,7 +56,7 @@ void usage(void)
     printf("The input file yktFILE contains a 2-column table with dates (in s) in the first column and frequency deviation samples (yk) in the second column.\n\n");
     printf("The file yktFILE.gnu is generated for invoking gnuplot.\n");
     printf("The file yktFILE.ps is the postscript file of the gnuplot graph.\n\n");
-    printf("Sigma-Theta %s 2015 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

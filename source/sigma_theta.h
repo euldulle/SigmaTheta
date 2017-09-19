@@ -38,7 +38,8 @@
 /*                                                                          */
 /*                                                                          */
 
-#define ST_VERSION 2.2
+#define ST_VERSION "3.0"
+#define ST_DATE "2017/07/05"
 
 struct conf_int
     {
@@ -49,7 +50,8 @@ struct conf_int
 
 double coeff[10], ortau[10], log_inc;
 double *T, *Y;
-char st_version[]="2.2";
+char st_version[]=ST_VERSION;
+char st_date[]=ST_DATE;
 char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[6], flag_variance, flag_log_inc;
 int ntau;
 

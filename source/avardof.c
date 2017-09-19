@@ -61,7 +61,7 @@ void usage(void)
     printf("A 2-column table containing tau values (integration time) in the first column and the equivalent degrees of freedom in the second column is sent to the standard output.\n\n");
     printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
     printf("A redirection should be used for saving the results in a TARGET file: AVarDOF SOURCE > TARGET\n\n");
-    printf("Sigma-Theta %s 2010 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

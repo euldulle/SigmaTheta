@@ -44,16 +44,14 @@
 #include <string.h>
 #include <math.h>
 #include "filtre.h"
+#include "sigma_theta.h"
 
-#define ST_VERSION 2.2 	   /* bruiteur is included in the SigmaTheta        */
-			   /* software package since the 2.2 release (2015) */
 #define DATAMAX 67108864   /* Maximum sequence size 			    */
 
 double *x;
 double hm3,hm2,hm1,h0,hp1,hp2,C1,C0;
 double tau0;
 long GR;
-char st_version[]="2.2";
 
 void usage(void)
 /* Help message */
@@ -62,7 +60,7 @@ void usage(void)
     printf("Computes a sequence of time error x(t) and/or normalized frequency deviation yk samples.\n\n");
     printf("A 2-column table containing dates in the first column and time errors in the second column is saved in the file TARGET.xtt and/or a 2-column table containing dates in the first column and frequency deviations in the second column is saved in the file TARGET.ykt.\n\n");
     printf("A redirection should be used for loading the input parameters from a SOURCE file: bruiteur TARGET < SOURCE\n\n");
-    printf("Sigma-Theta %s 2015 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

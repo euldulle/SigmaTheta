@@ -59,7 +59,7 @@ void usage(void)
     printf("If the configuration file \".SigmaTheta.conf\" contains the line \"Unbiased estimates: ON\", the fit is performed over the unbiased estimates.\n\n");
     printf("The 6 asymptote coefficients are sent to the standard output separated by a tabulation.\n\n");
     printf("A redirection should be used for saving the results in a TARGET file: Asymptote SOURCE [edfFILE] > TARGET\n\n");
-    printf("Sigma-Theta %s 2010 - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version);
+    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])
