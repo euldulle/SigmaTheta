@@ -42,63 +42,100 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
+#include <stdint.h>
 #include "sigma_theta.h"
 
 #define DATAMAX 16384
 #define GRANMAX 67108864
 
-void usage(void)
+void usage(uint8_t *message)
 /* Help message */
     {
-    printf("Usage: MDev SOURCE\n\n");
-    printf("Computes the Modified Allan Deviations of a sequence of normalized frequency deviation measurements.\n\n");
-    printf("The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.\n\n");
-    printf("A 2-column table containing tau values (integration time) in the first column and Modified Allan deviation measurement in the second column is sent to the standard output.\n\n");
-    printf("A redirection should be used for saving the results in a TARGET file: MDeV SOURCE > TARGET\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("\n   Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE)\n\n",st_version,st_date);
+    printf("Usage: %s [-t] SOURCE\n\n", message);
+    printf(" Computes the Modified Allan Deviations of a sequence of \n");
+    printf(" normalized frequency deviation measurements.\n\n");
+    printf("  options  \n");
+    printf("     -t : outputs TDEV instead of MDEV\n\n");
+
+    printf("  input file SOURCE is a 2-column table : \n");
+    printf("     . time values (timestamps, in seconds) in the first column \n");
+    printf("     . normalized frequency deviation measurements in the second column.\n\n");
+    printf("  output consists of a 2-column table containing : \n");
+    printf("     . tau values (integration time) in the first column  \n");
+    printf("     . Modified Allan deviation (or TDEV if -t) measurement in the second column \n");
+    printf("    which is sent to the standard output.\n\n");
+    printf(" A redirection should be used to save the results in a TARGET file: MDeV SOURCE > TARGET\n\n");
     }
 
 int main(int argc, char *argv[])
-/* Compute MDEV serie from tau=tau0 (tau0=sampling step) to tau=N*tau0/3 (N=number of samples) by octave (log step : tau_n+1=2*tau_n) */
-/* Input : file name of the normalized frequency deviation samples*/
-/* Output : tau \t MDev(tau) */
-/*          (for tau=tau0 to tau=N*tau0/3 by octave) */
-    {
-    int i,nbv,N,nto,tomax;
-    long int dtmx;
-    char source[256], gm[100];
-    FILE *ofd;
-    double v1,v2,smpt,rslt,tau[256],dev[256];
+	/* Compute MDEV serie from tau=tau0 (tau0=sampling step) to tau=N*tau0/3 (N=number of samples) by octave (log step : tau_n+1=2*tau_n) */
+	/* Input : file name of the normalized frequency deviation samples*/
+	/* Output : tau \t MDev(tau) */
+	/*          (for tau=tau0 to tau=N*tau0/3 by octave) */
+{
+	int i,nbv,N,nto,tomax;
+	long int dtmx;
+	char source[256], gm[100];
+	FILE *ofd;
+	double v1,v2,smpt,rslt,tau[256],dev[256];
+	uint8_t stddev=0, tdev=0;
+    int8_t c;
+	extern char *optarg;
+	extern int opterr;
 
-    if (argc<2)
-        {
-	usage();
-	exit(-1);
-        }
-    else
-	strcpy(source,*++argv);
+	while(1) {
+		c=getopt(argc, argv, "t");
+		if (c=='?') {
+			usage(argv[0]);
+		}
 
-    N=load_ykt(source);
-    if (N==-1)
-        printf("# File not found\n");
-    else
-        {
-        if (N<2)
-	    {
-            printf("# Unrecognized file\n\n");
-	    if (N==1)
-	      printf("# Use 1col2col command\n\n");
-	    usage();
-	    }
-        else
-            {
-	    flag_log_inc=1;
-	    flag_variance=1;
-	    log_inc=(double)2;
-	    nto=serie_dev(N, tau, dev);
-            for(i=0;i<nto;++i)
-                printf("%24.16e \t %24.16e\n",tau[i],dev[i]);
-	    }
-        }
-    }
-    
+		if (c==-1) break;
+		switch(c) {
+			case 't':
+				tdev=1;
+				break;
+
+			default:
+				usage(argv[0]);
+				break;
+		}
+	}
+
+	if (optind>=argc)
+	{
+		usage(argv[0]);
+		exit(-1);
+	}
+	else
+		strcpy(source,argv[optind]);
+
+	N=load_ykt(source);
+	if (N==-1)
+		printf("# File not found\n");
+	else
+	{
+		if (N<2)
+		{
+			printf("# Unrecognized file\n\n");
+			if (N==1)
+				printf("# Use 1col2col command\n\n");
+			usage(argv[0]);
+		}
+		else
+		{
+			flag_log_inc=1;
+			flag_variance=1;
+			log_inc=(double)2;
+			nto=serie_dev(N, tau, dev);
+			for(i=0;i<nto;++i){
+                if (tdev==1)
+                    printf("%24.16e \t %24.16e\n",tau[i],tau[i]*dev[i]/sqrt(3));
+                else 
+                    printf("%24.16e \t %24.16e\n",tau[i],dev[i]);
+			}
+		}
+	}
+}
+
