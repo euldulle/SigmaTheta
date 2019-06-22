@@ -1,0 +1,328 @@
+\documentclass[12pt,a4paper,french]{article}
+\usepackage{hyperref}
+\usepackage{transparent}
+\usepackage{eso-pic}
+\usepackage[utf8]{inputenc}
+\newcommand{\typdoc}{DIVERS }	%% la référence du document A MODIFIER
+\newcommand{\vercvs}{1}	%% la version du document A MODIFIER (avec F10)
+\newcommand{\revdate}{2019-06-22}	%% la date de la derniere modif A MODIFIER
+\newcommand{\refdoc}{DIVERS\_1501}	%% la référence du document A MODIFIER
+\title {
+    {\LARGE{\tt{\textbf{
+SigmaTheta reference \\
+}}}}
+{\small{last revision : \revdate}}
+}
+
+\author{}
+
+\date{}
+\markboth{}{ }
+\parindent=0cm
+\parskip=0.3cm
+
+\begin{document}
+\maketitle 
+\section{ 1col2col}
+
+Usage : {\tt{1col2col SOURCE TARGET [x]}}
+
+Transforms a 1 column file into a 2 column file.
+
+The input file SOURCE contains a N line / 1 column table.
+
+The output file TARGET contains a N line / 2 column table with time values (dates) in the first column and the data of SOURCE in the second column.
+
+The optional argument $x$ is the sampling step in seconds. If $x$ is omitted, the sampling rate is assumed to be $1 s$.
+
+\section{ X2Y}
+
+Usage : {\tt{X2Y SOURCE TARGET}}
+
+Transforms a time error sequence $x(t)$ into a normalized frequency deviation sequence $Y_k$.
+
+The input file SOURCE contains a N line / 2 column table with time values (dates) in the first column and time error samples in the second column.
+
+The output file TARGET contains a N-1 line / 2 column table with time values (dates) in the first column and normalized frequency samples in the second column.
+
+\section{DriRem}
+
+Usage : {\tt{DriRem SOURCE TARGET}}
+
+Removes the linear drift of a sequence of normalized frequency deviation measurements.
+
+The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+The output file TARGET contains a 2-column table with the same time values in the first column and the normalized frequency deviation measurements from which the linear drift was removed in the second column.
+
+The coefficients a and b of the drift (equation $y=a.x+b$) are given in the header of the TARGET file.
+
+\section{SigmaTheta}
+
+Usage : {\tt{SigmaTheta SOURCE TARGET}}
+
+Computes the (modified) Allan Deviations of a sequence of normalized frequency deviation measurements, the 95 \% confidence intervals (2 sigma), the 68 \% confidence intervals (1 sigma), the asymptotes and plots a graph as a postscript file.
+
+The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+A 7-column table is sent to the standard output with :
+\begin{itemize}
+\item   1st column : tau values
+\item   2nd column : (modified) Allan deviation estimate
+\item   3rd column : unbiased estimate
+\item   4th column : 2.5 \% bound
+\item   5th column : 16 \% bound
+\item   6th column : 84 \% bound
+\item   7th column : 97.5 \% bound.
+\end{itemize}
+
+The file TARGET.gnu is generated for invoking gnuplot. The configuration file ".SigmaTheta.conf" is taken into account (e.g. selection of the modified Allan varance).
+The file TARGET.ps is the postscript file of the gnuplot graph.
+
+If the option ’-m’ is selected, the modified Allan variance is invoked.
+
+If the option ’-h’ is selected, the Hadamard variance is invoked.
+
+If the option ’-p’ is selected, the Parabolic variance is invoked.
+
+Otherwise, the classical Allan variance is invoked.
+
+\section{ADev}
+
+Usage : {\tt{ADev SOURCE}}
+
+Computes the Allan Deviations of a sequence of normalized frequency deviation measurements.
+
+The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+A 2-column table containing tau values (integration time) in the first column and Allan deviation measurement in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{ADeV SOURCE > TARGET}}
+
+\section{MDev}
+
+Usage : {\tt{MDev SOURCE}}
+
+Computes the modified Allan Deviations of a sequence of normalized frequency deviation measurements.
+
+The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+A 2-column table containing tau values (integration time) in the first column and modified Allan deviation measurement in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{MDeV SOURCE > TARGET}}
+
+\section{ HDev}
+
+Usage : {\tt{HDev SOURCE}}
+
+Computes the modified Hadamard Deviations of a sequence of normalized frequency deviation measurements.
+
+The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+A 2-column table containing tau values (integration time) in the first column and Hadamard deviation measurement in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{HDeV SOURCE > TARGET}}
+
+\section{PDev}
+
+Usage : {\tt{PDev SOURCE}}
+
+Computes the Parabolic Deviations of a sequence of normalized frequency deviation measurements.
+
+The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+A 2-column table containing tau values (integration time) in the first column and Parabolic deviation measurement in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{PDeV SOURCE > TARGET}}
+
+\section{uncertainties}
+
+{\tt{Usage : uncertainties SOURCE TARGET}}
+
+Computes the 95 \% confidence intervals (2 sigma), the 68 \% confidence intervals (1 sigma) of a sequence of Allan Deviations, the asymptotes and plots a graph as a postscript file.
+
+The input file SOURCE contains a 2-column table with tau values (integration time) in the first column and Allan deviation measurement in the second column.
+
+The first tau value is assumed to be equal to the sampling step.
+The last tau value is assumed to be equal to the half of the whole time sequence duration.
+
+The output file TARGET contains a 4-column table with :
+
+    1st column : tau values
+    2nd column : Allan deviation measurement
+    3rd column : inferior bound of the 95 \% confidence interval
+    4th column : superior bound of the 95 \% condidence interval.
+
+The file TARGET.gnu is generated for invoking gnuplot.
+The file TARGET.ps is the postscript file of the gnuplot graph.
+
+\section{STshell}
+
+STshell is an example of bourne shell chaining ADev and uncertainties for obtaining the same result as SigmaTheta.
+
+Same input and output format as SigmaTheta.
+
+\section{Asymptote}
+
+Usage : {\tt{Asymptote SOURCE [edfFILE]}}
+
+Computes the $\tau^{-1}, \tau^{-\frac{1}{2}}, \tau^0 , \tau^{-\frac{1}{2}} $and $\tau$ asymptotes of a sequence of Allan Deviations.
+
+The input file SOURCE contains a 2-column table with tau values (integration time) in the first column and Allan deviation measurement in the second column.
+
+The optional input file edfFILE contains a 2-column table with tau values in the first column and the equivalent degrees of freedom (edf) of the Allan deviation measurement in the second column.
+
+The Allan deviation estimates are weigted by the tau-values in the default case and by the inverse of the "edf" if the optional file edfFILE has been used.
+
+If the configuration file ".SigmaTheta.conf" contains the line "Unbiased estimates : ON", the fit is performed over the unbiased estimates.
+
+The 5 asymptote coefficients are sent to the standard output separated by a tabulation.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{Asymptote SOURCE > TARGET}}
+
+\section{RaylConfInt}
+
+Usage : {\tt{RaylConfInt ’value’}}
+
+Computes the mean and the 95 \% confidence interval of a chi distribution with ’value’ degrees of freedom, normalized by the square root of ’value’.
+
+The input ’value’ is a floating point number.
+
+The inferior bound, the logarithmic mean and the superior bound are sent to the standard output separated by a tabulation.
+
+\section{Asym2Alpha}
+
+Usage : {\tt{Asym2Alpha ADevFILE FitFILE}}
+
+Finds the dominating power law noise (alpha) versus tau.
+
+The input file ADevFILE contains a 2-column table with tau values (integration time) in the first column and Allan deviation measurement in the second column.
+
+The input file FitFILE contains the 5 asymptote coefficients (from $tau^{-1}$ to $tau^{+1}$) in a 1-line 5-column table.
+
+A a 2-column table with tau values in the first column and the dominating power law noise (from alpha=-2 to +2) in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file : Asym2Alpha ADevFILE FitFILE > TARGET
+
+\section{AVarDOF}
+
+Usage : {\tt{AVarDOF SOURCE}}
+
+Computes the degrees of freedom of a sequence of tau values.
+
+The input file SOURCE contains a 2-column table with tau values (integration time) in the first column and the exponent of the power law of the dominating noise in the second column.
+
+The first tau value is assumed to be equal to the sampling step.
+The last tau value is assumed to be equal to the half of the whole time sequence duration.
+
+A 2-column table containing tau values (integration time) in the first column and the equivalent degrees of freedom in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{AVarDOF SOURCE > TARGET}}
+
+\section{ADUncert}
+
+Usage : {\tt{ADUncert AdevFILE EdfFILE}}
+
+Computes the 95 \% (2 sigma) and the 68\% (1 sigma) confidence intervals of a sequence of Allan Deviations.
+
+The input file ADevFILE contains a 2-column table with tau values (integration time) in the first column and Allan deviation measurement in the second column.
+
+The input file EdfFILE contains a 2-column table with tau values in the first column and the equivalent degrees of freedom (edf) of the Allan deviation measurement in the second column.
+
+A 7-column table is sent to the standard output with :
+
+    1st column : tau values
+    2nd column : Allan deviation estimate
+    3rd column : unbiased estimate
+    4th column : 2.5 \% bound
+    5th column : 16 \% bound
+    6th column : 84 \% bound
+    7th column : 97.5 \% bound.
+
+A redirection should be used for saving the results in a TARGET file : 
+
+{\tt{ADUncert AdevFILE EdfFILE > TARGET}
+
+\section{ADGraph}
+
+Usage : {\tt{ADGraph ADevFILE FitFILE}}
+
+Plots the graph of the Allan Deviation estimates versus tau.
+
+The input file ADevFILE contains a 2-column table with tau values (integration time) in the first column and Allan deviation measurement in the second column.
+
+The input file FitFILE contains the 5 asymptote coefficients (from $tau^{-1}$ to $tau^{+1}$) in a 1-line 5-column table.
+
+The file ADevFILE.gnu is generated for invoking gnuplot.
+The file ADevFILE.ps is the postscript file of the gnuplot graph.
+
+\section{PSDGraph}
+
+Usage : {\tt{PSDGraph yktFILE}}
+
+Plots the graph of the Power Spectrum Density (PSD) of normalized frequency deviation versus the frequency.
+
+The input file yktFILE contains a 2-column table with dates (in s) in the first column and frequency deviation samples (yk) in the second column.
+
+The PSD versus the frequency are stored in the output file yktFILE.psd.
+The file yktFILE.psd.gnu is generated for invoking gnuplot.
+The file DevFILE.psd.ps is the postscript file of the gnuplot graph.
+
+\section{YkGraph}
+
+Usage : {\tt{YkGraph yktFILE}}
+
+Plots the graph of the normalized frequency deviation samples versus time.
+
+The input file yktFILE contains a 2-column table with dates (in s) in the first column and frequency deviation samples (yk) in the second column.
+
+The file yktFILE.gnu is generated for invoking gnuplot.
+The file yktFILE.ps is the postscript file of the gnuplot graph.
+
+\section{ XtGraph}
+
+Usage : {\tt{XtGraph xttFILE}}
+
+Plots the graph of the time error data versus time.
+
+The input file xttFILE contains a 2-column table with dates (in s) in the first column and time error data x(t) (in s) in the second column.
+
+The file xttFILE.gnu is generated for invoking gnuplot.
+The file xttFILE.ps is the postscript file of the gnuplot graph.
+
+\section{bruiteur}
+
+Usage : {\tt{bruiteur TARGET}}
+
+Computes a sequence of simulated time error x(t) and/or normalized frequency deviation yk samples.
+
+A 2-column table containing dates in the first column and time errors in the second column is saved in the file TARGET.xtt and/or a 2-column table containing dates in the first column and frequency deviations in the second column is saved in the file TARGET.ykt.
+
+A redirection should be used for loading the input parameters from a SOURCE file : bruiteur TARGET < SOURCE
+
+\section{STshell2}
+
+STshell2 is an example of bourne shell chaining ADev, Asymptote, Asym2Alpha, AVarDOF, ADUncert and ADGraph for obtaining the same result as SigmaTheta.
+
+Same input and output format as SigmaTheta.
+
+\section{STshell3}
+
+STshell3 is an example of bourne shell chaining MDev, Asymptote, Asym2Alpha, AVarDOF, ADUncert and ADGraph for obtaining the same result as SigmaTheta when the modified Allan variance is selected from the configuration file.
+
+Same input and output format as SigmaTheta.
+
+\label{fin}
+\end{document}
