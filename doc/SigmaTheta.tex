@@ -1,18 +1,52 @@
-\documentclass[12pt,a4paper,french]{article}
+\documentclass[10pt,a4paper,french]{article}
 \usepackage{hyperref}
-\usepackage{transparent}
+\usepackage[dvips]{graphicx}
+\usepackage{eso-pic}
+
+\newcommand\LogoSigmatheta{%
+    \put(100,330){%
+    \parbox[b][\paperheight]{\paperwidth}{%
+        \vfill
+%        \centering
+        %\includegraphics[width=2cm,height=\paperheight,%
+        \includegraphics[width=3cm,%
+        keepaspectratio]{logo_SigmaTheta.png}%
+        \vfill
+        }}}
+
+\newcommand\LogoOSU{%
+    \put(250,250){%
+    \parbox[b][\paperheight]{\paperwidth}{%
+        \vfill
+%        \centering
+        %\includegraphics[width=2cm,height=\paperheight,%
+        \includegraphics[width=4cm,%
+        keepaspectratio]{logo_OSU.png}%
+        \vfill
+        }}}
+
+%\usepackage{transparent}
 \usepackage{eso-pic}
 \usepackage[utf8]{inputenc}
 \newcommand{\typdoc}{DIVERS }	%% la référence du document A MODIFIER
 \newcommand{\vercvs}{1}	%% la version du document A MODIFIER (avec F10)
-\newcommand{\revdate}{2019-06-22}	%% la date de la derniere modif A MODIFIER
+\newcommand{\revdate}{2019-06-23}	%% la date de la derniere modif A MODIFIER
 \newcommand{\refdoc}{DIVERS\_1501}	%% la référence du document A MODIFIER
 \title {
+%    \includegraphics[width=2cm]{logo_SigmaTheta.png}
     {\LARGE{\tt{\textbf{
 SigmaTheta reference \\
 }}}}
 {\small{last revision : \revdate}}
 }
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
 
 \author{}
 
@@ -22,6 +56,8 @@ SigmaTheta reference \\
 \parskip=0.3cm
 
 \begin{document}
+\AddToShipoutPicture*{\LogoSigmatheta}
+\AddToShipoutPicture*{\LogoOSU}
 \maketitle 
 \section{ 1col2col}
 
