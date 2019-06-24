@@ -1,0 +1,3 @@
+#!/bin/sh
+git describe --abbrev=4 --dirty --always --tags
+git log | head -3 | grep Date | sed 's/Date/SigmaTheta version date/'
