@@ -40,9 +40,9 @@ Installation Instructions
 
 SigmaTheta follows the standard GNU installation procedure. 
 
-To compile SigmaTheta you will need the gnu gcc C-compiler 
-and the GSL library (Gnu Scientific Library, see 
-http://www.gnu.org/software/gsl/).
+To compile SigmaTheta you will need the gnu gcc C-compiler, the GSL 
+library (Gnu Scientific Library, see http://www.gnu.org/software/gsl/)
+as well as libfftw3.
 
 gnuplot must also be installed on the computer in order to run 
 SigmaTheta (see http://www.gnuplot.info/)

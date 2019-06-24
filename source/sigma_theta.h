@@ -38,8 +38,8 @@
 /*                                                                          */
 /*                                                                          */
 
-#define ST_VERSION "3.0"
-#define ST_DATE "2017/07/05"
+#define ST_VERSION "4.0"
+#define ST_DATE "2019/06/22"
 
 struct conf_int
     {
@@ -49,16 +49,19 @@ struct conf_int
     };
 
 double coeff[10], ortau[10], log_inc;
-double *T, *Y;
+double *T, *Y, *Y1, *Y2;
 char st_version[]=ST_VERSION;
 char st_date[]=ST_DATE;
-char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[6], flag_variance, flag_log_inc;
+char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[6], flag_variance, flag_log_inc, flag_display;
 int ntau;
 
 int init_flag();
 double tchebyfit(long);
 double adev_y(int, int);
+double gcodev_y(int, int);
 double mdev_y(int, int);
+double hadamard_y(int, int);
+double pdev_y(int, int);
 int serie_dev(int, double *, double *);
 int resol(int, double *, double*);
 double interpo(double, int);
@@ -73,9 +76,14 @@ double dcdfr(double x, double nu);
 struct conf_int raylconfint(double);
 struct conf_int raylconfint1s(double);
 int load_ykt(char *);
+int load_2yk(char *, char *);
+int load_3yk(char *, char *, char *);
 int load_adev(char *, double *, double *);
 int load_coef(char *);
 int load_1col(char *);
 int load_3col(char *, double *, double *, double *);
 int load_7col(char *, double *, double *, double *, double *, double *, double *, double *);
 int gener_gplt(char *, int, double *, double *, double *);
+int gen_psdplt(char *, int, double *, double *);
+int gen_linplt(char *, int, double *, double *, int);
+int gen_gcodplt(char *, char (*)[], int, int, double *, double (*)[], int);

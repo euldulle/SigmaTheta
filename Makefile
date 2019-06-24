@@ -4,9 +4,11 @@
 #           - DriRem
 #           - SigmaTheta 
 #           - ADev
+#           - GCoDev
 #           - MDev
 #	    - HDev
 #	    - PDev
+#	    - Aver
 #           - uncertainties
 #           - RaylConfInt
 #           - Asymptote
@@ -65,7 +67,7 @@ CFLAGS = -g -O3
 # link dynamically against libfftw3
 FFTW3 = -lfftw3
 
-TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)bruiteur
+TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)GCoDev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)Aver $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)DevGraph $(BIN)bruiteur
 
 all: $(TARGETS)
 
@@ -88,6 +90,9 @@ $(BIN)SigmaTheta : $(OBJ)sigma_theta.o $(OBJ)dev_sbr.o $(OBJ)asymptote_sbr.o $(O
 $(BIN)ADev : $(OBJ)adev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
+$(BIN)GCoDev : $(OBJ)gcodev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
 $(BIN)MDev : $(OBJ)mdev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
@@ -96,6 +101,9 @@ $(BIN)HDev : $(OBJ)hdev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
 
 $(BIN)PDev : $(OBJ)pdev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+$(BIN)Aver : $(OBJ)aver.o $(OBJ)stio_sbr.o 
+	$(CC) $(CFLAGS) -o $@ $^ -Wl,-Bdynamic -lgsl -lgslcblas -lm
 
 $(BIN)uncertainties : $(OBJ)uncertainties.o $(OBJ)asymptote_sbr.o $(OBJ)avardof_sbr.o $(OBJ)rayleigh_sbr.o $(OBJ)stio_sbr.o 
 	$(CC) $(CFLAGS) -o $@ $^ -lgsl -lgslcblas -lm
@@ -127,6 +135,9 @@ $(BIN)YkGraph : $(OBJ)ykgraph.o $(OBJ)stio_sbr.o
 $(BIN)XtGraph : $(OBJ)xtgraph.o $(OBJ)stio_sbr.o 
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
+$(BIN)DevGraph : $(OBJ)devgraph.o $(OBJ)stio_sbr.o 
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
 $(BIN)bruiteur : $(OBJ)bruiteur.o $(OBJ)filtre.o $(OBJ)splitmix64.o $(OBJ)xorshift1024star.o $(OBJ)ziggurat.o
 	$(CC) $(CFLAGS) -o $@ $^ $(FFTW3) -Wl,-Bdynamic -lm
 
@@ -140,11 +151,15 @@ $(OBJ)sigma_theta.o : $(SOURCE)sigma_theta.c $(SOURCE)sigma_theta.h
 
 $(OBJ)adev.o : $(SOURCE)adev.c $(SOURCE)sigma_theta.h
 
+$(OBJ)gcodev.o : $(SOURCE)gcodev.c $(SOURCE)sigma_theta.h
+
 $(OBJ)mdev.o : $(SOURCE)mdev.c $(SOURCE)sigma_theta.h
 
 $(OBJ)hdev.o : $(SOURCE)hdev.c $(SOURCE)sigma_theta.h
 
 $(OBJ)pdev.o : $(SOURCE)pdev.c $(SOURCE)sigma_theta.h
+
+$(OBJ)aver.o : $(SOURCE)aver.c $(SOURCE)sigma_theta.h
 
 $(OBJ)uncertainties.o : $(SOURCE)uncertainties.c $(SOURCE)sigma_theta.h
 
@@ -165,6 +180,8 @@ $(OBJ)psdgraph.o : $(SOURCE)psdgraph.c $(SOURCE)sigma_theta.h
 $(OBJ)ykgraph.o : $(SOURCE)ykgraph.c $(SOURCE)sigma_theta.h
 
 $(OBJ)xtgraph.o : $(SOURCE)xtgraph.c $(SOURCE)sigma_theta.h
+
+$(OBJ)devgraph.o : $(SOURCE)devgraph.c $(SOURCE)sigma_theta.h
 
 $(OBJ)bruiteur.o : $(SOURCE)bruiteur.c $(SOURCE)filtre.h
 

@@ -96,7 +96,7 @@ A 7-column table is sent to the standard output with:
 	7th column: 97.5 % bound.
 
 The file TARGET.gnu is generated for invoking gnuplot. The configuration file ".SigmaTheta.conf" is taken into account (e.g. selection of the modified Allan varance). 
-The file TARGET.ps is the postscript file of the gnuplot graph.
+The file TARGET.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
 If the option '-m' is selected, the modified Allan variance is invoked. 
 If the option '-h' is selected, the Hadamard variance is invoked. 
 If the option '-p' is selected, the Parabolic variance is invoked. 
@@ -171,7 +171,7 @@ A 7-column table is sent to the standard output with:
 	7th column: 97.5 % bound.
 
 The file TARGET.gnu is generated for invoking gnuplot. The configuration file ".SigmaTheta.conf" is taken into account.
-The file TARGET.ps is the postscript file of the gnuplot graph.
+The file TARGET.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
 
 If the option '-m' is selected, the variance is assumed to be the modified Allan variance.
 If the option '-c' is selected, the variance is assumed to be the classical Allan variance.
@@ -276,7 +276,7 @@ The input file DevFILE contains a 2-column table with tau values (integration ti
 The input file FitFILE contains the 6 asymptote coefficients (from tau^-3/2 to tau^+1) in a 1-line 6-column table.
 
 The file DevFILE.gnu is generated for invoking gnuplot.
-The file DevFILE.ps is the postscript file of the gnuplot graph.
+The file DevFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
 
 If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.
 
@@ -290,7 +290,7 @@ The input file yktFILE contains a 2-column table with dates (in s) in the first 
 
 The PSD versus the frequency are stored in the output file yktFILE.psd.
 The file yktFILE.psd.gnu is generated for invoking gnuplot.
-The file DevFILE.psd.ps is the postscript file of the gnuplot graph.
+The file yktFILE.psd.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
 
 18. YkGraph
     -------
@@ -301,7 +301,7 @@ Plots the graph of the normalized frequency deviation samples versus time.
 The input file yktFILE contains a 2-column table with dates (in s) in the first column and frequency deviation samples (yk) in the second column.
 
 The file yktFILE.gnu is generated for invoking gnuplot.
-The file yktFILE.ps is the postscript file of the gnuplot graph.
+The file yktFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
 
 19. XtGraph
     -------
@@ -312,7 +312,7 @@ Plots the graph of the time error data versus time.
 The input file xttFILE contains a 2-column table with dates (in s) in the first column and time error data x(t) (in s) in the second column.
 
 The file xttFILE.gnu is generated for invoking gnuplot.
-The file xttFILE.ps is the postscript file of the gnuplot graph.
+The file xttFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
 
 20. bruiteur
     --------
@@ -324,13 +324,49 @@ A 2-column table containing dates in the first column and time errors in the sec
 
 A redirection should be used for loading the input parameters from a SOURCE file: bruiteur TARGET < SOURCE
 
-21. STshell2
+21. GCoDev
+    ------
+Usage: GCoDev SOURCE1 SOURCE2
+
+Computes the Groslambert CoDeviations (see arXiv:1904.05849) of 2 sequences of normalized frequency deviation measurements.
+
+The input files SOURCE1 and SOURCE2 contain a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.
+
+A 2-column table containing tau values (integration time) in the first column and Groslambert codeviation measurement in the second column is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file: GCoDeV SOURCE1 SOURCE2 > TARGET.
+
+22. Aver
+    ----
+Usage: AVer FILE1 FILE2 FILE3
+
+Computes the average of the 2nd columns of FILE1, FILE2 and FILE3 (suitable to compute the measurement noise of a three-cornered hat system thanks to the closure relationship).
+
+The input files FILE1, FILE2 and FILE3 contain a N line / 2 column table, the 1st columns are assumed identical.
+
+A 2-column table containing the 1st column of FILE1 as the first column of the output table and the average of the 2nd columns of FILE1, FILE2, FILE3 as the the second column of the output table is sent to the standard output.
+
+A redirection should be used for saving the results in a TARGET file: AVer FILE1 FILE2 > TARGET.
+
+23. DevGraph
+    --------
+Usage: DevGraph OutFILE DevFILE1 [Dev FILE2] ... [DevFILE8]
+
+Plots the graph of 1 to 8 2-columns Dev files (suitable to plot the 3 ADEV computed by GCoDev on a three-cornered hat system and the ADEV of the measurement noise computed by Aver).
+
+If a file name is preceded by a dash (-DevFILEn), the contain of the second column of this file is multiplied by -1.
+
+The OutFILE is given to store:
+  - the file OutFILE.gnu for invoking gnuplot,
+  - the file OutFILE.pdf which is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).
+
+24. STshell2
     --------   
 STshell2 is an example of bourne shell chaining ADev, Asymptote, Asym2Alpha, AVarDOF, ADUncert and ADGraph for obtaining the same result as SigmaTheta when the classical Allan variance is selected from the configuration file.
 
 Same input and output format as SigmaTheta. 
 
-22. STshell3
+25. STshell3
     --------   
 STshell3 is an example of bourne shell chaining MDev, Asymptote, Asym2Alpha, AVarDOF, ADUncert and ADGraph for obtaining the same result as SigmaTheta when the modified Allan variance is selected from the configuration file.
 
@@ -339,7 +375,7 @@ Same input and output format as SigmaTheta.
 
 Configuration
 =============
-The configuration file ".SigmaTheta.conf" is stored in the home directory. Several options can be set or unset by typing ON or OFF after its description. The default configuration is ON for all options exept the Tau^-3/2 slope fit and the modified Allan variance:
+The configuration file ".SigmaTheta.conf" must be stored in the home directory. An example of configuration file is given in config-example/dot.SigmaTheta.conf. This file may be copied without the prefix 'dot' (cp config-example/dot.SigmaTheta.conf ~/..SigmaTheta.conf). Several options can be set or unset by typing ON or OFF after its description. The default configuration is ON for all options exept the Tau^-3/2 slope fit and the modified Allan variance:
 68% bounds: ON
 95% bounds: ON
 Unbiased estimates: ON
@@ -355,6 +391,8 @@ Tau^0 slope: ON
 Tau^1/2 slope: ON
 Tau^1 slope: ON
 Modified Allan variance: OFF
+Tau: 1 2 3 5
+Output: PDF
 
-François Vernotte, 2012/07/17 (initial), 2015/06/25 (latest revision)
+François Vernotte, 2012/07/17 (initial), 2019/06/22 (latest revision)
 

@@ -53,9 +53,9 @@ void usage(void)
     printf("Usage: ADGraph [-m] DevFILE FitFILE\n\n");
     printf("Plots the graph of the (modified) Allan Deviation estimates versus tau.\n\n");
     printf("The input file DevFILE contains a 2-column table with tau values (integration time) in the first column and deviation measurement in the second column.\n\n");
-    printf("The input file FitFILE contains the 5 asymptote coefficients (from tau^-1 to tau^+1) in a 1-line 5-column table.\n\n");
+    printf("The input file FitFILE contains the 6 asymptote coefficients (from tau^-3/2 to tau^+1) in a 1-line 6-column table.\n\n");
     printf("The file DevFILE.gnu is generated for invoking gnuplot.\n");
-    printf("The file DevFILE.ps is the postscript file of the gnuplot graph.\n\n");
+    printf("The file DevFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n\n");
     printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
     printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
     if (err==-2) printf("# ~/.SigmaTheta.conf improper, default values selected\n");
     flag_variance=fv;
     N=load_7col(source,tau,adev,truc,truc,truc,truc,bmax);
+//    N=load_adev(source,tau,adev);
     if (N==-1)
       printf("# File %s not found\n",source);
     else

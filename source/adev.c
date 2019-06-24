@@ -64,12 +64,13 @@ int main(int argc, char *argv[])
 /* Output : tau \t ADev(tau) */
 /*          (for tau=tau0 to tau=N*tau0/2 by octave) */
     {
-    int i,nbv,N,nto,tomax;
+    int err,i,nbv,N,nto,tomax;
     long int dtmx;
     char source[256], gm[100];
     FILE *ofd;
     double v1,v2,smpt,rslt,tau[256],dev[256];
 
+    err=0;
     if (argc<2)
         {
 	usage();
@@ -92,9 +93,15 @@ int main(int argc, char *argv[])
 	    }
         else
             {
-	    flag_log_inc=1;
+	    err=init_flag();
+	    if (err==-1) printf("# ~/.SigmaTheta.conf not found, default values selected\n");
+	    if (err==-2) printf("# ~/.SigmaTheta.conf improper, default values selected\n");
+	    if (err)
+		{
+	        flag_log_inc=1;
+	        log_inc=(double)2;
+		}
 	    flag_variance=0;
-	    log_inc=(double)2;
 	    nto=serie_dev(N, tau, dev);
             for(i=0;i<nto;++i)
                 printf("%24.16e \t %24.16e\n",tau[i],dev[i]);

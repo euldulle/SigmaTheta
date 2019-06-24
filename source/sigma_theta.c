@@ -66,7 +66,7 @@ void usage(void)
     printf("\t6th column: 84 %% bound\n");
     printf("\t7th column: 97.5 %% bound.\n\n");
     printf("The file TARGET.gnu is generated for invoking gnuplot. The configuration file \".SigmaTheta.conf\" is taken into account (e.g. selection of the modified Allan varance).\n");
-    printf("The file TARGET.ps is the postscript file of the gnuplot graph.\n");
+    printf("The file TARGET.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n");
     printf("If the option '-m' is selected, the modified Allan variance is invoked. \n");
     printf("If the option '-h' is selected, the Hadamard variance is invoked. \n");
     printf("If the option '-p' is selected, the Parabolic variance is invoked. \n");

@@ -1,4 +1,12 @@
-2018-11-14 : sigmatheta moved to git on renater (FM)
+2019-06-22, FV: adding of the options WXT or PDF for the graph output (display of the graph on a separate window or creation of a pdf file)
+
+2019-06-21, FV:	* implementation of GCoDev (Groslambert Covariance, see 
+arXiv:1904.05849)
+		* implementation of DevGraph
+		* implementation of Aver
+		* move plots from .ps to .pdf files (XtGraph, YkGraph, ADGraph, PSDGraph, DevGraph, SigmaTheta) 
+
+2018-11-14: sigmatheta moved to git on renater (FM)
 
     git clone https://git.renater.fr/sigmatheta.git    
 

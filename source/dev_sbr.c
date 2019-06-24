@@ -46,7 +46,7 @@
 #include <string.h>
 #include <math.h>
 
-extern double *T, *Y, ortau[], log_inc;
+extern double *T, *Y, *Y1, *Y2, ortau[], log_inc;
 extern char flag_log_inc, flag_variance;
 extern int ntau;
 
@@ -79,6 +79,49 @@ double adev_y(int tau, int ny)
     return(al);
     }
   
+double gcodev_y(int tau, int ny)
+/* gcodev_y(tau,ny) : compute the Groslambert codeviation (see arXiv:1904.05849) of the 'ny' frequency deviation elements of the vectors 'Y1' and 'Y2' with an integration time 'tau'.*/
+    {
+    int i,j,nt;
+    double Myd1,Myf1,Myd2,Myf2,al,bl;
+
+    nt=ny-2*tau+1;
+    Myd1=Myf1=Myd2=Myf2=(double)0;
+    for (i=0;i<tau;++i)
+	{
+	Myd1+=Y1[i];
+	Myf1+=Y1[i+tau];
+	Myd2+=Y2[i];
+	Myf2+=Y2[i+tau];
+	}
+    if (nt==1)
+	{
+        al=(Myd1-Myf1)*(Myd2-Myf2);
+	if (al>0)
+		bl=sqrt( ((double)2) * al ) / ((double)ny);
+	else
+		bl=-sqrt( ((double)-2) * al ) / ((double)ny);
+	}
+    else
+        {
+	al=(Myf1-Myd1)*(Myf2-Myd2);
+        for(i=1;i<nt;++i)
+	    {
+            Myd1+=Y1[tau+i-1]-Y1[i-1];
+            Myf1+=Y1[2*tau+i-1]-Y1[tau+i-1];
+            Myd2+=Y2[tau+i-1]-Y2[i-1];
+            Myf2+=Y2[2*tau+i-1]-Y2[tau+i-1];
+	    al+=(Myf1-Myd1)*(Myf2-Myd2);
+	    }
+    	if (al>0)
+        	bl=sqrt(al)/(((double)tau)*sqrt((double)(2*nt)));
+    	else
+        	bl=-sqrt(-al)/(((double)tau)*sqrt((double)(2*nt)));
+	}
+//    if (isnan(bl)) printf("Myd1=%12.6le, Myf1=%12.6le, Myd2=%12.6le, Myf2=%12.6le, al=%12.6le, ny=%d, nt=%d\n",Myd1,Myf1,Myd2,Myf2,al,ny,nt);
+    return(bl);
+    }
+
 double mdev_y(int tau, int ny) /* Dudullized modified Allan deviation (Francois Meyer, 199?) */
 /* mdev_y(tau,ny) : compute the modified Allan deviation of the 'ny' frequency deviation elements of the vector 'Y' with an integration time 'tau'.*/
 	{
@@ -294,6 +337,9 @@ int serie_dev(int N, double *tau, double *dev)
 			break;
 		case 3 :
 			dev[i]=pdev_y(toi[i],N);
+			break;
+		case 4 :
+			dev[i]=gcodev_y(toi[i],N);
 			break;
 		default :
 			dev[i]=adev_y(toi[i],N);

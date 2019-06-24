@@ -55,7 +55,7 @@ void usage(void)
     printf("Plots the graph of the normalized frequency deviation samples versus time.\n\n");
     printf("The input file yktFILE contains a 2-column table with dates (in s) in the first column and frequency deviation samples (yk) in the second column.\n\n");
     printf("The file yktFILE.gnu is generated for invoking gnuplot.\n");
-    printf("The file yktFILE.ps is the postscript file of the gnuplot graph.\n\n");
+    printf("The file yktFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n\n");
     printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 

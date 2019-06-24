@@ -46,9 +46,9 @@
 #define DATAMAX 16384
 #define GRANMAX 67108864
 
-extern double *T, *Y, coeff[], ortau[], log_inc;
+extern double *T, *Y, *Y1, *Y2, coeff[], ortau[], log_inc;
 extern char st_version[];
-extern char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[], flag_variance, flag_log_inc;
+extern char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[], flag_variance, flag_log_inc, flag_display;
 extern int ntau;
 
 #define db(x) ((double)(x))
@@ -335,6 +335,20 @@ int init_flag()
 		else if ((ortau[0]==(double)1)&&(ntau>1)) flag_log_inc=0;
 		}
 	    }
+	flag_display=1;
+	tfs=fseek(ofd,deb_file,SEEK_SET);
+	do
+	    {
+	    fg=fgets(gm,100,ofd);
+	    strcpy(tg,gm);
+	    tg[8]=0;
+	    }
+       	while(strcmp(tg,"Output: ")&&(fg));
+	if (fg)
+	    {
+	    strcpy(tg,&gm[8]);
+	    if (!strncmp(tg,"PDF",3)) flag_display=0;
+	    }
 	return(0);
         }
     }
@@ -391,6 +405,247 @@ int load_ykt(char *source)
             N=i;
 	    }
         }
+    return(N);
+    }
+
+int load_2yk(char *source1, char *source2)
+/* Load the file pointed by 'source' and transfer its contain into the global 'T' and 'Y' tables. */
+/* Output values: -1 file not found       */
+/*                 0 unrecognized file    */
+/*                 N length of the tables */
+    {
+    int i, nbv, n1, n2, N;
+    long int dtmx;
+    double tst;
+    char gm[256];    
+    FILE *ofd, *of2;
+
+    dtmx=DATAMAX;
+    T=(double *)malloc(dtmx*sizeof(double)); 
+    Y1=(double *)malloc(dtmx*sizeof(double)); 
+    Y2=(double *)malloc(dtmx*sizeof(double));
+/* First file */ 
+    ofd=fopen(source1, "r");
+    if (ofd==NULL)
+        return(-1);
+    else
+        {
+       	do
+	    fgets(gm,100,ofd);
+	while((gm[0]=='#')||(gm[0]=='%'));
+        i=0;
+        nbv=sscanf(gm,"%lf %lf %lf",&T[i],&Y1[i],&tst);
+	if (nbv!=2)
+	    {
+	    if (nbv!=1) nbv=-nbv;
+	    return(nbv);
+	    }
+	else
+	    {
+            do
+                {
+                i++;
+	        if (i>=dtmx)
+	            {
+	            dtmx+=DATAMAX;
+	            if (dtmx>GRANMAX)
+	                {
+		        printf("# File trucated to %ld elements\n",dtmx);
+                        break;
+	                }
+	            T=(double *)realloc(T,dtmx*sizeof(double));
+	            Y1=(double *)realloc(Y1,dtmx*sizeof(double));
+	            }
+	        }
+            while(fscanf(ofd,"%lf %lf",&T[i],&Y1[i])==2);
+            fclose(ofd);
+            n1=i;
+	    }
+        }
+/* Second file */ 
+    dtmx=DATAMAX;
+    of2=fopen(source2, "r");
+    if (of2==NULL)
+        return(-1);
+    else
+        {
+       	do
+	    fgets(gm,100,of2);
+	while((gm[0]=='#')||(gm[0]=='%'));
+        i=0;
+        nbv=sscanf(gm,"%lf %lf %lf",&T[i],&Y2[i],&tst);
+	if (nbv!=2)
+	    {
+	    if (nbv!=1) nbv=-nbv;
+	    return(nbv);
+	    }
+	else
+	    {
+            do
+                {
+                i++;
+	        if (i>=dtmx)
+	            {
+	            dtmx+=DATAMAX;
+	            if (dtmx>GRANMAX)
+	                {
+		        printf("# File trucated to %ld elements\n",dtmx);
+                        break;
+	                }
+//	            T=(double *)realloc(T,dtmx*sizeof(double));
+	            Y2=(double *)realloc(Y2,dtmx*sizeof(double));
+	            }
+	        }
+            while(fscanf(of2,"%lf %lf",&T[i],&Y2[i])==2);
+            fclose(of2);
+            n2=i;
+	    }
+        }
+    if (n1==n2) N=n1;
+    else N=-2;
+    return(N);
+    }
+
+int load_3yk(char *source1, char *source2, char *source3)
+/* Load the file pointed by 'source' and transfer its contain into the global 'T' and 'Y' tables. */
+/* Output values: -1 file not found       */
+/*                 0 unrecognized file    */
+/*                 N length of the tables */
+    {
+    int i, nbv, n1, n2, n3, N;
+    long int dtmx;
+    double tst;
+    char gm[256];    
+    FILE *ofd, *of2, *of3;
+
+    dtmx=DATAMAX;
+    T=(double *)malloc(dtmx*sizeof(double)); 
+    Y=(double *)malloc(dtmx*sizeof(double)); 
+    Y1=(double *)malloc(dtmx*sizeof(double)); 
+    Y2=(double *)malloc(dtmx*sizeof(double));
+/* First file */ 
+    ofd=fopen(source1, "r");
+    if (ofd==NULL)
+        return(-1);
+    else
+        {
+       	do
+	    fgets(gm,100,ofd);
+	while((gm[0]=='#')||(gm[0]=='%'));
+        i=0;
+        nbv=sscanf(gm,"%lf %lf %lf",&T[i],&Y1[i],&tst);
+	if (nbv!=2)
+	    {
+	    if (nbv!=1) nbv=-nbv;
+	    return(nbv);
+	    }
+	else
+	    {
+            do
+                {
+                i++;
+	        if (i>=dtmx)
+	            {
+	            dtmx+=DATAMAX;
+	            if (dtmx>GRANMAX)
+	                {
+		        printf("# File trucated to %ld elements\n",dtmx);
+                        break;
+	                }
+	            T=(double *)realloc(T,dtmx*sizeof(double));
+	            Y1=(double *)realloc(Y1,dtmx*sizeof(double));
+	            }
+	        }
+            while(fscanf(ofd,"%lf %lf",&T[i],&Y1[i])==2);
+            fclose(ofd);
+            n1=i;
+	    }
+        }
+/* Second file */ 
+    dtmx=DATAMAX;
+    of2=fopen(source2, "r");
+    if (of2==NULL)
+        return(-1);
+    else
+        {
+       	do
+	    fgets(gm,100,of2);
+	while((gm[0]=='#')||(gm[0]=='%'));
+        i=0;
+        nbv=sscanf(gm,"%lf %lf %lf",&T[i],&Y2[i],&tst);
+	if (nbv!=2)
+	    {
+	    if (nbv!=1) nbv=-nbv;
+	    return(nbv);
+	    }
+	else
+	    {
+            do
+                {
+                i++;
+	        if (i>=dtmx)
+	            {
+	            dtmx+=DATAMAX;
+	            if (dtmx>GRANMAX)
+	                {
+		        printf("# File trucated to %ld elements\n",dtmx);
+                        break;
+	                }
+//	            T=(double *)realloc(T,dtmx*sizeof(double));
+	            Y2=(double *)realloc(Y2,dtmx*sizeof(double));
+	            }
+	        }
+            while(fscanf(of2,"%lf %lf",&T[i],&Y2[i])==2);
+            fclose(of2);
+            n2=i;
+	    }
+        }
+    if (n1==n2) N=n1;
+    else
+	{ 
+	N=-2;
+	return(N);
+	}
+/* Third file */ 
+    dtmx=DATAMAX;
+    of3=fopen(source3, "r");
+    if (of2==NULL)
+        return(-1);
+    else
+        {
+       	do
+	    fgets(gm,100,of2);
+	while((gm[0]=='#')||(gm[0]=='%'));
+        i=0;
+        nbv=sscanf(gm,"%lf %lf %lf",&T[i],&Y[i],&tst);
+	if (nbv!=2)
+	    {
+	    if (nbv!=1) nbv=-nbv;
+	    return(nbv);
+	    }
+	else
+	    {
+            do
+                {
+                i++;
+	        if (i>=dtmx)
+	            {
+	            dtmx+=DATAMAX;
+	            if (dtmx>GRANMAX)
+	                {
+		        printf("# File trucated to %ld elements\n",dtmx);
+                        break;
+	                }
+//	            T=(double *)realloc(T,dtmx*sizeof(double));
+	            Y=(double *)realloc(Y,dtmx*sizeof(double));
+	            }
+	        }
+            while(fscanf(of2,"%lf %lf",&T[i],&Y[i])==2);
+            fclose(of2);
+            n3=i;
+	    }
+        }
+    if (n3!=N) N=-2;
     return(N);
     }
 
@@ -606,13 +861,19 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[])
     strcpy(gptfile,outfile);
     strcat(gptfile,".gnu");
     strcpy(psfile,outfile);
-    strcat(psfile,".ps");
+    strcat(psfile,".pdf");
     ofd=fopen(gptfile, "w");
     if (ofd==NULL) return(-1);
-    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
-    fprintf(ofd,"set output \"%s\"\n",psfile);
+//    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
+    if (flag_display)
+	    fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+    else
+	{
+	fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+	fprintf(ofd,"set output \"%s\"\n",psfile);
+	}
     fprintf(ofd,"set logscale xy\n");
-    fprintf(ofd,"set format xy \"%%.0e\"\n");
+    fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
     fprintf(ofd,"set grid\n");
     minx=miny=1e99;
     maxx=maxy=db(0);
@@ -655,6 +916,8 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[])
     maxy=exp(lmay);
     fprintf(ofd,"set xrange[%9.3e:%9.3e]\n",minx,maxx);
     fprintf(ofd,"set yrange[%9.3e:%9.3e]\n",miny,maxy);
+    fprintf(ofd,"set mxtics 10\n");
+    fprintf(ofd,"set mytics 10\n");
     if (flag_title) fprintf(ofd,"set title \"%s\"\n",outfile);
     fprintf(ofd,"set xlabel \"Integration time {/Symbol t} [s]\"\n");
     fprintf(ofd,"set ylabel \"");
@@ -694,9 +957,32 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[])
     		fprintf(ofd,"A");
 	}
     fprintf(ofd,"({/Symbol t})\"\n");
-    fprintf(ofd,"set style line 1 pt 2 lc 7 lw 3\n");
-    fprintf(ofd,"set style line 2 pt 2 lc 7 lw 2\n");
-    fprintf(ofd,"set style line 3 pt 6 lc 2 lw 3\n");
+    if (flag_display)
+	{
+	fprintf(ofd,"set style line 1 pt 2 ps 1 lc 7 lw 3\n");
+	fprintf(ofd,"set style line 2 pt 2 ps 1 lc 7 lw 2\n");
+	fprintf(ofd,"set style line 3 pt 6 ps 2 lc rgb \"#30D015\" lw 4\n");
+	fprintf(ofd,"set style line 4 lc rgb \"#D01000\" lw 5\n");
+	fprintf(ofd,"set style line 5 lc rgb \"#00A0A0\" lw 3\n");
+	fprintf(ofd,"set style line 6 lc rgb \"#FFE000\" lw 3\n");
+	fprintf(ofd,"set style line 7 lc rgb \"#109010\" lw 3\n");
+	fprintf(ofd,"set style line 8 lc rgb \"#A000A0\" lw 3\n");
+	fprintf(ofd,"set style line 9 lc rgb \"#0010D0\" lw 3\n");
+	fprintf(ofd,"set style line 10 lc rgb \"#FF8000\" lw 3\n");
+	}
+    else
+	{
+	fprintf(ofd,"set style line 1 pt 2 ps 20 lc 7 lw 60\n");
+	fprintf(ofd,"set style line 2 pt 2 ps 20 lc 7 lw 40\n");
+	fprintf(ofd,"set style line 3 pt 6 ps 20 lc rgb \"#30D015\" lw 80\n");
+	fprintf(ofd,"set style line 4 lc rgb \"#D01000\" lw 80\n");
+	fprintf(ofd,"set style line 5 lc rgb \"#00C0FF\" lw 60\n");
+	fprintf(ofd,"set style line 6 lc rgb \"#FFE000\" lw 60\n");
+	fprintf(ofd,"set style line 7 lc rgb \"#109010\" lw 60\n");
+	fprintf(ofd,"set style line 8 lc rgb \"#A000A0\" lw 60\n");
+	fprintf(ofd,"set style line 9 lc rgb \"#0010D0\" lw 60\n");
+	fprintf(ofd,"set style line 10 lc rgb \"#FF8000\" lw 60\n");
+	}
     fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
     fprintf(ofd,"plot ");
     switch(flag_conf)
@@ -726,22 +1012,22 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[])
         fprintf(ofd,"%12.6e/x+",coeff[2]);
         fprintf(ofd,"%12.6e+",coeff[3]);
         fprintf(ofd,"%12.6e*x+",coeff[4]);
-        fprintf(ofd,"%12.6e*x**2) notitle with line lt 1 lw 2",coeff[5]);
+        fprintf(ofd,"%12.6e*x**2) notitle with line ls 4",coeff[5]);
         }
     if (flag_asymptote)
         {
         if (coeff[0]!=0)
-            fprintf(ofd,", sqrt(%12.6e/x**3) title \"%7.1e {/Symbol t}^{-3/2} \" with line lt 7",coeff[0],sqrt(coeff[0]));
+            fprintf(ofd,", sqrt(%12.6e/x**3) title \"%7.1e {/Symbol t}^{-3/2} \" with line ls 5",coeff[0],sqrt(coeff[0]));
         if (coeff[1]!=0)
-            fprintf(ofd,", sqrt(%12.6e/x**2) title \"%7.1e {/Symbol t}^{-1} \" with line lt 3",coeff[1],sqrt(coeff[1]));
+            fprintf(ofd,", sqrt(%12.6e/x**2) title \"%7.1e {/Symbol t}^{-1} \" with line ls 6",coeff[1],sqrt(coeff[1]));
         if (coeff[2]!=0)
-            fprintf(ofd,", sqrt(%12.6e/x) title \"%7.1e {/Symbol t}^{-1/2}\" with line lt 4",coeff[2],sqrt(coeff[2]));
+            fprintf(ofd,", sqrt(%12.6e/x) title \"%7.1e {/Symbol t}^{-1/2}\" with line ls 7",coeff[2],sqrt(coeff[2]));
         if (coeff[3]!=0)
-	    fprintf(ofd,", sqrt(%12.6e) title \"%7.1e      \" with line lt 5",coeff[3],sqrt(coeff[3]));
+	    fprintf(ofd,", sqrt(%12.6e) title \"%7.1e      \" with line ls 8",coeff[3],sqrt(coeff[3]));
         if (coeff[4]!=0)
-	    fprintf(ofd,", sqrt(%12.6e*x) title \"%7.1e {/Symbol t}^{1/2} \" with line lt 6",coeff[4],sqrt(coeff[4]));
+	    fprintf(ofd,", sqrt(%12.6e*x) title \"%7.1e {/Symbol t}^{1/2} \" with line ls 9",coeff[4],sqrt(coeff[4]));
         if (coeff[5]!=0)
-	    fprintf(ofd,", sqrt(%12.6e*x**2) title \"%7.1e {/Symbol t}    \" with line lt 2",coeff[5],sqrt(coeff[5]));
+	    fprintf(ofd,", sqrt(%12.6e*x**2) title \"%7.1e {/Symbol t}    \" with line ls 10",coeff[5],sqrt(coeff[5]));
 	}
     fprintf(ofd,"\n");
     fprintf(ofd,"exit\n");
@@ -763,13 +1049,19 @@ int gen_psdplt(char *outfile, int N, double freq[], double syf[])
     strcpy(gptfile,outfile);
     strcat(gptfile,".gnu");
     strcpy(psfile,outfile);
-    strcat(psfile,".ps");
+    strcat(psfile,".pdf");
     ofd=fopen(gptfile, "w");
     if (ofd==NULL) return(-1);
-    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
-    fprintf(ofd,"set output \"%s\"\n",psfile);
+//    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
+    if (flag_display)
+	fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+    else
+	{
+	fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+	fprintf(ofd,"set output \"%s\"\n",psfile);
+	}
     fprintf(ofd,"set logscale xy\n");
-    fprintf(ofd,"set format xy \"%%.0e\"\n");
+    fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
     fprintf(ofd,"set grid\n");
     minx=miny=1e99;
     maxx=maxy=db(0);
@@ -812,10 +1104,12 @@ int gen_psdplt(char *outfile, int N, double freq[], double syf[])
     maxy=exp(lmay);
     fprintf(ofd,"set xrange[%9.3e:%9.3e]\n",minx,maxx);
     fprintf(ofd,"set yrange[%9.3e:%9.3e]\n",miny,maxy);
+    fprintf(ofd,"set mxtics 10\n");
+    fprintf(ofd,"set mytics 10\n");
     if (flag_title) fprintf(ofd,"set title \"%s\"\n",outfile);
     fprintf(ofd,"set xlabel \"Frequency f [Hz]\"\n");
     fprintf(ofd,"set ylabel \"PSD S_y(f)\"\n");
-    fprintf(ofd,"set style line 1 pt 6 lc rgb \"#308010\" lw 3\n");
+    fprintf(ofd,"set style line 1 pt 6 lc rgb \"#308015\" lw 3\n");
     fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
     fprintf(ofd,"plot ");
     fprintf(ofd,"\"%s\" using 1:2 notitle with lines ls 1\n",outfile);
@@ -838,12 +1132,19 @@ int gen_linplt(char *outfile, int N, double tt[], double xy[], int xory)
     strcpy(gptfile,outfile);
     strcat(gptfile,".gnu");
     strcpy(psfile,outfile);
-    strcat(psfile,".ps");
+    strcat(psfile,".pdf");
     ofd=fopen(gptfile, "w");
     if (ofd==NULL) return(-1);
-    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
-    fprintf(ofd,"set output \"%s\"\n",psfile);
+//    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
+    if (flag_display)
+	fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+    else
+	{
+	fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+	fprintf(ofd,"set output \"%s\"\n",psfile);
+	}
     fprintf(ofd,"set format xy \"%%g\"\n");
+//    fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
     fprintf(ofd,"set grid\n");
     minx=maxx=tt[0];
     miny=maxy=xy[0];
@@ -892,6 +1193,137 @@ int gen_linplt(char *outfile, int N, double tt[], double xy[], int xory)
     fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
     fprintf(ofd,"plot ");
     fprintf(ofd,"\"%s\" using 1:2 notitle with lines ls 1\n",outfile);
+    fprintf(ofd,"exit\n");
+    fclose(ofd);
+    strcpy(sys_cmd,"gnuplot ");
+    strcat(sys_cmd,gptfile);
+    err=system(sys_cmd);
+    return(err);
+    }
+
+int gen_gcodplt(char *outfile, char names[][256], int N, int nbf, double tau[], double gcod[][256], int ind_gcod)
+/* Generate a gnuplot file (.gnu) and invoke gnuplot for creating a postscript file */
+    {
+    int i,j,k,mii,mxi,err;
+    double minx, maxx, miny, maxy, lmix, lmax, lmiy, lmay, ltx, lty, lmx, lmy, rtmx, rtmy;
+    char gptfile[256], psfile[256], gpt_cmd[65536], sys_cmd[256];
+    FILE *ofd;
+
+    strcpy(gptfile,outfile);
+    strcat(gptfile,".gnu");
+    strcpy(psfile,outfile);
+    strcat(psfile,".pdf");
+    ofd=fopen(gptfile, "w");
+    if (ofd==NULL) return(-1);
+//    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
+    if (flag_display)
+	fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+    else
+	{
+	fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+	fprintf(ofd,"set output \"%s\"\n",psfile);
+	}
+    fprintf(ofd,"set logscale xy\n");
+    fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
+    fprintf(ofd,"set grid\n");
+    minx=miny=1e99;
+    maxx=maxy=db(0);
+    for(i=0;i<N;++i)
+	{
+	if (tau[i]<minx) minx=tau[i];
+	if (tau[i]>maxx) maxx=tau[i];
+	}
+    for(j=0;j<nbf;++j)
+	for(i=0;i<N;++i)
+		{
+		if (fabs(gcod[j][i])<miny)
+	    		{
+	    		mii=i;
+	    		miny=fabs(gcod[j][i]);
+	    		}
+		if (fabs(gcod[j][i])>maxy)
+	    		{
+	    		mxi=i;
+	    		maxy=fabs(gcod[j][i]);
+	    		}
+		}
+/*    if (mxi<mii)
+	fprintf(ofd,"set key right\n");
+    else*/
+	fprintf(ofd,"set key left bottom\n");
+    lmix=log(minx);
+    lmax=log(maxx);
+    lmiy=log(miny);
+    lmay=log(maxy);
+    ltx=db(0.05)*(lmax-lmix);
+    lmix=lmix-ltx;
+    lmax=lmax+ltx;
+    lty=db(0.1)*(lmay-lmiy);
+    lmiy=lmiy-lty;
+    lmay=lmay+lty;
+    lmx=lmax-db(0.15)*ltx;
+    lmy=lmiy+db(0.25)*lty;
+    rtmx=exp(lmx);
+    rtmy=exp(lmy);
+    minx=exp(lmix);
+    maxx=exp(lmax);
+    miny=exp(lmiy);
+    maxy=exp(lmay);
+    fprintf(ofd,"set xrange[%9.3e:%9.3e]\n",minx,maxx);
+    fprintf(ofd,"set yrange[%9.3e:%9.3e]\n",miny,maxy);
+    fprintf(ofd,"set mxtics 10\n");
+    fprintf(ofd,"set mytics 10\n");
+    if (flag_title) fprintf(ofd,"set title \"%s\"\n",outfile);
+    fprintf(ofd,"set xlabel \"Integration time {/Symbol t} [s]\"\n");
+    fprintf(ofd,"set ylabel \"ADEV {/Symbol s}_A({/Symbol t})\"\n");
+    if (flag_display)
+	{
+	fprintf(ofd,"set style line 1 lt 1 pt 4 ps 1.1 lc rgb \"#D01000\" lw 2\n");
+	fprintf(ofd,"set style line 2 lt 1 pt 12 ps 1.6 lc rgb \"#308015\" lw 2\n");
+	fprintf(ofd,"set style line 3 lt 1 pt 6 ps 1.3 lc rgb \"#0010D0\" lw 2\n");
+	fprintf(ofd,"set style line 4 lt 1 pt 13 ps 1 lc rgb \"#806020\" lw 2\n");
+	fprintf(ofd,"set style line 5 lt 2 dt 2 pt 3 ps 1.2 lc rgb \"#D01000\" lw 2\n");
+	fprintf(ofd,"set style line 6 lt 2 dt 2 pt 1 ps 1.4 lc rgb \"#308015\" lw 2\n");
+	fprintf(ofd,"set style line 7 lt 2 dt 2 pt 2 ps 1.1 lc rgb \"#0010D0\" lw 2\n");
+	fprintf(ofd,"set style line 8 lt 2 dt 2 pt 5 ps 1 lc rgb \"#806020\" lw 2\n");
+	fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
+	}
+    else
+	{
+	fprintf(ofd,"set style line 1 lt 1 pt 4 ps 22 lc rgb \"#D01000\" lw 60\n");
+	fprintf(ofd,"set style line 2 lt 1 pt 12 ps 32 lc rgb \"#308015\" lw 60\n");
+	fprintf(ofd,"set style line 3 lt 1 pt 6 ps 26 lc rgb \"#0010D0\" lw 60\n");
+	fprintf(ofd,"set style line 4 lt 1 pt 13 ps 20 lc rgb \"#806020\" lw 60\n");
+	fprintf(ofd,"set style line 5 lt 2 dt 2 pt 3 ps 24 lc rgb \"#D01000\" lw 60\n");
+	fprintf(ofd,"set style line 6 lt 2 dt 2 pt 1 ps 28 lc rgb \"#308015\" lw 60\n");
+	fprintf(ofd,"set style line 7 lt 2 dt 2 pt 2 ps 22 lc rgb \"#0010D0\" lw 60\n");
+	fprintf(ofd,"set style line 8 lt 2 dt 2 pt 5 ps 20 lc rgb \"#806020\" lw 60\n");
+	}
+    fprintf(ofd,"plot ");
+    for(i=0;i<nbf;++i)
+	{
+	fprintf(ofd,"\"%s\" using 1:",&names[i][1]);
+	if (names[i][0]=='-') fprintf(ofd,"(-$2)");
+	else fprintf(ofd,"2");
+	fprintf(ofd," title \"%s\" with linespoints ls %d",names[i], i+1);
+	if (i<nbf-1) fprintf(ofd,",");
+	}
+    if (ind_gcod)
+	{
+	if (nbf==4) --nbf;
+	fprintf(ofd,", ");
+    	for(i=0;i<nbf;++i)
+		{
+		if (names[i][0]=='-') names[i][0]='+';
+		else names[i][0]='-';
+		fprintf(ofd,"\"%s\" using 1:",&names[i][1]);
+		if (names[i][0]=='-') fprintf(ofd,"(-$2)");
+		else fprintf(ofd,"2");
+		fprintf(ofd," title \"%s\" with linespoints ls %d",names[i], i+5);
+		if (i<nbf-1) fprintf(ofd,",");
+		}
+	}
+    fprintf(ofd,"\n");
     fprintf(ofd,"exit\n");
     fclose(ofd);
     strcpy(sys_cmd,"gnuplot ");

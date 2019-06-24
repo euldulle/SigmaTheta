@@ -57,7 +57,7 @@ void usage(void)
     printf("The input file yktFILE contains a 2-column table with dates (in s) in the first column and frequency deviation samples (yk) in the second column.\n\n");
     printf("The PSD versus the frequency are stored in the output file yktFILE.psd.\n");
     printf("The file yktFILE.psd.gnu is generated for invoking gnuplot.\n");
-    printf("The file DevFILE.psd.ps is the postscript file of the gnuplot graph.\n\n");
+    printf("The file yktFILE.psd.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file)\n\n");
     printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
