@@ -58,7 +58,7 @@ void usage(void)
     printf("The PSD versus the frequency are stored in the output file yktFILE.psd.\n");
     printf("The file yktFILE.psd.gnu is generated for invoking gnuplot.\n");
     printf("The file yktFILE.psd.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file)\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

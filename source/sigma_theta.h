@@ -38,8 +38,8 @@
 /*                                                                          */
 /*                                                                          */
 
-#define ST_VERSION "4.0"
-#define ST_DATE "2019/06/22"
+// #define ST_VERSION "4.0"
+//#define ST_DATE "2019/06/22"
 
 struct conf_int
     {

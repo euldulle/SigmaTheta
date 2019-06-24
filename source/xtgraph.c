@@ -55,7 +55,7 @@ void usage(void)
     printf("The input file xttFILE contains a 2-column table with dates (in s) in the first column and time error data x(t) (in s) in the second column.\n\n");
     printf("The file xttFILE.gnu is generated for invoking gnuplot.\n");
     printf("The file xttFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

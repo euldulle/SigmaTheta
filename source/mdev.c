@@ -67,6 +67,7 @@ void usage(uint8_t *message)
     printf("     . Modified Allan deviation (or TDEV if -t) measurement in the second column \n");
     printf("    which is sent to the standard output.\n\n");
     printf(" A redirection should be used to save the results in a TARGET file: MDeV SOURCE > TARGET\n\n");
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

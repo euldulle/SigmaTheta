@@ -64,7 +64,7 @@ void usage(void)
     printf("Computes a sequence of time error x(t) and/or normalized frequency deviation yk samples.\n\n");
     printf("A 2-column table containing dates in the first column and time errors in the second column is saved in the file TARGET.xtt and/or a 2-column table containing dates in the first column and frequency deviations in the second column is saved in the file TARGET.ykt.\n\n");
     printf("A redirection should be used for loading the input parameters from a SOURCE file: bruiteur TARGET < SOURCE\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

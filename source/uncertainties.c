@@ -68,7 +68,7 @@ void usage(void)
     printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance.\n");
     printf("If the option '-c' is selected, the variance is assumed to be the classical Allan variance.\n");
     printf("Otherwise, the variance is assumed to be the one selected in the configuration file \".SigmaTheta.conf\".\n\n"); 
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

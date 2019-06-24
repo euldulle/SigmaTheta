@@ -969,6 +969,7 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[])
 	fprintf(ofd,"set style line 8 lc rgb \"#A000A0\" lw 3\n");
 	fprintf(ofd,"set style line 9 lc rgb \"#0010D0\" lw 3\n");
 	fprintf(ofd,"set style line 10 lc rgb \"#FF8000\" lw 3\n");
+	fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,6\"\n",st_version,rtmx,rtmy);
 	}
     else
 	{
@@ -982,8 +983,8 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[])
 	fprintf(ofd,"set style line 8 lc rgb \"#A000A0\" lw 60\n");
 	fprintf(ofd,"set style line 9 lc rgb \"#0010D0\" lw 60\n");
 	fprintf(ofd,"set style line 10 lc rgb \"#FF8000\" lw 60\n");
+	fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,8\"\n",st_version,rtmx,rtmy);
 	}
-    fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
     fprintf(ofd,"plot ");
     switch(flag_conf)
         {
@@ -1110,7 +1111,7 @@ int gen_psdplt(char *outfile, int N, double freq[], double syf[])
     fprintf(ofd,"set xlabel \"Frequency f [Hz]\"\n");
     fprintf(ofd,"set ylabel \"PSD S_y(f)\"\n");
     fprintf(ofd,"set style line 1 pt 6 lc rgb \"#308015\" lw 3\n");
-    fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
+    fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,8\"\n",st_version,rtmx,rtmy);
     fprintf(ofd,"plot ");
     fprintf(ofd,"\"%s\" using 1:2 notitle with lines ls 1\n",outfile);
     fprintf(ofd,"exit\n");
@@ -1190,7 +1191,7 @@ int gen_linplt(char *outfile, int N, double tt[], double xy[], int xory)
     if (xory) fprintf(ofd,"\"#D01000\"");
     else fprintf(ofd,"\"#0010D0\"");
     fprintf(ofd," lw 3\n");
-    fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
+    fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,8\"\n",st_version,rtmx,rtmy);
     fprintf(ofd,"plot ");
     fprintf(ofd,"\"%s\" using 1:2 notitle with lines ls 1\n",outfile);
     fprintf(ofd,"exit\n");
@@ -1250,7 +1251,7 @@ int gen_gcodplt(char *outfile, char names[][256], int N, int nbf, double tau[], 
 /*    if (mxi<mii)
 	fprintf(ofd,"set key right\n");
     else*/
-	fprintf(ofd,"set key left bottom\n");
+	fprintf(ofd,"set key left bottom reverse\n");
     lmix=log(minx);
     lmax=log(maxx);
     lmiy=log(miny);
@@ -1286,7 +1287,7 @@ int gen_gcodplt(char *outfile, char names[][256], int N, int nbf, double tau[], 
 	fprintf(ofd,"set style line 6 lt 2 dt 2 pt 1 ps 1.4 lc rgb \"#308015\" lw 2\n");
 	fprintf(ofd,"set style line 7 lt 2 dt 2 pt 2 ps 1.1 lc rgb \"#0010D0\" lw 2\n");
 	fprintf(ofd,"set style line 8 lt 2 dt 2 pt 5 ps 1 lc rgb \"#806020\" lw 2\n");
-	fprintf(ofd,"set label \"Sigma Theta %s\" at %9.3e,%9.3e right font \"Helvetica,10\"\n",st_version,rtmx,rtmy);
+	fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,6\"\n",st_version,rtmx,rtmy);
 	}
     else
 	{
@@ -1298,6 +1299,7 @@ int gen_gcodplt(char *outfile, char names[][256], int N, int nbf, double tau[], 
 	fprintf(ofd,"set style line 6 lt 2 dt 2 pt 1 ps 28 lc rgb \"#308015\" lw 60\n");
 	fprintf(ofd,"set style line 7 lt 2 dt 2 pt 2 ps 22 lc rgb \"#0010D0\" lw 60\n");
 	fprintf(ofd,"set style line 8 lt 2 dt 2 pt 5 ps 20 lc rgb \"#806020\" lw 60\n");
+	fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,8\"\n",st_version,rtmx,rtmy);
 	}
     fprintf(ofd,"plot ");
     for(i=0;i<nbf;++i)

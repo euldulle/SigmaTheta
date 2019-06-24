@@ -55,7 +55,7 @@ void usage(void)
     printf("Transforms a time error sequence {x(t)} into a normalized frequency deviation sequence {Yk}.\n\n");
     printf("The input file SOURCE contains a N line / 2 column table with time values (dates) in the first column and time error samples in the second column.\n\n");
     printf("The output file TARGET contains a N-1 line / 2 column table with time values (dates) in the first column and normalized frequency samples in the second column.\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

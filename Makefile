@@ -61,7 +61,9 @@ SOURCE = source/
 INSTALLDIR = /usr/local/bin/
 INSTALL = install
 CC = gcc
-CFLAGS = -g -O3
+GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
+GIT_DATE := "$(shell git log | head -3 | grep Date | sed 's/Date:   //')"
+CFLAGS = -g -O3 -DST_VERSION=\"$(GIT_VERSION)\" -DST_DATE=\"$(GIT_DATE)\"
 # link statically against libfftw3
 #FFTW3 = -static -lfftw3
 # link dynamically against libfftw3
@@ -186,7 +188,6 @@ $(OBJ)devgraph.o : $(SOURCE)devgraph.c $(SOURCE)sigma_theta.h
 $(OBJ)bruiteur.o : $(SOURCE)bruiteur.c $(SOURCE)filtre.h
 
 $(OBJ)ziggurat.o : $(SOURCE)ziggurat.c $(SOURCE)zigtables.h
-
 
 install: $(TARGETS)
 	$(INSTALL) -c -m 755 $(TARGETS) $(INSTALLDIR)

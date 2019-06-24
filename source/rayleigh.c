@@ -55,7 +55,7 @@ void usage(void)
     printf("Computes the mean and the 95 %% confidence interval of a Chi distribution with 'value' degrees of freedom, normalized by the square root of 'value'.\n\n");
     printf("The input 'value' is a floating point number.\n\n");
     printf("The inferior bound, the logarithmic mean and the superior bound are sent to the standard output separated by a tabulation.\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])

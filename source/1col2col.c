@@ -55,7 +55,7 @@ void usage(void)
     printf("The input file SOURCE contains a N line / 1 column table.\n\n");
     printf("The output file TARGET contains a N line / 2 column table with time values (dates) in the first column and the data of SOURCE in the second column.\n\n");
     printf("The optional argument x is the sampling step in seconds. If x is omitted, the sampling rate is assumed to be 1 s.\n\n");
-    printf("Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])
