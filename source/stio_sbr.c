@@ -368,7 +368,12 @@ int load_ykt(char *source)
     dtmx=DATAMAX;
     T=(double *)malloc(dtmx*sizeof(double)); 
     Y=(double *)malloc(dtmx*sizeof(double)); 
-    ofd=fopen(source, "r");
+
+    if (strlen(source)==0)
+        ofd=stdin;
+    else
+        ofd=fopen(source, "r");
+
     if (ofd==NULL)
         return(-1);
     else
@@ -401,7 +406,8 @@ int load_ykt(char *source)
 	            }
 	        }
             while(fscanf(ofd,"%lf %lf",&T[i],&Y[i])==2);
-            fclose(ofd);
+            if (ofd!=stdin)
+                fclose(ofd);
             N=i;
 	    }
         }
