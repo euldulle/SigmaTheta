@@ -39,69 +39,194 @@
 /*                                                                          */
 /*                                                                          */
                                     
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
+
 #include "sigma_theta.h"
 
 #define DATAMAX 16384
 #define GRANMAX 67108864
 
+#define MAXCHAR 512
+double scale(char code){
+    double factor;
+
+    switch(code){
+        case 'd':
+            factor=86400.;
+            break;
+        case 'H':
+            factor=3600.;
+            break;
+        case 'M':
+            factor=60.;
+            break;
+        case 'm':
+            factor=1.e-3;
+            break;
+        case 'u':
+            factor=1.e-6;
+            break;
+        case 'n':
+            factor=1.e-9;
+            break;
+        case 'p':
+            factor=1.e-12;
+            break;
+        default:
+            factor=1;
+        }
+    return factor;
+    }
+
 void usage(void)
 /* Help message */
     {
-    printf("Usage: X2Y SOURCE TARGET\n\n");
+    printf("Usage: X2Y [-c] [-x xscalingfactor] [-y yscalingfactor] : [SOURCE [TARGET]]\n\n");
     printf("Transforms a time error sequence {x(t)} into a normalized frequency deviation sequence {Yk}.\n\n");
-    printf("The input file SOURCE contains a N line / 2 column table with time values (dates) in the first column and time error samples in the second column.\n\n");
-    printf("The output file TARGET contains a N-1 line / 2 column table with time values (dates) in the first column and normalized frequency samples in the second column.\n\n");
+    printf("  Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
+    printf("  If only SOURCE is specified, output goes to SOURCE.ykt unless -c option (output to stdout) is given \n\n");
+    printf("  Options :\n");
+    printf("  -x xscalingfactor\n");
+    printf("  -y xscalingfactor\n");
+    printf("  	Units are SI units (s) by default ; should the input data be in other units (MJD, ns, ...)\n");
+    printf("  	x and y options allows to properly normalize output : \n");
+    printf("  	scaling factor is one of : \n");
+    printf("  	  	  	d : days  \n");
+    printf("  	  	  	H : hours  \n");
+    printf("  	  	  	M : minutes  \n");
+    printf("  	  	  	m : millisecond \n");
+    printf("  	  	  	u : microsecond \n");
+    printf("  	  	  	n : nanosecond \n");
+    printf("  	  	  	p : picosecond \n");
+	printf("   	  A file containing data as MJD.XXXXX vs time in ns can be processed with \n");
+	printf("   	  X2Y datafile -x d -y n \n");
+    printf("  -c : stdout output ; this is the default if SOURCE is stdin)\n");
+    printf("       if SOURCE is specified, both stdout and SOURCE.ykt are fed with the results.)\n");
+    printf("       if SOURCE and TARGET are specified, both stdout and TARGET are fed with the results.)\n");
+
+	
+    printf("Input consists in an N line / 2 column table with time values (dates) in the first column and time error samples in the second column.\n\n");
+    printf("Ouput is a N-1 line / 2 column table with time values (dates) in the first column and normalized frequency samples in the second column.\n\n");
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    exit(-1);
     }
 
 int main(int argc, char *argv[])
     {
     int i, nbv, N;
     long int dtmx;
-    char source[256], outfile[256], gm[100];
+    char source[MAXCHAR]="", outfile[MAXCHAR]="", gm[100];
     FILE *ofd;
-    double tau;
+    double tau, xscale=1, yscale=1;
+    uint8_t stdo=0;
+    int8_t c, index;
+    int16_t stridx, lensrc;
 
-    if (argc<3)
+
+	opterr = 0;
+
+
+    while ((c = getopt (argc, argv, "cx:y:")) != -1)
+        switch (c)
         {
-	usage();
-	exit(-1);
+            case 'c':
+                stdo = 1;
+                break;
+            case 'x':
+                xscale=scale(optarg[0]);
+                break;
+            case 'y':
+                yscale=scale(optarg[0]);
+                break;
+            case '?':
+                if (optopt == 'x'){
+                    fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+                    usage();
+                }
+                else if (optopt == 'y'){
+                    fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+                    usage();
+                }
+                else if (isprint (optopt))
+                    fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf (stderr,
+                            "Unknown option character `\\x%x'.\n",
+                            optopt);
+                return 1;
+            default:
+                abort ();
         }
-    else
+
+    index=optind;
+	if (index<argc){
+		lensrc=strlen(strncpy(source,argv[index], MAXCHAR));
+        printf ("Input file %s\n", argv[index]);
+
+        index++;
+        if (index<argc){
+            printf ("Output file %s\n", argv[index]);
+            strncpy(outfile,argv[index], MAXCHAR);
+            }
+        else {
+            if (stdo != 1){
+                stridx=lensrc-3;
+                if (source[stridx++]=='x' && source[stridx++]=='k' && source[stridx++]=='t' ){
+                    snprintf(outfile, lensrc+1, "%s", source);
+                    outfile[lensrc-3]='y';
+                    }
+                else{
+                    snprintf(outfile, lensrc+5, "%s.ykt", source);
+                }
+            }
+        }
+
+        index++;
+        if (index<argc)
         {
-	strcpy(source,*++argv);
-	strcpy(outfile,*++argv);
-	}
-    N=load_ykt(source);
-    if (N==-1)
-        printf("# File not found\n");
-    else
-        {
-        if (N<2)
-	    {
-            printf("# Unrecognized file\n\n");
-	    if (N==1)
-	      printf("# Use 1col2col command\n\n");
-	    usage();
-	    }
-        else
-            {
-            tau=T[1]-T[0];
-	    ofd=fopen(outfile, "w");
-            if (ofd==NULL)
-                printf("# Incorrect file name\n");
-	    else
-	        {
-		fprintf(ofd,"# File generated by X2Y from the file %s\n",source);
-		for(i=0;i<N-1;++i)
-		    fprintf(ofd,"%24.16e \t %24.16e\n",T[i],(Y[i+1]-Y[i])/tau);
-                fclose(ofd);
-	        }
-	    }
+            fprintf(stderr,"Extra parameter.\n");
+            usage();
         }
     }
-    
+    fprintf(stderr,"in = %s out = %s \n",source,outfile);
+
+    N=load_ykt(source);
+	if (N==-1)
+		printf("# File not found\n");
+	else
+	{
+		if (N<2)
+		{
+			printf("# Unrecognized file\n\n");
+			if (N==1)
+				printf("# Use 1col2col command\n\n");
+			usage();
+		}
+		else
+		{
+			tau=T[1]-T[0];
+            if (stdo==1)
+                ofd=stdout;
+            else
+                ofd=fopen(outfile, "w");
+
+			if (ofd==NULL)
+				fprintf(stderr, "# Could not open file %s\n", source);
+			else
+			{
+				fprintf(ofd,"# File generated by X2Y from the file %s\n",source);
+				for(i=0;i<N-1;++i)
+					fprintf(ofd,"%24.16e \t %24.16e\n",T[i],(Y[i+1]-Y[i])/tau/xscale);
+                if (ofd!=stdout)
+                    fclose(ofd);
+			}
+		}
+	}
+	}
+
