@@ -87,33 +87,40 @@ double scale(char code){
 void usage(void)
 /* Help message */
     {
-    printf("Usage: X2Y [-c] [-x xscalingfactor] [-y yscalingfactor] : [SOURCE [TARGET]]\n\n");
-    printf("Transforms a time error sequence {x(t)} into a normalized frequency deviation sequence {Yk}.\n\n");
-    printf("  Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
-    printf("  If only SOURCE is specified, output goes to SOURCE.ykt unless -c option (output to stdout) is given \n\n");
-    printf("  Options :\n");
-    printf("  -x xscalingfactor\n");
-    printf("  -y xscalingfactor\n");
-    printf("  	Units are SI units (s) by default ; should the input data be in other units (MJD, ns, ...)\n");
-    printf("  	x and y options allows to properly normalize output : \n");
-    printf("  	scaling factor is one of : \n");
-    printf("  	  	  	d : days  \n");
-    printf("  	  	  	H : hours  \n");
-    printf("  	  	  	M : minutes  \n");
-    printf("  	  	  	m : millisecond \n");
-    printf("  	  	  	u : microsecond \n");
-    printf("  	  	  	n : nanosecond \n");
-    printf("  	  	  	p : picosecond \n");
-	printf("   	  A file containing data as MJD.XXXXX vs time in ns can be processed with \n");
-	printf("   	  X2Y datafile -x d -y n \n");
-    printf("  -c : stdout output ; this is the default if SOURCE is stdin)\n");
-    printf("       if SOURCE is specified, both stdout and SOURCE.ykt are fed with the results.)\n");
-    printf("       if SOURCE and TARGET are specified, both stdout and TARGET are fed with the results.)\n");
-
-	
-    printf("Input consists in an N line / 2 column table with time values (dates) in the first column and time error samples in the second column.\n\n");
-    printf("Ouput is a N-1 line / 2 column table with time values (dates) in the first column and normalized frequency samples in the second column.\n\n");
-    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("##############################################################################################################\n\n");
+    printf(" X2Y : a tool from the SigmaTheta suite\n\n");
+    printf("     Usage: X2Y [-ch] [-x xscalingfactor] [-y yscalingfactor] [SOURCE [TARGET]]\n\n");
+    printf("     Transforms a time error sequence {x(t)} into a normalized frequency deviation sequence {Yk}.\n\n");
+    printf("      Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
+    printf("      If only SOURCE is specified, output goes to SOURCE.ykt unless -c option (output to stdout) is given \n\n");
+    printf("      Options :\n");
+    printf("           -x xscalingfactor\n");
+    printf("           -y xscalingfactor\n");
+    printf("            	Units are SI units (s) by default ; should the input data be in other units (MJD, ns, ...)\n");
+    printf("            	x and y options allows to properly normalize output : \n");
+    printf("            	scaling factor is one of : \n");
+    printf("           	  	  	d : days  \n");
+    printf("           	  	  	H : hours  \n");
+    printf("           	  	  	M : minutes  \n");
+    printf("           	  	  	m : millisecond \n");
+    printf("           	  	  	u : microsecond \n");
+    printf("           	  	  	n : nanosecond \n");
+    printf("           	  	  	p : picosecond \n");
+	printf("            	  A file containing data as MJD.XXXXX vs time in ns can be processed with \n");
+	printf("            	  X2Y datafile -x d -y n \n\n");
+    printf("           -c : stdout output ; this is the default if SOURCE is stdin\n");
+    printf("                if SOURCE is specified, both stdout and SOURCE.ykt are fed with the results.)\n");
+    printf("                if SOURCE and TARGET are specified, both stdout and TARGET are fed with the results.)\n\n");
+    printf("           -h : this message\n\n");
+                
+	            
+    printf("     Input consists in an N line / 2 column table with time values (dates) in the first column\n");
+    printf("                                                   and time error samples in the second column.\n\n");
+    printf("     Ouput is a N-1 line / 2 column table with time values (dates) in the first column \n");
+    printf("                                           and normalized frequency samples in the second column.\n\n");
+    printf("           SigmaTheta %s %s \n",st_version,st_date);
+    printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");
+    printf("##############################################################################################################\n\n");
     exit(-1);
     }
 
@@ -132,11 +139,14 @@ int main(int argc, char *argv[])
 	opterr = 0;
 
 
-    while ((c = getopt (argc, argv, "cx:y:")) != -1)
+    while ((c = getopt (argc, argv, "hcx:y:")) != -1)
         switch (c)
         {
             case 'c':
                 stdo = 1;
+                break;
+            case 'h':
+                usage();
                 break;
             case 'x':
                 xscale=scale(optarg[0]);
@@ -194,7 +204,11 @@ int main(int argc, char *argv[])
             usage();
         }
     }
-    fprintf(stderr,"in = %s out = %s \n",source,outfile);
+
+    if (strlen(source)==0){
+        fprintf(stderr,"#\n#\n# No input file given , expecting data on stdin...\n#   (X2Y -h to show usage)\n");
+        stdo=1;
+        }
 
     N=load_ykt(source);
 	if (N==-1)
