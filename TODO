@@ -15,7 +15,7 @@ license as circulated by CEA, CNRS and INRIA at the following URL
 "http://www.cecill.info". 
 
 
-TODO (2015/10/26)
+TODO (2019/07/31)
 ----
 Main Todo Items:
 * Computation of other variances (Time variance, ...)
@@ -25,5 +25,6 @@ Main Todo Items:
 * Computation of Total Variances
 * Possibility of computing the variances from X-values or from Y-values
 * Selection of multivariance mode
-* Selection of the three-cornered method mode
+* Definition of a user friendly interface
+* Graphic tool to modify the configuration file
 

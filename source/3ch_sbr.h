@@ -1,10 +1,11 @@
-/*   sigma_theta.h                                F. Vernotte - 2010/10/25  */
-/*   Declaration of global variables and functions for sigma_theta.c        */
-/*                                                                          */
+/*   3ch_sbr.h                      F. Vernotte - First release: 2019/07/28 */
+/* 			    						    */
+/*   Subroutines for 3cornered_hat (KLTG & KLTS)			    */
+/*									    */
 /*                                                   - SIGMA-THETA Project  */
 /*                                                                          */
-/* Copyright or Â© or Copr. UniversitÃ© de Franche-ComtÃ©, BesanÃ§on, France    */
-/* Contributor: FranÃ§ois Vernotte, UTINAM/OSU THETA (2012/07/17)            */
+/* Copyright or © or Copr. Université de Franche-Comté, Besançon, France    */
+/* Contributor: François Vernotte, UTINAM/OSU THETA (2012/07/17)            */
 /* Contact: francois.vernotte@obs-besancon.fr                               */
 /*                                                                          */
 /* This software, SigmaTheta, is a collection of computer programs for      */
@@ -38,54 +39,10 @@
 /*                                                                          */
 /*                                                                          */
 
-// #define ST_VERSION "4.0"
-//#define ST_DATE "2019/06/22"
-
-struct conf_int
-    {
-    double inf_bound;
-    double mean;
-    double sup_bound;
-    };
-
-double coeff[10], ortau[10], log_inc;
-double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31;
-char st_version[]=ST_VERSION;
-char st_date[]=ST_DATE;
-char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[6], flag_variance, flag_log_inc, flag_display;
-int ntau;
-
-int init_flag();
-double tchebyfit(long);
-double adev_y(int, int);
-double gcodev_y(int, int);
-double mdev_y(int, int);
-double hadamard_y(int, int);
-double pdev_y(int, int);
-int serie_dev(int, double *, double *);
-int resol(int, double *, double*);
-double interpo(double, int);
-int relatfit(int, double *, double *, double *, int);
-double sw(double, int);
-double sx(double, int, int);
-double sz(double, int, int);
-double BasicSum(int, int, int, int, int);
-void avardof(int , double *, int *, double *);
-double cdf_rayleigh(double , double);
-double dcdfr(double x, double nu);
-struct conf_int raylconfint(double);
-struct conf_int raylconfint1s(double);
-int load_ykt(char *);
-int load_2yk(char *, char *);
-int load_3yk(char *, char *, char *);
-int load_adev(char *, double *, double *);
-int load_coef(char *);
-int load_1col(char *);
-int load_3col(char *, double *, double *, double *);
-int load_7col(char *, double *, double *, double *, double *, double *, double *, double *);
-int gener_gplt(char *, int, double *, double *, double *, char *);
-int gen_psdplt(char *, int, double *, double *);
-int gen_linplt(char *, int, double *, double *, int);
-int gen_gcodplt(char *, char (*)[], int, int, double *, double (*)[], int);
-int gen_3chplt(char (*)[], char *, int, double *, double (*)[], double (*)[], int);
+long *matlab_sort(double *, long, double *, long *);
+double pgaussdirectfin(double *, double *, int, double);
+double pgaussdirectavecestimbr(double *, double, double, double, double, int, double);
+double *eig(double *, int, double *, double *);
+double xinvy(double *, double *, double, long);
+int ci_kltgs(double *, double, double, int, double (*)[3], double (*)[5]);
 

@@ -1,7 +1,12 @@
+2019-07-31, FV: * modification of Aver (options to change normalization coefficient)
+                * implementation of GCUncert (computation of the confidence interval by using KLTG/KLTS method, see arXiv:1904.05849)
+		* implementation of 3CorneredHat (from Groslambert Covariances -or classical Three-cornered hat- computation to graph display with confidence intervals)  
+		* implementation of 3CHGraph (plot GCov with confidence intervals)  
+
 2019-06-22, FV: adding of the options WXT or PDF for the graph output (display of the graph on a separate window or creation of a pdf file)
 
 2019-06-21, FV:	* implementation of GCoDev (Groslambert Covariance, see 
-arXiv:1904.05849)
+arXiv:1808.09843)
 		* implementation of DevGraph
 		* implementation of Aver
 		* move plots from .ps to .pdf files (XtGraph, YkGraph, ADGraph, PSDGraph, DevGraph, SigmaTheta) 

@@ -51,7 +51,7 @@ void usage(void)
 /* Help message */
     {
     printf("Usage: uncertainties [-option] SOURCE TARGET\n\n");
-    printf("Computes the 95 %% confidence intervals of a sequence of (modified) Allan Deviations, the asymptotes and plot a graph as a postscript file.\n\n");
+    printf("Computes the 95 %% confidence intervals of a sequence of (modified) Allan Deviations, the asymptotes and plot a graph.\n\n");
     printf("The input file SOURCE contains a 2-column table with tau values (integration time) in the first column and (modified) Allan deviation measurement in the second column.\n\n");
     printf("The first tau value is assumed to be equal to the sampling step.\n");
     printf("The last tau value is assumed to be equal to the half of the whole time sequence duration.\n\n");
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 	    for(i=0;i<6;++i) printf("%12.6e \t ",coeff[i]);
 	    printf("\n");
 /* Use of gnuplot for generating the graph as a ps file */
-	    err=gener_gplt(outfile,N,tau,adev,bmax);
+	    err=gener_gplt(outfile,N,tau,adev,bmax,"unbiased");
 	    if (err) printf("# Error %d: ps file not created\n",err);
 	    /*	    printf("tau: ");
 	    for(i=0;i<N;++i) printf("%12.6e \t ",tau[i]);

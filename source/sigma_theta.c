@@ -105,17 +105,17 @@ int main(int argc, char *argv[])
 				switch(command[1])
 					{
 					case 'p':
-						fv=PVAR;
+						fv=(char)3;
 						break;
 					case 'h':
-						fv=HVAR;
+						fv=(char)2;
 						break;
 					case 'm':
-						fv=MVAR;
+						fv=(char)1;
 						break;
 					case 'a':
 					default:
-						fv=AVAR;
+						fv=0;
 					}
 				strcpy(source,*++argv);
 				strcpy(outfile,*++argv);
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
 	    if (flag_graph)
 	        {
 /* Use of gnuplot for generating the graph as a ps file */
-		err=gener_gplt(outfile,N,tau,dev,bmax);
+		err=gener_gplt(outfile,N,tau,dev,bmax,"unbiased");
 		if (err) printf("# Error %d: ps file not created\n",err);
 		}
 	    }

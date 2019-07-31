@@ -69,7 +69,7 @@ CFLAGS = -g -O3 -DST_VERSION=\"$(GIT_VERSION)\" -DST_DATE=\"$(GIT_DATE)\"
 # link dynamically against libfftw3
 FFTW3 = -lfftw3
 
-TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)GCoDev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)Aver $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)DevGraph $(BIN)bruiteur
+TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)GCoDev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)Aver $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)DevGraph $(BIN)3CHGraph $(BIN)bruiteur $(BIN)GCUncert $(BIN)3CorneredHat
 
 all: $(TARGETS)
 
@@ -140,8 +140,17 @@ $(BIN)XtGraph : $(OBJ)xtgraph.o $(OBJ)stio_sbr.o
 $(BIN)DevGraph : $(OBJ)devgraph.o $(OBJ)stio_sbr.o 
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
+$(BIN)3CHGraph : $(OBJ)3chgraph.o $(OBJ)stio_sbr.o 
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
 $(BIN)bruiteur : $(OBJ)bruiteur.o $(OBJ)filtre.o $(OBJ)splitmix64.o $(OBJ)xorshift1024star.o $(OBJ)ziggurat.o
 	$(CC) $(CFLAGS) -o $@ $^ $(FFTW3) -Wl,-Bdynamic -lm
+
+$(BIN)GCUncert : $(OBJ)gcuncert.o $(OBJ)stio_sbr.o $(OBJ)filtre.o $(OBJ)3ch_sbr.o $(OBJ)splitmix64.o $(OBJ)xorshift1024star.o $(OBJ)ziggurat.o
+	$(CC) $(CFLAGS) -o $@ $^ $(FFTW3) -Wl,-Bdynamic -lgsl -lgslcblas -lm
+
+$(BIN)3CorneredHat : $(OBJ)3_cornered_hat.o $(OBJ)asymptote_sbr.o $(OBJ)avardof_sbr.o $(OBJ)stio_sbr.o  $(OBJ)dev_sbr.o $(OBJ)tchebyfit.o $(OBJ)filtre.o $(OBJ)3ch_sbr.o $(OBJ)splitmix64.o $(OBJ)xorshift1024star.o $(OBJ)ziggurat.o
+	$(CC) $(CFLAGS) -o $@ $^ $(FFTW3) -Wl,-Bdynamic -lgsl -lgslcblas -lm
 
 $(OBJ)1col2col.o : $(SOURCE)1col2col.c $(SOURCE)sigma_theta.h
 
@@ -185,7 +194,13 @@ $(OBJ)xtgraph.o : $(SOURCE)xtgraph.c $(SOURCE)sigma_theta.h
 
 $(OBJ)devgraph.o : $(SOURCE)devgraph.c $(SOURCE)sigma_theta.h
 
+$(OBJ)3chgraph.o : $(SOURCE)3chgraph.c $(SOURCE)sigma_theta.h
+
 $(OBJ)bruiteur.o : $(SOURCE)bruiteur.c $(SOURCE)filtre.h
+
+$(OBJ)gcuncert.o : $(SOURCE)gcuncert.c $(SOURCE)sigma_theta.h $(SOURCE)filtre.h $(SOURCE)3ch_sbr.h
+
+$(OBJ)3_cornered_hat.o : $(SOURCE)3_cornered_hat.c $(SOURCE)sigma_theta.h $(SOURCE)filtre.h $(SOURCE)3ch_sbr.h
 
 $(OBJ)ziggurat.o : $(SOURCE)ziggurat.c $(SOURCE)zigtables.h
 

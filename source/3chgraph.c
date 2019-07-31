@@ -1,6 +1,6 @@
-/*   aver.c                                    F. Vernotte - 2018/10/19     */
-/*   Average rounded to integer of 2nd columns of file 1 and file 2         */
-/*				   Modified FV 30/07/2019 (adding options)  */
+/*   3CHGraph.c                                   F. Vernotte - 2019/07/31  */
+/*   Plot 3-cornered hat results with confidence intervals 		    */
+/*   in a single graph 							    */
 /*                                                                          */
 /*                                                   - SIGMA-THETA Project  */
 /*                                                                          */
@@ -46,49 +46,41 @@
 #include <math.h>
 #include "sigma_theta.h"
 
-#define DATAMAX 16384
-#define GRANMAX 67108864
+#define db(x) ((double)(x))
+#define sisig(x) ( (x) == 0 ) ? (db(0)) : (  ( (x) > 0 ) ? (db(1)) : (db(-1))  )
 
 void usage(void)
 /* Help message */
     {
-    printf("Usage: AVer [-s|q|c'val'] FILE1 FILE2 FILE3\n\n");
-    printf("Computes the average of the 2nd columns of FILE1, FILE2 and FILE3: (y1+y2+y3)/3.\n\n");
-    printf("The input files FILE1, FILE2 and FILE3 contain a N line / 2 column table, the 1st columns are assumed identical.\n\n");
-    printf("A 2-column table containing the 1st column of FILE1 as the first column of the output table and the average of the 2nd columns of FILE1, FILE2, FILE3 as the the second column of the output table is sent to the standard output.\n\n");
-    printf("If the option '-s' is selected, the sum is computed without dividing by 3. \n");
-    printf("If the option '-q' is selected, the sum is divided by the square root of 3 (suitable to compute the measurement noise of a three-cornered system thanks to the closure relationship). \n");
-    printf("If the option '-c' immediately followed by a value 'val' is selected, the sum is divided by the coefficient 'val'.\n\n");
-    printf("A redirection should be used for saving the results in a TARGET file: AVer FILE1 FILE2 > TARGET.\n\n");
+    printf("Usage: 3CHGraph [-m|f] OutFILE InFILE1 InFILE2 InFILE3 [InFILE4]\n\n");
+    printf("Plots 3-cornered hat results (computed by Groslambert Covariance or classical 3-cornered hat) with confidence intervals in a single graph.\n\n");
+    printf("The 3 input files InFILE1-3 have 7 columns. Each of these files should contain the results of each of the 3 clocks of the 3-cornered hat system: tau, GCov or classical 3-conered hat, mean or median estimate, 68 and 95 %% confidence interval bounds.\n\n");
+    printf("The optional 4th input file InFILE4 has 2 columns. It should contain the ADev of the measurement noise.\n\n");
+    printf("If the option '-m' is selected, the mean estimate is meant to be displayed in the 3rd column of the input files.\n");
+    printf("If the option '-f' is selected, the 50 %% estimate (median) is meant to be displayed in the 3rd column of the input files.\n\n");
+    printf("The OutFILE is given to store:\n");
+    printf("- the file OutFILE.gnu for invoking gnuplot,\n");
+    printf("- the file OutFILE.pdf which is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n\n");
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
 int main(int argc, char *argv[])
     {
-    int rep, rip, indeq, err;
-    int i, nbv, N, N2, N3;
-    double knorm;
-    char source1[256], source2[256], source3[256], gm[100];
+    int i, j, rep, nbf, err, N, Nref, aflag, fflag, ind50;
+    char outfile[256], infiles[4][256];
+    double tau[256], gcod[4][256], bmin[3][256], bmax[3][256], truc[256];
 
-    knorm=(double)3;
-    while ((rep = getopt (argc, argv, "sqc:?")) != -1)
+    aflag=fflag=0;
+    ind50=2;
+    while ((rep = getopt (argc, argv, "mf")) != -1)
 	switch(rep)
 		{
-		case 's':
-			knorm = (double)1;
+		case 'm':
+			aflag = 1;
+			ind50=0;
 			break;
-		case 'q':
-			knorm = sqrt((double)3);
-			break;
-		case 'c':
-			knorm=0;
-			rip=sscanf(optarg,"%lf",&knorm);
-			if ((rip!=1)||(!knorm))
-				{
-				printf("# Invalid coefficient after option '-c'\n");
-				usage();
-				exit(-1);
-				}
+		case 'f':
+			fflag = ind50 = 1;
 			break;
 		case '?':
 			printf("# Unknown option '-%c'\n",optopt);
@@ -96,48 +88,80 @@ int main(int argc, char *argv[])
 		default:
 			exit(-1);
 		}
-    if (optind>2)
-	{
-	printf("Incompatible options\n");
-	usage();
-	exit(-1);
-	}
-    if (argc-optind<3)
-	{
-	printf("# Missing arguments\n");
-	usage();
-	exit(-1);
-	}
-    if (argc-optind>3)
-	{
-	printf("# Too many arguments\n");
-	usage();
-	exit(-1);
-	}
-    strcpy(source1,argv[optind]);
-    strcpy(source2,argv[optind+1]);
-    strcpy(source3,argv[optind+2]);
-
-    err=0;
-    printf("# Coefficient: %f\n",knorm);
-    N=load_3yk(source1,source2,source3);
-    if (N<1)
-	{
-	switch(N)
+    if (aflag&fflag)
 		{
-	        case 0:
-			printf("# Empty file\n");
-			break;
-		case -1:
-			printf("# File not found\n");
-			break;
-		case -2:
-			printf("# Different file lengths\n");
+		printf("# Incompatible options '-m' and '-f'\n");
+		usage();
+		exit(-1);
 		}
-	exit(N);
+    nbf=argc-optind;
+    if (nbf<4)
+        {
+	printf("# 3CHGraph requires at least 4 file names as arguments\n\n");
+        usage();
+	exit(-1);
 	}
-    for (i=0;i<N;++i)
-	printf("%24.16e \t %24.16e\n",T[i],(Y12[i]+Y23[i]+Y31[i])/knorm);
-    exit(err);		
+    if (nbf>5)
+	{
+	printf("# Too many file names\n\n");
+	usage();
+	exit(-1);
+	}
+    strcpy(outfile,argv[optind]);
+    for (i=0;i<3;++i)
+	{
+	strcpy(infiles[i],argv[optind+i+1]);
+	N=load_7col(infiles[i],tau,gcod[i],bmin[i],truc,truc,truc,bmax[i]);
+    	if (N==-1)
+		{
+      		printf("# File %s not found\n", infiles[i]);
+		exit(-1);
+		}
+        if (N<2)
+		{
+		printf("# %s: unrecognized file\n\n", infiles[i]);
+		usage();
+		exit(-1);
+		}
+	for (j=0;j<N;++j)
+		if (gcod[i][j]<bmin[i][j]) bmin[i][j]=gcod[i][j];
+	if (i)
+		{
+		if (N!=Nref)
+			{
+			printf("# Different number of data in %s and %s\n",infiles[0],infiles[i]);
+			exit(-1);
+			}
+		}
+	else
+		Nref=N;
+	}
+    if (nbf==5)
+	{
+	strcpy(infiles[3],argv[optind+4]);
+	N=load_adev(infiles[3],tau,gcod[3]);
+    	if (N==-1)
+		{
+      		printf("# File %s not found\n", infiles[3]);
+		exit(-1);
+		}
+        if (N<2)
+		{
+		printf("# %s: unrecognized file\n\n", infiles[3]);
+		usage();
+		exit(-1);
+		}
+	}
+    else
+	infiles[3][0]=0;
+
+    err=init_flag();
+    if (err==-1) printf("# ~/.SigmaTheta.conf not found, default values selected\n");
+    if (err==-2) printf("# ~/.SigmaTheta.conf improper, default values selected\n");
+
+
+/* Use of gnuplot for generating the graph as a ps file */
+    err=gen_3chplt(infiles, outfile, N, tau, bmin, bmax, ind50);
+    if (err) printf("# Error %d: pdf file not created\n",err);
     }
-    
+		  

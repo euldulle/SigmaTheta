@@ -52,7 +52,7 @@ void usage(void)
     {
     printf("Usage: ADGraph [-m] DevFILE FitFILE\n\n");
     printf("Plots the graph of the (modified) Allan Deviation estimates versus tau.\n\n");
-    printf("The input file DevFILE contains a 2-column table with tau values (integration time) in the first column and deviation measurement in the second column.\n\n");
+    printf("The input file DevFILE contains a 7-column table with tau values (integration time) in the first column, deviation measurements in the second column, unbiased estimates in the 3rd, 68 and 95 %% confidence interval bounds in the following columns.\n\n");
     printf("The input file FitFILE contains the 6 asymptote coefficients (from tau^-3/2 to tau^+1) in a 1-line 6-column table.\n\n");
     printf("The file DevFILE.gnu is generated for invoking gnuplot.\n");
     printf("The file DevFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n\n");
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 		exit(-1);
 		}
 /* Use of gnuplot for generating the graph as a ps file */
-	    err=gener_gplt(source,N,tau,adev,bmax);
+	    err=gener_gplt(source,N,tau,adev,bmax,"unbiased");
 	    if (err) printf("# Error %d: ps file not created\n",err);
 	    }
 	}

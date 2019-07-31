@@ -89,11 +89,11 @@ The following data should be printed on screen:
 2.174317e-25 	 9.832043e-26 	 2.319278e-27 	 1.501548e-30 	 3.418445e-35 
 
 
-Moreover, 2 files should be created: nt.adv.gnu and nt.adv.ps. 
+Moreover, 2 files should be created: nt.adv.gnu and nt.adv.pdf. 
 The first one is a gnuplot command file which should contain:
 
-set terminal postscript landscape enhanced color solid "Helvetica" 18
-set output "nt.adv.ps"
+set terminal pdfcairo size 172,128 enhanced color font "Helvetica" fontscale 18
+set output "nt.adv.pdf"
 set logscale xy
 set grid
 set key left
@@ -109,7 +109,7 @@ set label "Sigma Theta 1.1" at 5.097e+05,3.306e-14 right font "Helvetica,10"
 plot "nt.adv" using 1:2:4:7 title "95 % confidence interval" with yerrorbars ls 2 , "nt.adv" using 1:2:5:6 title "68 % confidence interval" with yerrorbars ls 1 , "nt.adv" using 1:3 title "unbiased estimates" with points ls 3, sqrt(2.174317e-25/x**2+9.832043e-26/x+2.319278e-27+1.501548e-30*x+3.418445e-35*x**2) notitle with line lt 1 lw 2, sqrt(2.174317e-25/x**2) title "4.7e-13 {/Symbol t}^{-1} " with line lt 2, sqrt(9.832043e-26/x) title "3.1e-13 {/Symbol t}^{-1/2}" with line lt 3, sqrt(2.319278e-27) title "4.8e-14      " with line lt 4, sqrt(1.501548e-30*x) title "1.2e-15 {/Symbol t}^{1/2} " with line lt 5, sqrt(3.418445e-35*x**2) title "5.8e-18 {/Symbol t}    " with line lt 6
 exit
 
-The second one is a postscript file which can be opened with ghostview. The graph should look as the reference one located in the file "reference.ps".
+The second one is a pdf file. The graph should look as the reference one located in the file "reference.pdf".
 
 You may also test the equivalent bourne shell script by typing:
 
@@ -146,7 +146,7 @@ The file flicker.adev should look like:
 1.024000e+03 	 6.686291e-01 	 8.040981e-01 	 3.787698e-01 	 5.095008e-01 	 1.263986e+00 	 2.493070e+00
 2.048000e+03 	 8.967642e-01 	 1.692521e+00 	 4.000906e-01 	 6.382338e-01 	 4.441769e+00 	 2.861589e+01
 
-Differences of a few percent are entirely normal since this is noise simulation. Viewing the postcript file flicker.adev.ps should reveal adev values following a horizontal asymptote around ~1.3.
+Differences of a few percent are entirely normal since this is noise simulation. Viewing the postcript file flicker.adev.pdf should reveal adev values following a horizontal asymptote around ~1.3.
 
-François Vernotte, 2015/10/26
+François Vernotte, 2015/10/26, revised 2019/07/31
 
