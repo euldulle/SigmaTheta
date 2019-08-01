@@ -105,17 +105,17 @@ int main(int argc, char *argv[])
 				switch(command[1])
 					{
 					case 'p':
-						fv=(char)3;
+						fv=PVAR;
 						break;
 					case 'h':
-						fv=(char)2;
+						fv=HVAR;
 						break;
 					case 'm':
-						fv=(char)1;
+						fv=MVAR;
 						break;
 					case 'a':
 					default:
-						fv=0;
+						fv=AVAR;
 					}
 				strcpy(source,*++argv);
 				strcpy(outfile,*++argv);

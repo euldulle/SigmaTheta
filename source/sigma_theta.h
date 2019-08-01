@@ -41,6 +41,11 @@
 // #define ST_VERSION "4.0"
 //#define ST_DATE "2019/06/22"
 
+#define AVAR 0
+#define MVAR 1
+#define HVAR 2
+#define PVAR 3
+
 struct conf_int
     {
     double inf_bound;
