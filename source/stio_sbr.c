@@ -41,10 +41,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <math.h>
 
 #define DATAMAX 16384
 #define GRANMAX 67108864
+#define MAXLINELENGTH 256
+#define MAXCHAR 512
+
 
 extern double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31, coeff[], ortau[], log_inc;
 extern char st_version[];
@@ -353,70 +357,177 @@ int init_flag()
         }
     }
 
-int load_ykt(char *source)
+double scale(char code){
+    //
+    // returns a scaling factor as a double defined according to
+    // the following conventions :
+    //
+    // code char :
+    //  
+    //
+    //
+    
+    double factor;
+
+
+    switch(code){
+        case 'd': 
+            //
+            // d for days, 86400 s ; useful for timestamps in MJDs
+            //
+            factor=86400.;
+            break;
+        case 'H':
+            //
+            // H for hours, 3600 s ; useful for timestamps in hours
+            //
+            factor=3600.;
+            break;
+        case 'M':
+            //
+            // M for minutes, 60 s ; useful for timestamps in minutes
+            //
+            factor=60.;
+            break;
+        case 'm':
+            //
+            // m for milliseconds ; useful for data in milliseconds
+            //
+            factor=1.e-3;
+            break;
+        case 'u':
+            //
+            // u for microseconds ; useful for data in microseconds
+            //
+            factor=1.e-6;
+            break;
+        case 'n':
+            //
+            // n for nanoseconds ; useful for data in nanoseconds
+            //
+            factor=1.e-9;
+            break;
+            //
+        case 'p':
+            //
+            // p for picoseconds ; useful for data in picoseconds
+            factor=1.e-12;
+            break;
+        case 'f':
+            //
+            // f for femtoseconds ; useful for data in femtoseconds
+            //
+            factor=1.e-15;
+            break;
+        case 'a':
+            //
+            // a for attoseconds ; useful for data in attoseconds. Why not ?..
+            //
+            factor=1.e-18;
+            break;
+        default:
+            // default: no scaling. 
+            //    No scaling is normally dealt with code = 0 
+            //    so no multiplication by 1 of a full dataset 
+            //    should ever occur under normal use.
+            factor=1;
+        }
+    // fprintf(stderr,"# scale: factor %le input @%c@%d@\n", factor, code, code );
+    return factor;
+    }
+
+
+int load_ykt(char *source, char scalex, char scaley)
 /* Load the file pointed by 'source' and transfer its contain into the global 'T' and 'Y' tables. */
 /* Output values: -1 file not found       */
 /*                 0 unrecognized file    */
 /*                 N length of the tables */
-    {
-    int i, nbv, N;
+//
+// file reading switched from fscanf to readline and sscanf 
+// reading only checks that there are at least 2 readable columns
+// the existence of additional columns is not checked, and hence 
+// no longer considered a fatal error
+//
+// Scaling can be done using 2 chars scalex scaley
+// to deal with timestamps available in MJD, hours or minutes
+// and data available in ms, us, ns, ps, fs
+//
+// if those are 0 (decimal value 0, not char '0'), no scaling 
+// applies ; see double scale(char) for details.
+//
+{
+    int i, nbv, N, linecount=0, valcount=0;
     char *rep;
     long int dtmx;
-    double tst;
-    char gm[256];    
+    double tst, xscale=1, yscale=1;
+    size_t n;
+    //char line[MAXLINELENGTH+1];    
+    char *line=NULL;
     FILE *ofd;
 
     dtmx=DATAMAX;
     T=(double *)malloc(dtmx*sizeof(double)); 
     Y=(double *)malloc(dtmx*sizeof(double)); 
+    if (scalex!=0) xscale=scale(scalex);
+    if (scaley!=0) yscale=scale(scaley);
+    // fprintf(stderr,"# stio_sbr: xscale %le yscale %le\n", xscale, yscale);
 
     if (strlen(source)==0)
         ofd=stdin;
     else
         ofd=fopen(source, "r");
 
-    if (ofd==NULL)
+    if (ofd==NULL){
+        fprintf(stderr,"Could not open file %s", source);
         return(-1);
-    else
-        {
-       	do
-	    rep=fgets(gm,100,ofd);
-	while((gm[0]=='#')||(gm[0]=='%'));
-        i=0;
-        nbv=sscanf(gm,"%lf %lf %lf",&T[i],&Y[i],&tst);
-	if (nbv!=2)
-	    {
-	    if (nbv!=1) nbv=-nbv;
-	    return(nbv);
-	    }
-	else
-	    {
-            do
-                {
-                i++;
-	        if (i>=dtmx)
-	            {
-	            dtmx+=DATAMAX;
-	            if (dtmx>GRANMAX)
-	                {
-		        printf("# File trucated to %ld elements\n",dtmx);
-                        break;
-	                }
-	            T=(double *)realloc(T,dtmx*sizeof(double));
-	            Y=(double *)realloc(Y,dtmx*sizeof(double));
-	            }
-	        }
-            while(fscanf(ofd,"%lf %lf",&T[i],&Y[i])==2);
-            if (ofd!=stdin)
-                fclose(ofd);
-            N=i;
-	    }
-        }
-    return(N);
     }
+    else {
+        i=0;
+        while(getline(&line, &n, ofd)!=-1) {
+            //
+            // read an entire line
+            //
+            linecount++;
+            if (line[0] == '#' || line[0] == '%')
+                //
+                // ignore comment lines
+                //
+                continue;
+            if ((valcount=sscanf(line,"%lf %lf",&T[i],&Y[i])==2)){
+                // reads 2 values out of line
+
+                //
+                // proceed to rescaling if needed (scalex != 0 or scaley != 0)
+                //
+                if (scalex) T[i]*=xscale;
+                if (scaley) Y[i]*=yscale;
+                i++;
+                if (i>=dtmx)
+                {
+                    dtmx+=DATAMAX;
+                    if (dtmx>GRANMAX)
+                    {
+                        printf("# File truncated to %ld elements\n",dtmx);
+                        break;
+                    }
+                    T=(double *)realloc(T,dtmx*sizeof(double));
+                    Y=(double *)realloc(Y,dtmx*sizeof(double));
+                }
+            }
+            else{
+                fprintf(stderr," # ignoring line %d : only %d value(s) read #%s# \n", linecount, valcount, line);
+            }
+        }
+
+        if (ofd!=stdin)
+            fclose(ofd);
+        N=i;
+    }
+    return(N);
+}
 
 int load_2yk(char *source1, char *source2)
-/* Load the file pointed by 'source' and transfer its contain into the global 'T' and 'Y' tables. */
+/* Load the file pointed by 'source' and transfer its content into the global 'T' and 'Y' tables. */
 /* Output values: -1 file not found       */
 /*                 0 unrecognized file    */
 /*                 N length of the tables */
@@ -724,7 +835,11 @@ int load_adev(char *source, double tau[], double adev[])
     char gm[256];    
     FILE *ofd;
 
-    ofd=fopen(source, "r");
+    if (strlen(source)==0)
+        ofd=stdin;
+    else
+        ofd=fopen(source, "r");
+    
     if (ofd==NULL)
         return(-1);
     else
@@ -1521,4 +1636,3 @@ int gen_3chplt(char input[][256], char *outfile, int N, double tau[], double gco
     err=system(sys_cmd);
     return(err);
     }
-

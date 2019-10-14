@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
     char source[256], gm[100];
     FILE *ofd;
     double v1,v2,smpt,rslt,tau[256],dev[256];
+    char scalex=0, scaley=0;
 
     if (argc<2)
         {
@@ -78,7 +79,7 @@ int main(int argc, char *argv[])
     else
 	strcpy(source,*++argv);
 
-    N=load_ykt(source);
+    N=load_ykt(source,scalex,scaley);
     if (N==-1)
         printf("# File not found\n");
     else

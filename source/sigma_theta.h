@@ -46,6 +46,11 @@
 #define HVAR 2
 #define PVAR 3
 
+#define DATAMAX 16384
+#define GRANMAX 67108864
+
+#define MAXCHAR 512
+#include <stdint.h>
 struct conf_int
     {
     double inf_bound;
@@ -61,6 +66,7 @@ char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, fla
 int ntau;
 
 int init_flag();
+double scale(char);
 double tchebyfit(long);
 double adev_y(int, int);
 double gcodev_y(int, int);
@@ -81,7 +87,7 @@ double cdf_rayleigh(double , double);
 double dcdfr(double x, double nu);
 struct conf_int raylconfint(double);
 struct conf_int raylconfint1s(double);
-int load_ykt(char *);
+int load_ykt(char *, char, char);
 int load_2yk(char *, char *);
 int load_3yk(char *, char *, char *);
 int load_adev(char *, double *, double *);

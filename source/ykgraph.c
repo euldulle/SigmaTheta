@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     double tot_dur,ksy;
     char fv;
     FILE *ofd;
+    char scalex=0, scaley=0;
 
     fv=0;
     if (argc!=2)
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
     if (err==-1) printf("# ~/.SigmaTheta.conf not found, default values selected\n");
     if (err==-2) printf("# ~/.SigmaTheta.conf improper, default values selected\n");
     flag_variance=fv;
-    N=load_ykt(source);
+    N=load_ykt(source,scalex,scaley);
     if (N==-1)
       printf("# File %s not found\n",source);
     else

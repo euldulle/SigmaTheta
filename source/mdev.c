@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 	int i,nbv,N,nto,tomax;
 	long int dtmx;
 	char source[256], gm[100];
+    char scalex=0, scaley=0;
 	FILE *ofd;
 	double v1,v2,smpt,rslt,tau[256],dev[256];
 	uint8_t stddev=0, tdev=0;
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
 	else
 		strcpy(source,argv[optind]);
 
-	N=load_ykt(source);
+	N=load_ykt(source,scalex,scaley);
 	if (N==-1)
 		printf("# File not found\n");
 	else

@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
     {
     int i,j,nto,N,err,alpha[256];
     double tsas,asympt,tau[256], dev[256], avar[256], edf[256], bmin[256], bmax[256],bi1s[256],bx1s[256],adc[256],w[256];
+    char scalex=0, scaley=0;   
     char fsw, fv, command[32], source[256], outfile[256];
     struct conf_int rayl;
     FILE *ofd;
@@ -133,7 +134,7 @@ int main(int argc, char *argv[])
 			exit(-1);
 			}
 		}
-    nto=load_ykt(source);
+    nto=load_ykt(source,scalex,scaley);
     if (nto==-1)
         printf("# File not found\n");
     else

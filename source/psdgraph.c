@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     double stride,l2n,tot_dur,ksy;
     char fv;
     FILE *ofd;
+    char scalex=0, scaley=0;
 
     fv=0;
     if (argc!=2)
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
     flag_variance=fv;
     strcpy(psdfile,source);
     strcat(psdfile,".psd");
-    N=load_ykt(source);
+    N=load_ykt(source,scalex,scaley);
     if (N==-1)
       printf("# File %s not found\n",source);
     else
