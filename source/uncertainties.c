@@ -52,25 +52,42 @@
 void usage(void)
 /* Help message */
     {
-    printf("Usage: uncertainties [-option] SOURCE TARGET\n\n");
-    printf("Computes the 95 %% confidence intervals of a sequence of (modified) Allan Deviations, the asymptotes and plot a graph.\n\n");
-    printf("The input file SOURCE contains a 2-column table with tau values (integration time) in the first column and (modified) Allan deviation measurement in the second column.\n\n");
-    printf("The first tau value is assumed to be equal to the sampling step.\n");
-    printf("The last tau value is assumed to be equal to the half of the whole time sequence duration.\n\n");
-    printf("A 7-column table is sent to the standard output with:\n");
-    printf("\t1st column: tau values\n");
-    printf("\t2nd column: (modified) Allan deviation estimate\n");
-    printf("\t3rd column: unbiased estimate\n");
-    printf("\t4th column: 2.5 %% bound\n");
-    printf("\t5th column: 16 %% bound\n");
-    printf("\t6th column: 84 %% bound\n");
-    printf("\t7th column: 97.5 %% bound.\n\n");
-    printf("The file TARGET.gnu is generated for invoking gnuplot. The configuration file \".SigmaTheta.conf\" is taken into account.\n");
-    printf("The file TARGET.ps is the postscript file of the gnuplot graph.\n\n");
-    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance.\n");
-    printf("If the option '-c' is selected, the variance is assumed to be the classical Allan variance.\n");
-    printf("Otherwise, the variance is assumed to be the one selected in the configuration file \".SigmaTheta.conf\".\n\n"); 
-    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    printf("##############################################################################################################\n\n");
+    printf(" uncertainties : a tool from the SigmaTheta suite\n\n");
+    printf("     Usage: uncertainties [-mnch] [-o outfile] [SOURCE [TARGET]]\n\n");
+    printf("     Computes the 95 %% confidence intervals of a sequence of \n");
+    printf("     (modified) Allan Deviations, the asymptotes and plot a graph.\n\n");
+    printf("     The input file SOURCE contains a 2-column table with tau values (integration time)\n");
+    printf("     in the first column and (modified) Allan deviation measurement in the second column.\n");
+    printf("     If the input file is missing data is read out of stdin.\n\n");
+
+    printf("     The first tau value is assumed to be equal to the sampling step.\n");
+    printf("     The last tau value is assumed to be equal to the half.\n");
+    printf("        of the whole time sequence duration.\n\n");
+    printf("     A 7-column table is sent to the standard output with:\n");
+    printf("         1st column: tau values\n");
+    printf("         2nd column: (modified) Allan deviation estimate\n");
+    printf("         3rd column: unbiased estimate\n");
+    printf("         4th column: 2.5 %% bound\n");
+    printf("         5th column: 16 %% bound\n");
+    printf("         6th column: 84 %% bound\n");
+    printf("         7th column: 97.5 %% bound.\n\n");
+    printf("    The file TARGET.gnu is generated for invoking gnuplot. \n");
+    printf("    The configuration file \".SigmaTheta.conf\" is taken into account.\n");
+    printf("    The file TARGET.ps is the postscript file of the gnuplot graph.\n\n");
+    printf("    By default, the variance is assumed to be the one\n"); 
+    printf("    selected in the configuration file \".SigmaTheta.conf\".\n\n"); 
+    printf("    Options :\n");
+    printf("        -m : use the modified Allan variance.\n");
+    printf("        -c : use the classical Allan variance.\n");
+    printf("        -n : the plot is not built.\n");
+    printf("        -o output : when reading from stdin, -o allows to specify an output filename :\n");
+    printf("                    if not specified, a random filename will be generated for output.\n");
+    printf("        -h : this message.\n\n");
+    printf("           SigmaTheta %s %s \n",st_version,st_date);
+    printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");
+    printf("##############################################################################################################\n\n");
+    exit(-1);
     }
 
 int main(int argc, char *argv[])
@@ -80,7 +97,7 @@ int main(int argc, char *argv[])
 {
     int i,j,N,err,alpha[32];
     double tsas,asympt,tau[32], adev[32], avar[32], edf[32], bmin[32], bmax[32],bi1s[32],bx1s[32],adc[32],w[32];
-    char pre_flag_v, source[MAXCHAR]="", tmpoutfile[16]="st_unc_XXXXXX", outfile[MAXCHAR], command[32];
+    char pre_flag_v, source[MAXCHAR]="", tmpoutfile[16]="st_unc_XXXXXX", outfile[MAXCHAR]="", command[32];
     struct conf_int rayl;
     FILE *ofd;
     int8_t c, stdo, doplot=1;
@@ -90,7 +107,7 @@ int main(int argc, char *argv[])
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "cmn")) != -1)
+    while ((c = getopt (argc, argv, "cmnho:")) != -1)
         switch (c)
         {
             case 'c': // classical Allan Dev
@@ -105,6 +122,10 @@ int main(int argc, char *argv[])
 
             case 'n': // no plot
                 doplot=0;
+                break;
+
+            case 'o':
+                strncpy(outfile,optarg, MAXCHAR);
                 break;
 
             case 'h':
@@ -154,7 +175,10 @@ int main(int argc, char *argv[])
     if (strlen(source)==0){
         fprintf(stderr,"#\n#\n# No input file given , expecting data on stdin...\n#  (%s -h to show usage)\n", argv[0]);
         mktemp(tmpoutfile);
-        snprintf(outfile,MAXCHAR,"%s.%cdevu", tmpoutfile, flagchar);
+        if (outfile[0]==0){ // if -o file was not given, outfile[0] is 0 
+                            // so we need to build an output filename
+            snprintf(outfile,MAXCHAR,"%s.%cdevu", tmpoutfile, flagchar);
+            }
         stdo=1;
     }
 
