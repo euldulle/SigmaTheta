@@ -144,7 +144,6 @@ int main(int argc, char *argv[])
     index=optind;
     if (index<argc){
         lensrc=strlen(strncpy(source,argv[index], MAXCHAR));
-        printf ("# Input file %s\n", argv[index]);
 
         index++;
         if (index<argc){
@@ -159,9 +158,8 @@ int main(int argc, char *argv[])
                     snprintf(outfile+lensrc-3, 5, "adev");
                 }
                 else{
-                    snprintf(outfile, lensrc+5, "%s.adev", source);
+                    snprintf(outfile, lensrc+6, "%s.adev", source);
                 }
-            printf ("# Output file %s\n", outfile);
             }
         }
 
@@ -181,18 +179,20 @@ int main(int argc, char *argv[])
     err=0;
 
     N=load_ykt(source,scalex,0);
+
     if (N==-1)
-        printf("# File not found\n");
+        printf("# File %s not found\n", source);
     else
     {
         if (N<2)
         {
-            printf("# Unrecognized file\n\n");
+            printf("# not enough columns found in file %s \n\n");
             if (N==1)
-                printf("# Use 1col2col command\n\n");
+                printf("# only one column found (tip : use 1col2col command)\n\n");
             usage();
         }
         else {
+            printf ("# Input file %s = %d lines\n", source, N);
             if (stdo==1){
                 ofd=stdout;
                 printf("# Output to stdout: \n#\n");
@@ -214,6 +214,8 @@ int main(int argc, char *argv[])
 
             for(i=0;i<nto;++i)
                 fprintf(ofd,"%24.16e \t %24.16e\n",tau[i],dev[i]);
+
+            printf ("# Output file %s = %d lines\n", outfile, nto);
 
 			if (ofd!=stdout)
 				fclose(ofd);
