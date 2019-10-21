@@ -417,17 +417,17 @@ int main(int argc, char *argv[])
 		// Clock 1
 		for(i=0;i<nto;++i) avar[i]=gadev[0][i]*gadev[0][i];
 		err=relatfit(nto,tau,avar,tau,6);
-		err=gener_gplt(target[0],nto,tau,bmin[0],bmax[0],chestim);
+		err=gener_gplt(target[0],nto,tau,bmin[0],bmax[0],chestim,1);
 		if (err) printf("# Error %d: pdf file not created\n",err);
 		// Clock 2
 		for(i=0;i<nto;++i) avar[i]=gadev[1][i]*gadev[1][i];
 		err=relatfit(nto,tau,avar,tau,6);
-		err=gener_gplt(target[1],nto,tau,bmin[1],bmax[1],chestim);
+		err=gener_gplt(target[1],nto,tau,bmin[1],bmax[1],chestim,1);
 		if (err) printf("# Error %d: pdf file not created\n",err);
 		// Clock 3
 		for(i=0;i<nto;++i) avar[i]=gadev[2][i]*gadev[2][i];
 		err=relatfit(nto,tau,avar,tau,6);
-		err=gener_gplt(target[2],nto,tau,bmin[2],bmax[2],chestim);
+		err=gener_gplt(target[2],nto,tau,bmin[2],bmax[2],chestim,1);
 		if (err) printf("# Error %d: pdf file not created\n",err);
 		}
 	else

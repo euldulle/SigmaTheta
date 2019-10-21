@@ -976,8 +976,8 @@ int load_7col(char *source, double tau[], double adev[], double ubad[], double b
     return(N);
     }
 
-int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ)
-/* Generate a gnuplot file (.gnu) and invoke gnuplot for creating a postscript file */
+int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ, char doplot)
+/* Generate a gnuplot file (.gnu) and (if doplot not 0) invoke gnuplot for creating a postscript file */
     {
     int i,mii,mxi,err;
     double minx, maxx, miny, maxy, lmix, lmax, lmiy, lmay, ltx, lty, lmx, lmy, rtmx, rtmy;
@@ -1169,7 +1169,9 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
     fclose(ofd);
     strcpy(sys_cmd,"gnuplot ");
     strcat(sys_cmd,gptfile);
-    err=system(sys_cmd);
+    if (doplot!=0){
+        err=system(sys_cmd);
+        }
     return(err);
     }
 

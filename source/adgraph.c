@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 		exit(-1);
 		}
 /* Use of gnuplot for generating the graph as a ps file */
-	    err=gener_gplt(source,N,tau,adev,bmax,"unbiased");
+	    err=gener_gplt(source,N,tau,adev,bmax,"unbiased",1);
 	    if (err) printf("# Error %d: ps file not created\n",err);
 	    }
 	}
