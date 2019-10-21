@@ -81,8 +81,11 @@ void usage(void)
     printf("        -m : use the modified Allan variance.\n");
     printf("        -c : use the classical Allan variance.\n");
     printf("        -n : the plot is not built.\n");
-    printf("        -o output : when reading from stdin, -o allows to specify an output filename :\n");
-    printf("                    if not specified, a random filename will be generated for output.\n");
+    printf("        -o output : when reading from stdin, TARGET cannot be passed as arg : \n");
+    printf("                    -o is the way user can specify the TARGET output \n");
+    printf("                    If not specified, a random filename will be generated as TARGET.\n");
+    printf("                    (Specifying TARGET as arg along with SOURCE on the command line\n");
+    printf("                     is still possible for backward compatibility)\n");
     printf("        -h : this message.\n\n");
     printf("           SigmaTheta %s %s \n",st_version,st_date);
     printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");
@@ -297,6 +300,12 @@ int main(int argc, char *argv[])
                 avardof(N, tau, alpha, edf);
             }
             ofd=fopen(outfile, "w");
+
+            if (ofd==NULL){
+                fprintf(stderr,"Cannot open file %s for writing\nRedirecting to stderr\n");
+                ofd=stderr;
+                }
+
             if (flag_variance)
             {
                 printf("# Tau       \t Mdev       \t Mdev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
@@ -309,8 +318,7 @@ int main(int argc, char *argv[])
             }
             /*	    printf("# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
                     fprintf(ofd,"# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");*/
-            for(i=0;i<N;++i)
-            {
+            for(i=0;i<N;++i) {
                 rayl=raylconfint(edf[i]);
                 bmin[i]=adev[i]*sqrt(edf[i])/rayl.sup_bound;
                 bmax[i]=adev[i]*sqrt(edf[i])/rayl.inf_bound;
@@ -321,7 +329,9 @@ int main(int argc, char *argv[])
                 printf("%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
                 fprintf(ofd,"%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
             }
-            fclose(ofd);
+            if (ofd!=stderr)
+                fclose(ofd);
+
             if (flag_bias)
                 for(i=0;i<N;++i) 
                     avar[i]=adc[i]*adc[i];
@@ -339,16 +349,14 @@ int main(int argc, char *argv[])
             
             printf("\n");
             /* Use of gnuplot for generating the graph as a ps file */
-            if (doplot){
-                err=gener_gplt(outfile,N,tau,adev,bmax,"unbiased");
-                if (err) printf("# Error %d: ps file not created\n",err);
-                /*	    printf("tau: ");
-                        for(i=0;i<N;++i) printf("%12.6e \t ",tau[i]);
-                        printf("\n");
-                        printf("edf: ");
-                        for(i=0;i<N;++i) printf("%12.6e \t ",edf[i]);
-                        printf("\n");*/
-            }
+            err=gener_gplt(outfile,N,tau,adev,bmax,"unbiased",doplot);
+            if (err) printf("# Error %d: ps file not created\n",err);
+            /*	    printf("tau: ");
+                    for(i=0;i<N;++i) printf("%12.6e \t ",tau[i]);
+                    printf("\n");
+                    printf("edf: ");
+                    for(i=0;i<N;++i) printf("%12.6e \t ",edf[i]);
+                    printf("\n");*/
         }
     }
 }
