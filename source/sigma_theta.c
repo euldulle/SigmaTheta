@@ -99,6 +99,7 @@ void usage(void)
     printf("        if the PDF option has been chosen in the configuration file.\n\n");
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     printf("##############################################################################################################\n\n");
+    exit(-1);
     }
 
 int main(int argc, char *argv[]) {

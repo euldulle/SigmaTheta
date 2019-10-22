@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
     {
         if (N<2)
         {
-            printf("# not enough columns found in file %s \n\n");
+            printf("# not enough columns found in file %s \n\n", source);
             if (N==1)
                 printf("# only one column found (tip : use 1col2col command)\n\n");
             usage();
