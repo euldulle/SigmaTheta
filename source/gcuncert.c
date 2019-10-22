@@ -46,8 +46,10 @@
 #include "sigma_theta.h"
 #include "filtre.h"
 #include "3ch_sbr.h"
-
+#ifdef DATAMAX
+#undef DATAMAX
 #define DATAMAX 10000000   /* Maximum sequence size 			    */
+#endif
 #define NUMAX 1024    /* Maximum EDF numer */
 
 long GR, cpt_nan;
