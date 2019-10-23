@@ -41,10 +41,16 @@
 // #define ST_VERSION "4.0"
 //#define ST_DATE "2019/06/22"
 
-#define AVAR 0
+// Classical Allan variance
+#define AVAR 0 
+// Modified Allan variance
 #define MVAR 1
+// Hadamard variance
 #define HVAR 2
+// Parabolic variance
 #define PVAR 3
+// Groslambert covariance
+#define GVAR 4
 
 #define DATAMAX 16384
 #define GRANMAX 67108864
