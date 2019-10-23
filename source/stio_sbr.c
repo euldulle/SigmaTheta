@@ -785,7 +785,11 @@ int load_1col(char *source)
 
     dtmx=DATAMAX;
     Y=(double *)malloc(dtmx*sizeof(double)); 
-    ofd=fopen(source, "r");
+    if (strlen(source)==0)
+        ofd=stdin;
+    else
+        ofd=fopen(source, "r");
+
     if (ofd==NULL)
         return(-1);
     else
