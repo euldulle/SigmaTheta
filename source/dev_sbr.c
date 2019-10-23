@@ -46,6 +46,19 @@
 #include <string.h>
 #include <math.h>
 
+#ifndef AVAR
+// Classical Allan variance
+#define AVAR 0 
+// Modified Allan variance
+#define MVAR 1
+// Hadamard variance
+#define HVAR 2
+// Parabolic variance
+#define PVAR 3
+// Groslambert covariance
+#define GVAR 4
+#endif
+
 extern double *T, *Y, *Y1, *Y2, ortau[], log_inc;
 extern char flag_log_inc, flag_variance;
 extern int ntau;
@@ -323,27 +336,27 @@ int serie_dev(int N, double *tau, double *dev)
 			}
 		}
 	nto=indt;
-	}
-    for(i=0;i<nto;++i)
+    }
+    for(i=0;i<nto;++i) {
+        tau[i]=((double)toi[i])*smpt;
+        switch(flag_variance)
         {
-	tau[i]=((double)toi[i])*smpt;
-	switch(flag_variance)
-		{
-		case 1 :
-			dev[i]=mdev_y(toi[i],N);
-			break;
-		case 2 :
-			dev[i]=hadamard_y(toi[i],N);
-			break;
-		case 3 :
-			dev[i]=pdev_y(toi[i],N);
-			break;
-		case 4 :
-			dev[i]=gcodev_y(toi[i],N);
-			break;
-		default :
-			dev[i]=adev_y(toi[i],N);
-		}
-	}
+            case MVAR :
+                dev[i]=mdev_y(toi[i],N);
+                break;
+            case HVAR :
+                dev[i]=hadamard_y(toi[i],N);
+                break;
+            case PVAR :
+                dev[i]=pdev_y(toi[i],N);
+                break;
+            case GVAR :
+                dev[i]=gcodev_y(toi[i],N);
+                break;
+            case AVAR :
+            default :
+                dev[i]=adev_y(toi[i],N);
+        }
+    }
     return(nto);
     }  
