@@ -62,7 +62,7 @@ void usage(void)
 /* Help message */
     {                                                                                                                      
 	printf("##############################################################################################################\n\n");
-    printf(" ADex : a tool from the SigmaTheta suite\n\n");
+    printf(" ADev : a tool from the SigmaTheta suite\n\n");
     printf("     Usage: ADev [-ch] [-x xscalingfactor] [SOURCE [TARGET]]\n\n");
     printf("     Transforms a time error sequence {x(t)} into a normalized frequency deviation sequence {Yk}.\n\n");
     printf("      Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
@@ -208,7 +208,7 @@ int main(int argc, char *argv[])
                 flag_log_inc=1;
                 log_inc=(double)2;
             }
-            flag_variance=0;
+            flag_variance=AVAR;
 
             nto=serie_dev(N, tau, dev);
 
