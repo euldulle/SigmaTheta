@@ -64,7 +64,8 @@ void usage(void)
 	printf("##############################################################################################################\n\n");
     printf(" ADev : a tool from the SigmaTheta suite\n\n");
     printf("     Usage: ADev [-ch] [-x xscalingfactor] [SOURCE [TARGET]]\n\n");
-    printf("     Transforms a time error sequence {x(t)} into a normalized frequency deviation sequence {Yk}.\n\n");
+    printf("        Computes the Allan Deviations of a sequence of \n");
+    printf("        normalized frequency deviation measurements.\n\n");
     printf("      Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
 	printf("      If SOURCE and TARGET are specified, output goes to TARGET unless -c option (output to stdout) is given \n");
 	printf("      If only SOURCE is specified, output goes to SOURCE.adev unless -c option (output to stdout) is given \n\n");

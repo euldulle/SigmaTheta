@@ -44,16 +44,49 @@
 #include <math.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <ctype.h>
 #include "sigma_theta.h"
 
 #define DATAMAX 16384
 #define GRANMAX 67108864
 
-void usage(uint8_t *message)
+void usage(void)
 /* Help message */
     {
-    printf("\n   Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE)\n\n",st_version,st_date);
-    printf("Usage: %s [-t] SOURCE\n\n", message);
+    printf("##############################################################################################################\n\n");
+    printf(" MDev : a tool from the SigmaTheta suite\n\n");
+    printf("     Usage: MDev [-ch] [-x xscalingfactor] [SOURCE [TARGET]]\n\n");
+    printf("        Computes the Modified Allan Deviations of a sequence of \n");
+    printf("        normalized frequency deviation measurements.\n\n");
+    printf("      Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
+	printf("      If SOURCE and TARGET are specified, output goes to TARGET unless -c option (output to stdout) is given \n");
+	printf("      If only SOURCE is specified, output goes to SOURCE.mdev unless -c option (output to stdout) is given \n\n");
+    printf("           -x xscalingfactor\n");
+	printf("                Units are SI units (s) by default ; should the input data be in other units (MJD, ns, ...)\n");
+    printf("                x option allows to properly normalize output : \n");
+    printf("                scaling factor is one of : \n");
+    printf("                    d : days  \n");
+    printf("                    H : hours  \n");
+    printf("                    M : minutes  \n");
+    printf("                    m : millisecond \n");
+    printf("                    u : microsecond \n");
+    printf("                    n : nanosecond \n");
+    printf("                    p : picosecond \n");
+    printf("                  A file containing data as MJD.XXXXX vs freq_dev can be processed with \n");
+    printf("                  MDev datafile -x d  \n\n");
+    printf("           -c : output to stdout only, TARGET file is ignored even if specified ;\n");
+    printf("                this is the default if SOURCE is unspecified (stdin)\n\n");
+    printf("           -h : this message\n\n");
+    printf("     Input consists in an N line / 2 column table with time values (dates) in the first column\n");
+    printf("                               and normalized frequency deviation samples in the second column.\n\n");
+    printf("     Ouput is a 2 column table with averaging times tau in the first column \n");
+    printf("                               and Modified Allan deviation measurement in column 2.\n\n");
+    printf("           SigmaTheta %s %s \n",st_version,st_date);
+    printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");                                   
+	printf("##############################################################################################################\n\n");
+    exit(-1);
+printf("\n   Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE)\n\n",st_version,st_date);
+    printf("Usage: MDev [-t] SOURCE\n\n");
     printf(" Computes the Modified Allan Deviations of a sequence of \n");
     printf(" normalized frequency deviation measurements.\n\n");
     printf("  options  \n");
@@ -68,6 +101,7 @@ void usage(uint8_t *message)
     printf("    which is sent to the standard output.\n\n");
     printf(" A redirection should be used to save the results in a TARGET file: MDeV SOURCE > TARGET\n\n");
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
+    exit(0);
     }
 
 int main(int argc, char *argv[])
@@ -78,42 +112,95 @@ int main(int argc, char *argv[])
 {
 	int i,nbv,N,nto,tomax;
 	long int dtmx;
-	char source[256], gm[100];
     char scalex=0, scaley=0;
 	FILE *ofd;
 	double v1,v2,smpt,rslt,tau[256],dev[256];
 	uint8_t stddev=0, tdev=0;
-    int8_t c;
+    int8_t c, stdo=0, index;
+    int16_t stridx, lensrc;
 	extern char *optarg;
 	extern int opterr;
+    uint8_t source[MAXCHAR]="", outfile[MAXCHAR]="";
+    opterr = 0;
 
-	while(1) {
-		c=getopt(argc, argv, "t");
-		if (c=='?') {
-			usage(argv[0]);
-		}
-
-		if (c==-1) break;
-		switch(c) {
+    while ((c = getopt (argc, argv, "thcx:")) != -1)
+        switch (c)
+        {
+            case 'c':
+                stdo = 1;
+                break;
+            case 'h':
+                usage();
+                break;
+            case 'x':
+                scalex=optarg[0];
+                break;
 			case 't':
 				tdev=1;
 				break;
+            case '?':
+                if (optopt == 'x'){
+                    fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+                    usage();
+                }
+                else if (isprint (optopt))
+                    fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf (stderr,
+                            "Unknown option character `\\x%x'.\n",
+                            optopt);
+                return 1;
+            default:
+                abort ();
+        }
 
-			default:
-				usage(argv[0]);
-				break;
-		}
-	}
 
-	if (optind>=argc)
-	{
-		usage(argv[0]);
-		exit(-1);
-	}
-	else
-		strcpy(source,argv[optind]);
+    index=optind;
+    if (index<argc){
+        lensrc=strlen(strncpy(source,argv[index], MAXCHAR));
 
-	N=load_ykt(source,scalex,scaley);
+        index++;
+        if (index<argc){
+            strncpy(outfile,argv[index], MAXCHAR);
+            printf ("# Output file %s\n", outfile);
+        }
+        else {
+            if (stdo != 1){
+                stridx=lensrc-3;
+                if (source[stridx++]=='y' && source[stridx++]=='k' && source[stridx++]=='t' ){
+                    strncpy(outfile, source, MAXCHAR);
+                    snprintf(outfile+lensrc-3, 5, "mdev");
+                }
+                else{
+                    snprintf(outfile, lensrc+6, "%s.mdev", source);
+                }
+            }
+        }
+
+        index++;
+        if (index<argc)
+        {
+            fprintf(stderr,"Extra parameter.\n");
+            usage();
+        }
+    }
+
+    if (strlen(source)==0){
+        fprintf(stderr,"#\n#\n# No input file given , expecting data on stdin...\n# %s -h to show usage )\n#\n", argv[0]);
+        stdo=1;
+        }
+
+//    err=0; // this is for init_flag ; left on standby for now
+
+//  if (optind>=argc)
+//  {
+//  	usage(argv[0]);
+//  	exit(-1);
+//  }
+//  else
+//  	strcpy(source,argv[optind]);
+
+	N=load_ykt(source,scalex,0);
 	if (N==-1)
 		printf("# File not found\n");
 	else
@@ -123,7 +210,7 @@ int main(int argc, char *argv[])
 			printf("# Unrecognized file\n\n");
 			if (N==1)
 				printf("# Use 1col2col command\n\n");
-			usage(argv[0]);
+			usage();
 		}
 		else
 		{

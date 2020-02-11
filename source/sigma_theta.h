@@ -52,6 +52,11 @@
 // Groslambert covariance
 #define GVAR 4
 
+#define GPLDOPLOT (0x01) // whether we actually run the gnuplot file or just build it
+#define GPLPNG (0x02)    // whether we include png as an output format to the gnuplot file 
+#define GPLPDF (0x04)    // whether we include pdf as an output format to the gnuplot file 
+#define GPLX11 (0x08)    // whether we include X11 as an output (opens a graphic window whan running the gnuplot file
+
 #define DATAMAX 16384
 #define GRANMAX 67108864
 
