@@ -49,6 +49,10 @@
 #define MAXLINELENGTH 256
 #define MAXCHAR 512
 
+#define GPLDOPLOT (0x01) // whether we actually run the gnuplot file or just build it
+#define GPLPNG (0x02)    // whether we include png as an output format to the gnuplot file
+#define GPLPDF (0x04)    // whether we include pdf as an output format to the gnuplot file
+#define GPLX11 (0x08)    // whether we include X11 as an output (opens a graphic window whan running the gnuplot file
 
 extern double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31, coeff[], ortau[], log_inc;
 extern char st_version[];
@@ -980,28 +984,25 @@ int load_7col(char *source, double tau[], double adev[], double ubad[], double b
     return(N);
     }
 
-int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ, char doplot)
+int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ, char plotflag)
 /* Generate a gnuplot file (.gnu) and (if doplot not 0) invoke gnuplot for creating a postscript file */
     {
     int i,mii,mxi,err;
     double minx, maxx, miny, maxy, lmix, lmax, lmiy, lmay, ltx, lty, lmx, lmy, rtmx, rtmy;
-    char gptfile[256], psfile[256], gpt_cmd[65536], sys_cmd[256];
+    char gptfile[MAXCHAR], outviewfile[MAXCHAR], gpt_cmd[65536], sys_cmd[MAXCHAR];
     FILE *ofd;
+    uint8_t doplot=0;
 
-    strcpy(gptfile,outfile);
-    strcat(gptfile,".gnu");
-    strcpy(psfile,outfile);
-    strcat(psfile,".pdf");
+    strncpy(gptfile, outfile, MAXCHAR-1);
+    strncat(gptfile,".gnu", MAXCHAR-1);
+    strncpy(outviewfile,outfile,MAXCHAR-1);
     ofd=fopen(gptfile, "w");
     if (ofd==NULL) return(-1);
-//    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
-    if (flag_display)
-	    fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
-    else
-	{
-	fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
-	fprintf(ofd,"set output \"%s\"\n",psfile);
-	}
+    // 
+    // use a dummy terminal for initial plotting, the use replot to generate 
+    // requested output format(s)
+    //
+    fprintf(ofd,"set terminal unknown \n");
     fprintf(ofd,"set logscale xy\n");
     fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
     fprintf(ofd,"set grid\n");
@@ -1119,29 +1120,30 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
 	fprintf(ofd,"set style line 12 pt 0 ps 20 lc rgb \"#A0A0A0\" lw 40\n");
 	fprintf(ofd,"set label \"SigmaTheta %s\" at %9.3e,%9.3e right font \"Helvetica,8\"\n",st_version,rtmx,rtmy);
 	}
+
     fprintf(ofd,"plot ");
-    switch(flag_conf)
-        {
-	case 0 :
-            fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2 ",outfile);
-	    break;
-	case 1 :
-            fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
-            fprintf(ofd,"\"%s\" using 1:3:4:7 title \"95 %% confidence interval\" with yerrorbars ls 12 ",outfile);
-	    break;
-	case 8 : 
-            fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
-            fprintf(ofd,"\"%s\" using 1:3:5:6 title \"68 %% confidence interval\" with yerrorbars ls 11 ",outfile);
-	    break;
-	case 9 :
-            fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
-            fprintf(ofd,"\"%s\" using 1:3:4:7 title \"95 %% confidence interval\" with yerrorbars ls 12 ",outfile);
-            fprintf(ofd,", \"%s\" using 1:3:5:6 title \"68 %% confidence interval\" with yerrorbars ls 11 ",outfile);
-	    break;
-	default :
-            fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
-            fprintf(ofd,"\"%s\" using 1:3:4:7 title \"95 %% confidence interval\" with yerrorbars ls 12 ",outfile);
+    switch(flag_conf) {
+        case 0 :
+                fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2 ",outfile);
+            break;
+        case 1 :
+                fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
+                fprintf(ofd,"\"%s\" using 1:3:4:7 title \"95 %% confidence interval\" with yerrorbars ls 12 ",outfile);
+            break;
+        case 8 : 
+                fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
+                fprintf(ofd,"\"%s\" using 1:3:5:6 title \"68 %% confidence interval\" with yerrorbars ls 11 ",outfile);
+            break;
+        case 9 :
+                fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
+                fprintf(ofd,"\"%s\" using 1:3:4:7 title \"95 %% confidence interval\" with yerrorbars ls 12 ",outfile);
+                fprintf(ofd,", \"%s\" using 1:3:5:6 title \"68 %% confidence interval\" with yerrorbars ls 11 ",outfile);
+            break;
+        default :
+                fprintf(ofd,"\"%s\" using 1:2 notitle with points ls 2, ",outfile);
+                fprintf(ofd,"\"%s\" using 1:3:4:7 title \"95 %% confidence interval\" with yerrorbars ls 12 ",outfile);
 	}
+
     if (flag_bias)
         fprintf(ofd,", \"%s\" using 1:3 title \"%s estimates\" with points ls 3",outfile, est_typ);
     if (flag_fit)
@@ -1168,14 +1170,54 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
         if (coeff[5]!=0)
 	    fprintf(ofd,", sqrt(%12.6e*x**2) title \"%7.1e {/Symbol t}    \" with line ls 10",coeff[5],sqrt(coeff[5]));
 	}
+
+    //
+    // if plotflag is EQUAL to 1, then let flag_display do the job (backward compatibility)
+    //
+    if (plotflag==1){
+        doplot=1;
+        if (flag_display)
+            fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\nreplot\n");
+        else {
+            fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+            fprintf(ofd,"set output \"%s.pdf\"\n",outfile);
+        }
+    }
+    else {
+        //
+        //
+        // in any other case, lowercases doplot options will run the gnuplot file ; 
+        // upper cases and other options wont.
+        // 
+
+        if (plotflag & GPLPNG){
+            fprintf(ofd,"set terminal png size 1440,1024 enhanced font \"Helvetica\" fontscale 1.5\n");
+            fprintf(ofd,"set output \"%s.png\"\n",outfile);
+            fprintf(ofd,"replot\n");
+            }
+
+        if (plotflag & GPLPDF){
+            fprintf(ofd,"set terminal png size 1440,1024 enhanced font \"Helvetica\" fontscale 1.5\n");
+            fprintf(ofd,"set output \"%s.pdf\"\n",outfile);
+            fprintf(ofd,"replot\n");
+            }
+
+        if (plotflag & GPLX11){
+            fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+            fprintf(ofd,"replot\n");
+            }
+        }
+
     fprintf(ofd,"\n");
     fprintf(ofd,"exit\n");
     fclose(ofd);
-    strcpy(sys_cmd,"gnuplot ");
-    strcat(sys_cmd,gptfile);
-    if (doplot!=0){
+
+    if (doplot==1){
+        strcpy(sys_cmd,"gnuplot ");
+        strcat(sys_cmd,gptfile);
         err=system(sys_cmd);
         }
+
     return(err);
     }
 
