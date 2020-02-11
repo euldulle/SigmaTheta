@@ -86,6 +86,9 @@ void usage(void)
     printf("                    If not specified, a random filename will be generated as TARGET.\n");
     printf("                    (Specifying TARGET as arg along with SOURCE on the command line\n");
     printf("                     is still possible for backward compatibility)\n");
+    printf("       Options for png output :\n");
+    printf("        -P : prepares the gnuplot file for png output.\n");
+    printf("        -p : prepares and run the gnuplot file, building the png output.\n\n");
     printf("        -h : this message.\n\n");
     printf("           SigmaTheta %s %s \n",st_version,st_date);
     printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");
@@ -103,14 +106,16 @@ int main(int argc, char *argv[])
     char pre_flag_v, source[MAXCHAR]="", tmpoutfile[16]="st_unc_XXXXXX", outfile[MAXCHAR]="", command[32];
     struct conf_int rayl;
     FILE *ofd;
-    int8_t c, stdo, doplot=1;
+    int8_t c, stdo;
+    int doplot=1; // by default, 1 will build gnuplot file and run it
+
     char flagchar='a';
     int index, stridx;
     size_t lensrc;
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "cmnho:")) != -1)
+    while ((c = getopt (argc, argv, "cmnho:pP")) != -1)
         switch (c)
         {
             case 'c': // classical Allan Dev
@@ -125,6 +130,11 @@ int main(int argc, char *argv[])
 
             case 'n': // no plot
                 doplot=0;
+                break;
+            
+            case 'p': // term png : build gnuplot file and plot
+            case 'P': // term png : build gnuplot file, but dont run it
+                doplot=c;
                 break;
 
             case 'o':
