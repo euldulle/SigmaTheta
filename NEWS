@@ -1,3 +1,4 @@
+2020-03-17, FV: fixing a bug in bruiteur (works with very small amount of data)
 2019-07-31, FV: * modification of Aver (options to change normalization coefficient)
                 * implementation of GCUncert (computation of the confidence interval by using KLTG/KLTS method, see arXiv:1904.05849)
 		* implementation of 3CorneredHat (from Groslambert Covariances -or classical Three-cornered hat- computation to graph display with confidence intervals)  
