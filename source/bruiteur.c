@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	static char suffyk[4]= "ykt\0";
 	char nxtfich[64],nykfich[64];
 	char fifich[64],rep;
-	long i,ordre,nbr_dat,nbr_stat,debut;
+	long i,ordre,nbr_dat,nbr_stat,debut,size_mem;
 	int nb_seq,is;
 	double mx,m2x,sigx,sigy,di,dx,dN,SX,SY,SXY,SX2,den,num,a0,a1,kdb,cpu_time;
 	double Sm,Sm2,Ssig,Ssig2,Sa0,Sa02,Sa1,Sa12,adjsig,Sadj,Sadj2,un,deux,six;
@@ -119,7 +119,10 @@ int main(int argc, char *argv[])
 	nbr_dat=(long)ceil(log((double)nbr_dat)/log((double)2));
 	nbr_dat=(long)pow((double)2,(double)nbr_dat);
 	printf("Low cut-off frequency: 1/%ld.\n",nbr_dat);
-	x=(double *)malloc(nbr_dat*sizeof(double)); 
+	if (nbr_dat>65536) size_mem=nbr_dat;
+	else size_mem=(long)65536;
+	printf("Memory size: %ld\n",size_mem);
+	x=(double *)malloc(size_mem*sizeof(double)); 
 	if ((x==NULL))
 		{
 		printf("Not enough memory for %ld data\n",nbr_dat);
