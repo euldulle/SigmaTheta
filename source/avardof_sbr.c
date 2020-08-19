@@ -169,3 +169,32 @@ void avardof(int la, double tau[32], int alpha[32], double edf[32])
 	edf[i]=M[i]*pow(sz(db(0),F[i],alpha[i],d),db(2))/BasicSum(J[i],M[i],S[i],F[i],alpha[i],d);
 	}
     }
+
+void pvardof(int la, double tau[32], int alpha[32], double edf[32])
+    {
+/* Computation of the degrees of freedom of the Parabolic variance          */
+/* estimates (based on "Responses and Degrees of Freedom of PVAR            */
+/* for a Continuous Power-Law PSD" by François Vernotte, Enrico             */
+/* Rubiola and Siyuan Chen, to be published)                                */
+    int i, iter, N, m[32], M[32], gti;
+    double A, B, a, b;
+
+    B=(double)12;
+    for(i=0;i<la;++i)
+	m[i]=(int)(tau[i]/tau[0]);
+    N=2*m[la-1]+1;
+    for(i=0;i<la;++i)
+	M[i]=N-2*m[i]+1;
+    iter=0;
+    while(m[iter]<=N/4)
+	{
+	A=db(27)+alpha[iter]/db(4)+db(5)*alpha[iter]*alpha[iter]/db(14)-db(3)*alpha[iter]*alpha[iter]*alpha[iter]/db(4);
+	edf[iter]=db(35)/( A*db(m[iter])/db(M[iter])-B*db(m[iter])*db(m[iter])/db(M[iter])/db(M[iter]) );
+	++iter;
+	}
+    gti=iter-1;	
+    a=(edf[gti]-db(1))/(log(db(m[gti]))-log(db(N/2)));
+    b=(log(db(m[gti]))-db(edf[gti])*log(db(N/2)))/(log(db(m[gti]))-log(db(N/2)));
+    for(i=iter;i<la;++i)
+	edf[i]=a*log(db(m[i]))+b;
+    }

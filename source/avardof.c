@@ -142,7 +142,10 @@ int main(int argc, char *argv[])
         else
 	    {
 	    for(i=0;i<N;++i) alphint[i]=(int)alpha[i];
-	    avardof(N, tau, alphint, edf);
+	    if (flag_variance!=PVAR)
+	    	avardof(N, tau, alphint, edf);
+	    else
+		pvardof(N, tau, alphint, edf);
             for(i=0;i<N;++i)
 	        printf("%24.16e \t %24.16e\n",tau[i],edf[i]);
             }

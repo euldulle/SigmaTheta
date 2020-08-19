@@ -165,17 +165,17 @@ int main(int argc, char *argv[])
 		flag_slopes[0]=0;
 //		printf("flag_slopes[0]=%d\n",flag_slopes[0]);
 		}
-	    if (flag_variance==3)
-		flag_conf=0;
+/*	    if (flag_variance==3)
+		flag_conf=0;*/
 /*	    for (i=0;i<6;++i) printf("%d ",flag_slopes[i]);
 	    printf("\n");*/
 	    N=serie_dev(nto, tau, dev);
 	    for(i=0;i<N;++i) avar[i]=dev[i]*dev[i];
 	    err=relatfit(N,tau,avar,tau,6);
-/*	    printf("# Asymptote coefficients:\n");
+	    printf("# Asymptote coefficients:\n");
 	    printf("# tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
 	    for(i=0;i<5;++i) printf("%12.6e \t ",coeff[i]);
-	    printf("\n");*/
+	    printf("\n");
             for(i=0;i<N;++i)
                 {
                 asympt=0;
@@ -261,8 +261,8 @@ int main(int argc, char *argv[])
 			break;
 
 		case 3 :
-	    		printf("# Tau       \t Pdev       \t Pdev unbiased\n");
-	    		fprintf(ofd,"# Tau       \t Pdev       \t Pdev unbiased\n");
+	    		printf("# Tau       \t Pdev       \t Pdev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
+	    		fprintf(ofd,"# Tau       \t Pdev       \t Pdev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
 			break;
 
 		default :
@@ -278,16 +278,16 @@ int main(int argc, char *argv[])
 		bi1s[i]=dev[i]*sqrt(edf[i])/rayl.sup_bound;
 		bx1s[i]=dev[i]*sqrt(edf[i])/rayl.inf_bound;
 		adc[i]=dev[i]/rayl.mean;
-		if (flag_variance!=3)
-			{
+/*		if (flag_variance!=3)
+			{*/
 			printf("%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],dev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
 			fprintf(ofd,"%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],dev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
-			}
+/*			}
 		else
 			{
 			printf("%12.6e \t %12.6e \t %12.6e\n",tau[i],dev[i],adc[i]);
 			fprintf(ofd,"%12.6e \t %12.6e \t %12.6e\n",tau[i],dev[i],adc[i]);
-			}
+			}*/
 		}
 	    fclose(ofd);
 	    if (flag_bias)

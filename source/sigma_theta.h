@@ -76,6 +76,7 @@ double sx(double, int, int);
 double sz(double, int, int);
 double BasicSum(int, int, int, int, int);
 void avardof(int , double *, int *, double *);
+void pvardof(int , double *, int *, double *);
 double cdf_rayleigh(double , double);
 double dcdfr(double x, double nu);
 struct conf_int raylconfint(double);
