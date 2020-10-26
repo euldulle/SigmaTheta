@@ -53,13 +53,16 @@
 void usage(void)
 /* Help message */
     {
-    printf("Usage: AVarDOF [-m] SOURCE\n\n");
+    printf("Usage: AVarDOF [-a|m|h|p] SOURCE\n\n");
     printf("Compute the degrees of freedom of the variance computations over a sequence of tau values.\n\n");
     printf("The input file SOURCE contains a 2-column table with tau values (integration time) in the first column and the exponent of the power law of the dominating noise in the second column.\n\n");
     printf("The first tau value is assumed to be equal to the sampling step.\n");
     printf("The last tau value is assumed to be equal to the half of the whole time sequence duration.\n\n");
     printf("A 2-column table containing tau values (integration time) in the first column and the equivalent degrees of freedom in the second column is sent to the standard output.\n\n");
-    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
+    printf("If the option '-a' is selected, the variance is assumed to be the classical Allan variance (default).\n"); 
+    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance.\n"); 
+    printf("If the option '-h' is selected, the variance is assumed to be the Hadamard variance.\n"); 
+    printf("If the option '-p' is selected, the variance is assumed to be the parabolic variance.\n\n"); 
     printf("A redirection should be used for saving the results in a TARGET file: AVarDOF SOURCE > TARGET\n\n");
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
@@ -73,7 +76,7 @@ int main(int argc, char *argv[])
 /* output: 2-column table containing the tau values and the equivalent      */
 /*         degrees of freedom of each Allan variance measurement            */
     {
-      int i, N, alphint[32];
+    int i, N, alphint[32];
     double tau[32], edf[32], alpha[32];
     char gm[256], source[256], command[32];
     FILE *ofd;
@@ -92,42 +95,77 @@ int main(int argc, char *argv[])
 		}
 	else
 		{
-		strcpy(source,*++argv);
-		if (source[0]=='-')
+		strcpy(command,*++argv);
+		if (command[0]=='-')
 			{
-			if (!strcmp(source,"-m"))
+			if ((!strcmp(command,"-a"))||(!strcmp(command,"-m"))||(!strcmp(command,"-h"))||(!strcmp(command,"-p"))) 
 				{
-				flag_variance=1;
+				switch(command[1])
+					{
+					case 'p':
+						flag_variance=PVAR;
+						break;
+					case 'h':
+						flag_variance=HVAR;
+						break;
+					case 'm':
+						flag_variance=MVAR;
+						break;
+					case 'a':
+					default:
+						flag_variance=AVAR;
+					}
 				strcpy(source,*++argv);
 				}
 			else
 				{
-				printf("Unknown option '%s'\n",source);
+				printf("Unknown option '%s'\n",command);
 				usage();
 				exit(-1);
 				}
 			}
 		else
 			{
-			strcpy(command,*++argv);
-			if (command[0]=='-')
-				{
-				if (!strcmp(command,"-m")) flag_variance=1;
-				else
-					{
-					printf("Unknown option '%s'\n",command);
-					usage();
-					exit(-1);
-					}
-				}
-			else
-				{
-				usage();
-				exit(-1);
-				}
+			usage();
+			exit(-1);
 			}
 		}
 	}
+/*if (source[0]=='-')*/
+/*			{*/
+/*			if (!strcmp(source,"-m"))*/
+/*				{*/
+/*				flag_variance=1;*/
+/*				strcpy(source,*++argv);*/
+/*				}*/
+/*			else*/
+/*				{*/
+/*				printf("Unknown option '%s'\n",source);*/
+/*				usage();*/
+/*				exit(-1);*/
+/*				}*/
+/*			}*/
+/*		else*/
+/*			{*/
+/*			strcpy(command,*++argv);*/
+/*			if (command[0]=='-')*/
+/*				{*/
+/*				if (!strcmp(command,"-m")) flag_variance=1;*/
+/*				else*/
+/*					{*/
+/*					printf("Unknown option '%s'\n",command);*/
+/*					usage();*/
+/*					exit(-1);*/
+/*					}*/
+/*				}*/
+/*			else*/
+/*				{*/
+/*				usage();*/
+/*				exit(-1);*/
+/*				}*/
+/*			}*/
+/*		}*/
+/*	}*/
 
     N=load_adev(source,tau,alpha);
     if (N==-1)

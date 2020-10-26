@@ -50,13 +50,16 @@
 void usage(void)
 /* Help message */
     {
-    printf("Usage: ADGraph [-m] DevFILE FitFILE\n\n");
+    printf("Usage: ADGraph [-a|m|h|p] DevFILE FitFILE\n\n");
     printf("Plots the graph of the (modified) Allan Deviation estimates versus tau.\n\n");
     printf("The input file DevFILE contains a 7-column table with tau values (integration time) in the first column, deviation measurements in the second column, unbiased estimates in the 3rd, 68 and 95 %% confidence interval bounds in the following columns.\n\n");
     printf("The input file FitFILE contains the 6 asymptote coefficients (from tau^-3/2 to tau^+1) in a 1-line 6-column table.\n\n");
     printf("The file DevFILE.gnu is generated for invoking gnuplot.\n");
     printf("The file DevFILE.pdf is the pdf file of the gnuplot graph (if the PDF option has been chosen in the configuration file).\n\n");
-    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
+    printf("If the option '-a' is selected, the variance is assumed to be the classical Allan variance (default).\n"); 
+    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance.\n"); 
+    printf("If the option '-h' is selected, the variance is assumed to be the Hadamard variance.\n"); 
+    printf("If the option '-p' is selected, the variance is assumed to be the parabolic variance.\n\n"); 
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
 
@@ -84,6 +87,42 @@ int main(int argc, char *argv[])
 		strcpy(command,*++argv);
 		if (command[0]=='-')
 			{
+			if ((!strcmp(command,"-a"))||(!strcmp(command,"-m"))||(!strcmp(command,"-h"))||(!strcmp(command,"-p"))) 
+				{
+				switch(command[1])
+					{
+					case 'p':
+						fv=PVAR;
+						break;
+					case 'h':
+						fv=HVAR;
+						break;
+					case 'm':
+						fv=MVAR;
+						break;
+					case 'a':
+					default:
+						fv=AVAR;
+					}
+				strcpy(source,*++argv);
+				strcpy(fitfile,*++argv);
+				}
+			else
+				{
+				printf("Unknown option '%s'\n",command);
+				usage();
+				exit(-1);
+				}
+			}
+		else
+			{
+			usage();
+			exit(-1);
+			}
+		}
+/*		strcpy(command,*++argv);
+		if (command[0]=='-')
+			{
 			if (!strcmp(command,"-m")) 
 				{
 				fv=1;
@@ -102,7 +141,7 @@ int main(int argc, char *argv[])
 			usage();
 			exit(-1);
 			}
-		}
+		}*/
 
     err=init_flag();
     if (err==-1) printf("# ~/.SigmaTheta.conf not found, default values selected\n");

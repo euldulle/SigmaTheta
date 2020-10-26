@@ -51,7 +51,7 @@
 void usage(void)
 /* Help message */
     {
-    printf("Usage: ADUncert [-m] DevFILE EdfFILE\n\n");
+    printf("Usage: ADUncert [-a|m|h|p] DevFILE EdfFILE\n\n");
     printf("Computes the 95 %% (2 sigma) and the 68%% (1 sigma) confidence intervals of a sequence of (modified) Allan Deviations.\n\n");
     printf("The input file DevFILE contains a 2-column table with tau values (integration time) in the first column and (modified) Allan deviation measurement in the second column.\n\n");
     printf("The input file EdfFILE contains a 2-column table with tau values in the first column and the equivalent degrees of freedom (edf) of the deviation measurement in the second column.\n\n");
@@ -63,7 +63,10 @@ void usage(void)
     printf("\t5th column: 16 %% bound\n");
     printf("\t6th column: 84 %% bound\n");
     printf("\t7th column: 97.5 %% bound.\n\n");
-    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance. Otherwise, the variance is assumed to be the classical Allan variance.\n\n"); 
+    printf("If the option '-a' is selected, the variance is assumed to be the classical Allan variance (default).\n"); 
+    printf("If the option '-m' is selected, the variance is assumed to be the modified Allan variance.\n"); 
+    printf("If the option '-h' is selected, the variance is assumed to be the Hadamard variance.\n"); 
+    printf("If the option '-p' is selected, the variance is assumed to be the parabolic variance.\n\n"); 
     printf("A redirection should be used for saving the results in a TARGET file: ADUncert AdevFILE EdfFILE > TARGET\n\n");
     printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
     }
@@ -95,6 +98,42 @@ int main(int argc, char *argv[])
 		strcpy(command,*++argv);
 		if (command[0]=='-')
 			{
+			if ((!strcmp(command,"-a"))||(!strcmp(command,"-m"))||(!strcmp(command,"-h"))||(!strcmp(command,"-p"))) 
+				{
+				switch(command[1])
+					{
+					case 'p':
+						flag_variance=PVAR;
+						break;
+					case 'h':
+						flag_variance=HVAR;
+						break;
+					case 'm':
+						flag_variance=MVAR;
+						break;
+					case 'a':
+					default:
+						flag_variance=AVAR;
+					}
+				strcpy(source,*++argv);
+				strcpy(edffile,*++argv);
+				}
+			else
+				{
+				printf("Unknown option '%s'\n",command);
+				usage();
+				exit(-1);
+				}
+			}
+		else
+			{
+			usage();
+			exit(-1);
+			}
+		}
+/*		strcpy(command,*++argv);
+		if (command[0]=='-')
+			{
 			if (!strcmp(command,"-m")) 
 				{
 				flag_variance=1;
@@ -113,7 +152,7 @@ int main(int argc, char *argv[])
 			usage();
 			exit(-1);
 			}
-		}
+		}*/
 
     N=load_3col(source,tau,adev,truc);
     if (N==-1)

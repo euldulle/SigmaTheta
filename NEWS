@@ -1,3 +1,5 @@
+2020-10-26, FV: extension of AVarDOF, ADUncert and ADGraph to Hadamard and parabolic variances
+2020-08-19, FV: implementation of errorbars and confidence intervals for PVAR
 2020-03-17, FV: fixing a bug in bruiteur (works with very small amount of data)
 2019-07-31, FV: * modification of Aver (options to change normalization coefficient)
                 * implementation of GCUncert (computation of the confidence interval by using KLTG/KLTS method, see arXiv:1904.05849)
