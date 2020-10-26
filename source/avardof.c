@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 	if (argc==2)
 		{
 		strcpy(source,*++argv);
+		flag_variance=AVAR;
 		}
 	else
 		{

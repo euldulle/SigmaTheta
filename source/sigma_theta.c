@@ -55,11 +55,11 @@ void usage(void)
 /* Help message */
     {
     printf("Usage: SigmaTheta [-m|h|p] SOURCE TARGET\n\n");
-    printf("Computes the (modified) Allan Deviation of a sequence of normalized frequency deviation measurements.\n\n");
+    printf("Computes the Allan, Modified Allan, Hadamard or Parabolic Deviation of a sequence of normalized frequency deviation measurements.\n\n");
     printf("The input file SOURCE contains a 2-column table with time values (dates) in the first column and normalized frequency deviation measurements in the second column.\n\n");
     printf("A 7-column table is sent to the standard output with:\n");
     printf("\t1st column: tau values\n");
-    printf("\t2nd column: (modified) Allan deviation estimate\n");
+    printf("\t2nd column: deviation estimate\n");
     printf("\t3rd column: unbiased estimate\n");
     printf("\t4th column: 2.5 %% bound\n");
     printf("\t5th column: 16 %% bound\n");

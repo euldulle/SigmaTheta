@@ -118,22 +118,22 @@ double interpo(double t, int intyp)
     switch(intyp)
         {
         case 0 :
-	    rslt=db(1)/t/t/t;
+	    rslt=db(1)/t/t/t; // White PM: f^2 FM (only MVAR and PVAR)
 	    break;
         case 1 :
-	    rslt=db(1)/t/t;
+	    rslt=db(1)/t/t; // White PM (AVAR or HVAR) of Flicker PM: f^2 or f FM
 	    break;
         case 2 :
-	    rslt=db(1)/t;
+	    rslt=db(1)/t; // White FM: f^0 FM
 	    break;
         case 3 :
-	    rslt=db(1);
+	    rslt=db(1); // Flicker FM: f^(-1) FM
 	    break;
         case 4 :
-	    rslt=t;
+	    rslt=t; // Random Walk FM: f^(-2) FM
 	    break;
         case 5 :
-	    rslt=t*t;
+	    rslt=t*t; // Frequency drift (all except HVAR) or f^(-3) FM (HVAR only)
 	    break;
         default :
             rslt=0;

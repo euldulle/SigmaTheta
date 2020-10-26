@@ -50,9 +50,9 @@
 void usage(void)
 /* Help message */
     {
-    printf("Usage: Asym2Alpha DevFILE FitFILE\n\n");
+    printf("Usage: Asym2Alpha [-a|m|h|p] DevFILE FitFILE\n\n");
     printf("Finds the dominating power law noise (alpha) versus tau.\n\n");
-    printf("The input file DevFILE contains a 2-column table with tau values (integration time) in the first column and (modified) Allan deviation measurements in the second column.\n\n");
+    printf("The input file DevFILE contains a 2-column table with tau values (integration time) in the first column and Allan, modified Allan, Hadamard or Parabolic deviation measurements in the second column.\n\n");
     printf("The input file FitFILE contains the 6 asymptote coefficients (from tau^-3/2 to tau^+1) in a 1-line 6-column table.\n\n");
     printf("A a 2-column table with tau values in the first column and the dominating power law noise (from alpha=-2 to +2) in the second column is sent to the standard output.\n\n");
     printf("A redirection should be used for saving the results in a TARGET file: Asym2Alpha DevFILE FitFILE > TARGET\n\n");
@@ -61,21 +61,56 @@ void usage(void)
 
 int main(int argc, char *argv[])
     {
-    char source[256], fitfile[256];
-    int N,nto,i,j,nc,alpha[32];
+    char source[256], fitfile[256], command[32];
+    int flt,N,nto,i,j,nc,alpha[32];
     double tau[32], avar[32], truc[32], tsas, asympt;
     FILE *ofd;
 
-    if (argc<3)
+    if ((argc<3)||(argc>4))
         {
         usage();
 	exit(-1);
 	}
     else
-        {
-	strcpy(source,*++argv);
-	strcpy(fitfile,*++argv);
-	}
+	if (argc==3)
+        	{
+		flag_variance=AVAR;
+		strcpy(source,*++argv);
+		strcpy(fitfile,*++argv);
+		}
+	else
+		{
+		strcpy(command,*++argv);
+		if (command[0]=='-')
+			{
+			if ((!strcmp(command,"-a"))||(!strcmp(command,"-m"))||(!strcmp(command,"-h"))||(!strcmp(command,"-p"))) 
+				{
+				switch(command[1])
+					{
+					case 'p':
+						flag_variance=PVAR;
+						break;
+					case 'h':
+						flag_variance=HVAR;
+						break;
+					case 'm':
+						flag_variance=MVAR;
+						break;
+					case 'a':
+					default:
+						flag_variance=AVAR;
+					}
+				strcpy(source,*++argv);
+				strcpy(fitfile,*++argv);
+				}
+			else
+				{
+				printf("Unknown option '%s'\n",command);
+				usage();
+				exit(-1);
+				}
+			}
+		}
 
     N=load_3col(source,tau,avar,truc);
     if (N==-1)
@@ -105,21 +140,24 @@ int main(int argc, char *argv[])
             for(i=0;i<N;++i)
                 {
                 asympt=0;
-		if (flag_variance)
+		if ((flag_variance==MVAR)||(flag_variance==PVAR))
 			{
-			for(j=0;j<5;++j) /* The drift is not concerned */
+			flt=1;
+			for(j=0;j<6;++j)
                     		{
                     		tsas=coeff[j]*interpo(tau[i],j);
                     		if (tsas>asympt)
                         		{
                         		asympt=tsas;
-                         		alpha[i]=2-j;
-                        		}
+                        		alpha[i]=2-j;
+					if (j==5) alpha[i]=-2;
+                         		}
                     		}
 			}
 		else
 			{
-	                for(j=1;j<5;++j) /* Neither the tau^-3/2 asymptote nor the drift are concerned */
+			flt=2;
+	                for(j=1;j<6;++j) 
                     		{
                     		tsas=coeff[j]*interpo(tau[i],j);
                     		if (tsas>asympt)
@@ -127,10 +165,12 @@ int main(int argc, char *argv[])
                         		asympt=tsas;
                         		if (j==1) alpha[i]=+2;
                         		else alpha[i]=2-j;
+					if (j==5) alpha[i]=-2;
                         		}
                     		}
 	                }
                 }
+//	    fprintf(stdout,"flt: %d\n",flt);
 	    for(i=0;i<N;++i) printf("%24.16e \t %d\n",tau[i],alpha[i]);
 	    }
 	}

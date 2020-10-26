@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
 		}
 	    else
 		for(i=0;i<N;++i) wght[i]=tau[i];
+	    flag_slopes[0]=1; // tau^(-3/2) slope allowed 
             if ((flag_bias)&&(ubad[0]!=-1)) 
                 for(i=0;i<N;++i)avar[i]=ubad[i];
 	    for(i=0;i<N;++i) avar[i]*=avar[i];

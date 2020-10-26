@@ -81,6 +81,7 @@ int main(int argc, char *argv[])
         	{
 		strcpy(source,*++argv);
 		strcpy(fitfile,*++argv);
+		fv=AVAR;
 		}
 	else
 		{
