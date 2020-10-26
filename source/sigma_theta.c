@@ -205,7 +205,10 @@ int main(int argc, char *argv[])
                     		}
 	                }
 		}
-	    avardof(N, tau, alpha, edf);
+	    if (flag_variance==PVAR)
+	    	pvardof(N, tau, alpha, edf);
+	    else
+	    	avardof(N, tau, alpha, edf);
 	    if (flag_fit&0x8)
 	        {
 	        for(i=0;i<N;++i) w[i]=((double)1)/edf[i];
@@ -241,7 +244,10 @@ int main(int argc, char *argv[])
 		    }
 /*	        for(i=0;i<N;++i) printf("%d \t ",alpha[i]);
                 printf("\n");*/
-	        avardof(N, tau, alpha, edf);
+	    	if (flag_variance==PVAR)
+	    		pvardof(N, tau, alpha, edf);
+	    	else
+	    		avardof(N, tau, alpha, edf);
 /*		printf("# Asymptote coefficients:\n");
 		printf("# tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
 		for(i=0;i<5;++i) printf("%12.6e \t ",coeff[i]);

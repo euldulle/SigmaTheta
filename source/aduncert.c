@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     {
       int i, j, N, N2, err, ineq;
       double tau[32], adev[32], truc[32], to2[32], edf[32], bmin[32], bmax[32],bi1s[32],bx1s[32],adc[32],w[32];
-    char source[256], edffile[256], command[32];
+    char source[256], edffile[256], command[32],varname[8];
     struct conf_int rayl;
 
     flag_variance=0;
@@ -105,16 +105,20 @@ int main(int argc, char *argv[])
 					{
 					case 'p':
 						flag_variance=PVAR;
+						strcpy(varname,"PDev");
 						break;
 					case 'h':
 						flag_variance=HVAR;
+						strcpy(varname,"HDev");
 						break;
 					case 'm':
 						flag_variance=MVAR;
+						strcpy(varname,"MDev");
 						break;
 					case 'a':
 					default:
 						flag_variance=AVAR;
+						strcpy(varname,"ADev");
 					}
 				strcpy(source,*++argv);
 				strcpy(edffile,*++argv);
@@ -183,10 +187,7 @@ int main(int argc, char *argv[])
 	        printf("# %s incompatible with %s\n\n",edffile,source);
 	        usage();
 	        }
-	    if (flag_variance)
-	    	printf("# Tau       \t Mdev       \t Mdev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
-	    else
-	    	printf("# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
+	    printf("# Tau       \t %s       \t %s unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n",varname,varname);
 	    for(i=0;i<N;++i)
 	        {
 		rayl=raylconfint(edf[i]);
