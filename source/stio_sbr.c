@@ -984,7 +984,7 @@ int load_7col(char *source, double tau[], double adev[], double ubad[], double b
     return(N);
     }
 
-int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ, char plotflag)
+int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ, uint8_t plotflag)
 /* Generate a gnuplot file (.gnu) and (if doplot not 0) invoke gnuplot for creating a postscript file */
     {
     int i,mii,mxi,err;
@@ -1002,7 +1002,7 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
     // use a dummy terminal for initial plotting, the use replot to generate 
     // requested output format(s)
     //
-    fprintf(ofd,"set terminal unknown \n");
+    fprintf(ofd,"set terminal dumb \n");
     fprintf(ofd,"set logscale xy\n");
     fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
     fprintf(ofd,"set grid\n");
@@ -1174,10 +1174,10 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
     //
     // if plotflag is EQUAL to 1, then let flag_display do the job (backward compatibility)
     //
-    if (plotflag==1){
+    if (plotflag == 1){
         doplot=1;
         if (flag_display)
-            fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\nreplot\n");
+            fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\nreplot\n");
         else {
             fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
             fprintf(ofd,"set output \"%s.pdf\"\n",outfile);
@@ -1189,21 +1189,24 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
         // in any other case, lowercases doplot options will run the gnuplot file ; 
         // upper cases and other options wont.
         // 
+        if (plotflag & GPLDOPLOT){
+            doplot=1;
+            }
 
         if (plotflag & GPLPNG){
-            fprintf(ofd,"set terminal png size 1440,1024 enhanced font \"Helvetica\" fontscale 1.5\n");
+            fprintf(ofd,"\nset terminal png size 1440,1024 enhanced font \"Helvetica\" fontscale 1.5\n");
             fprintf(ofd,"set output \"%s.png\"\n",outfile);
             fprintf(ofd,"replot\n");
             }
 
         if (plotflag & GPLPDF){
-            fprintf(ofd,"set terminal png size 1440,1024 enhanced font \"Helvetica\" fontscale 1.5\n");
+            fprintf(ofd,"\nset terminal pdf size 1440,1024 enhanced font \"Helvetica\" fontscale 1.5\n");
             fprintf(ofd,"set output \"%s.pdf\"\n",outfile);
             fprintf(ofd,"replot\n");
             }
 
         if (plotflag & GPLX11){
-            fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+            fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
             fprintf(ofd,"replot\n");
             }
         }

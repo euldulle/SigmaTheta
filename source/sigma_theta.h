@@ -106,7 +106,7 @@ int load_coef(char *);
 int load_1col(char *);
 int load_3col(char *, double *, double *, double *);
 int load_7col(char *, double *, double *, double *, double *, double *, double *, double *);
-int gener_gplt(char *, int, double *, double *, double *, char *, char);
+int gener_gplt(char *, int, double *, double *, double *, char *, uint8_t);
 int gen_psdplt(char *, int, double *, double *);
 int gen_linplt(char *, int, double *, double *, int);
 int gen_gcodplt(char *, char (*)[], int, int, double *, double (*)[], int);

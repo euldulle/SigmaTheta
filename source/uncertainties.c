@@ -80,15 +80,16 @@ void usage(void)
     printf("    Options :\n");
     printf("        -m : use the modified Allan variance.\n");
     printf("        -c : use the classical Allan variance.\n");
-    printf("        -n : the plot is not built.\n");
+    printf("        -n : the plot is not built (gnuplot file(s) might still be generated).\n");
     printf("        -o output : when reading from stdin, TARGET cannot be passed as arg : \n");
     printf("                    -o is the way user can specify the TARGET output \n");
     printf("                    If not specified, a random filename will be generated as TARGET.\n");
     printf("                    (Specifying TARGET as arg along with SOURCE on the command line\n");
     printf("                     is still possible for backward compatibility)\n");
-    printf("       Options for png output :\n");
-    printf("        -P : prepares the gnuplot file for png output.\n");
-    printf("        -p : prepares and run the gnuplot file, building the png output.\n\n");
+    printf("       Options for gnuplot output :\n");
+    printf("        -p : insert png build in gnuplot file.\n\n");
+    printf("        -d : insert pdf build in gnuplot file.\n\n");
+    printf("        -X : insert x11 build in gnuplot file.\n\n");
     printf("        -h : this message.\n\n");
     printf("           SigmaTheta %s %s \n",st_version,st_date);
     printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
     struct conf_int rayl;
     FILE *ofd;
     int8_t c, stdo;
-    int doplot=1; // by default, 1 will build gnuplot file and run it
+    uint8_t doplot=GPLDOPLOT; // by default, 1 (GPDDOPLOT flag on) will build gnuplot file and run it
 
     char flagchar='a';
     int index, stridx;
@@ -115,7 +116,7 @@ int main(int argc, char *argv[])
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "cmnho:pP")) != -1)
+    while ((c = getopt (argc, argv, "cmnho:pdX")) != -1)
         switch (c)
         {
             case 'c': // classical Allan Dev
@@ -128,13 +129,20 @@ int main(int argc, char *argv[])
                 flagchar='m';
                 break;
 
-            case 'n': // no plot
-                doplot=0;
+            case 'n': // clear DOPLT flag = no actual plot (gnuplot file might still be generated but not run)
+                doplot&=~GPLDOPLOT;
                 break;
             
-            case 'p': // term png : build gnuplot file and plot
-            case 'P': // term png : build gnuplot file, but dont run it
-                doplot=c;
+            case 'p': // term png : insert png generation in gnuplot file
+                doplot=doplot|GPLPNG;
+                break;
+
+            case 'd': // term pdf : insert pdf generation in gnuplot file
+                doplot=doplot|GPLPDF;
+                break;
+
+            case 'X': // term pdf : insert x11 generation in gnuplot file 
+                doplot=doplot|GPLX11;
                 break;
 
             case 'o':
