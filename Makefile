@@ -69,7 +69,7 @@ CFLAGS = -g -O3 -DST_VERSION=\"$(GIT_VERSION)\" -DST_DATE=\"$(GIT_DATE)\"
 # link dynamically against libfftw3
 FFTW3 = -lfftw3
 
-TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)GCoDev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)Aver $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)DevGraph $(BIN)3CHGraph $(BIN)bruiteur $(BIN)GCUncert $(BIN)3CorneredHat
+TARGETS = $(BIN)1col2col $(BIN)X2Y $(BIN)DriRem $(BIN)SigmaTheta $(BIN)ADev $(BIN)find_tau_xdev $(BIN)GCoDev $(BIN)MDev $(BIN)HDev $(BIN)PDev $(BIN)Aver $(BIN)uncertainties $(BIN)RaylConfInt $(BIN)Asymptote $(BIN)Asym2Alpha $(BIN)AVarDOF $(BIN)ADUncert $(BIN)ADGraph $(BIN)PSDGraph $(BIN)YkGraph $(BIN)XtGraph $(BIN)DevGraph $(BIN)3CHGraph $(BIN)bruiteur $(BIN)GCUncert $(BIN)3CorneredHat
 
 all: $(TARGETS)
 
@@ -90,6 +90,9 @@ $(BIN)SigmaTheta : $(OBJ)sigma_theta.o $(OBJ)dev_sbr.o $(OBJ)asymptote_sbr.o $(O
 	$(CC) $(CFLAGS) -o $@ $^ -lgsl -lgslcblas -lm
 
 $(BIN)ADev : $(OBJ)adev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+$(BIN)find_tau_xdev : $(OBJ)find_tau_xdev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 $(BIN)GCoDev : $(OBJ)gcodev.o $(OBJ)dev_sbr.o $(OBJ)stio_sbr.o
