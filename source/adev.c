@@ -69,7 +69,7 @@ void usage(void)
     printf("      Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
 	printf("      If SOURCE and TARGET are specified, output goes to TARGET unless -c option (output to stdout) is given \n");
 	printf("      If only SOURCE is specified, output goes to SOURCE.adev unless -c option (output to stdout) is given \n\n");
-    printf("           -x xscalingfactor\n");
+    printf("           -x input xscalingfactor\n");
 	printf("                Units are SI units (s) by default ; should the input data be in other units (MJD, ns, ...)\n");
     printf("                x option allows to properly normalize output : \n");
     printf("                scaling factor is one of : \n");
@@ -82,6 +82,11 @@ void usage(void)
     printf("                    p : picosecond \n");
     printf("                  A file containing data as MJD.XXXXX vs freq_dev can be processed with \n");
     printf("                  ADev datafile -x d  \n\n");
+    printf("           -X output scalingfactor\n");
+	printf("                output tau are are in SI units (s) by default \n");
+    printf("                should the output data be wanted in other units (MJD, ns, ...)\n");
+    printf("                X option allows to properly normalize output taus \n");
+    printf("                see x option above for valid scaling factor\n");
     printf("           -c : output to stdout only, TARGET file is ignored even if specified ;\n");
     printf("                this is the default if SOURCE is unspecified (stdin)\n\n");
     printf("           -h : this message\n\n");
@@ -104,9 +109,9 @@ int main(int argc, char *argv[])
 {
     int err,i,nbv,N,nto,tomax;
     long int dtmx;
-    char gm[100], scalex=0;
+    char gm[100], scalex=0, scaletau=0;
     FILE *ofd;
-    double v1,v2,smpt,rslt,tau[256],dev[256];
+    double v1,v2,smpt,rslt,tau[256],dev[256], outscaletau=(double)1;
     uint8_t stdo=0, index;
     int8_t c;
     int16_t stridx, lensrc;
@@ -114,7 +119,7 @@ int main(int argc, char *argv[])
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "hcx:")) != -1)
+    while ((c = getopt (argc, argv, "hcx:X:")) != -1)
         switch (c)
         {
             case 'c':
@@ -125,6 +130,9 @@ int main(int argc, char *argv[])
                 break;
             case 'x':
                 scalex=optarg[0];
+                break;
+            case 'X':
+                scaletau=optarg[0];
                 break;
             case '?':
                 if (optopt == 'x'){
@@ -212,9 +220,13 @@ int main(int argc, char *argv[])
             flag_variance=AVAR;
 
             nto=serie_dev(N, tau, dev);
+            
+            outscaletau=scale(scaletau);
+            fprintf (stderr, "# scaletau %d outscaletau %lf \n", scaletau, outscaletau);
+
 
             for(i=0;i<nto;++i)
-                fprintf(ofd,"%24.16e \t %24.16e\n",tau[i],dev[i]);
+                fprintf(ofd,"%24.16e \t %24.16e\n",tau[i]/outscaletau,dev[i]);
 
             printf ("# Output file %s = %d lines\n", outfile, nto);
 

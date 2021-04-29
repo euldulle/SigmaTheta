@@ -89,6 +89,11 @@ void usage(void)
     printf("                  A file containing data as tau in days vs sigma_y(tau) can be processed with \n");
     printf("                   find_tau_allan datafile -x s -f 1d \n\n");
     printf("                   to interpolate the adev value for tau = 1d \n\n");
+    printf("           -X output scalingfactor for tau\n");
+	printf("                output tau are are in SI units (s) by default \n");
+    printf("                should the output data be wanted in other units (MJD, ns, ...)\n");
+    printf("                X option allows to properly normalize output taus \n");
+    printf("                see f option above for valid scaling factor\n");
     printf("           -h : this message\n\n");
     printf("     Input consists in an N line / 2 column table with tau values in second in the first column\n");
     printf("                                   and adev values (Hz/Hz) in the second column.\n\n");
@@ -130,8 +135,8 @@ double suffix_process(uint8_t *suffix){
     }
 
 int main(int argc, char **argv) {
-    double input_scale, first_tau, last_tau, target_tau, cur_tau, prev_tau, target_dev;
-    uint8_t stdo=1, index, rescale_input=0; 
+    double input_scale=1, outscaletau=1, first_tau, last_tau, target_tau, cur_tau, prev_tau, target_dev;
+    uint8_t stdo=1, index, rescale_input=0, rescale_tau=0; 
     char c;
     uint16_t lensrc;
     int nbv;
@@ -145,7 +150,7 @@ int main(int argc, char **argv) {
 	extern int opterr;
 
   	while(1) {
-		c=getopt(argc, argv, "f:x:");
+		c=getopt(argc, argv, "f:x:X:");
 		if (c=='?') {
 			usage();
 			exit(0);
@@ -162,6 +167,11 @@ int main(int argc, char **argv) {
 				case 'x':
                     input_scale=suffix_process(optarg);
                     rescale_input=1;
+					break;
+					
+				case 'X':
+                    outscaletau=suffix_process(optarg);
+                    rescale_tau=1;
 					break;
 					
 				default:
@@ -217,7 +227,7 @@ int main(int argc, char **argv) {
         cur_tau=tau[i];
         if (cur_tau> target_tau){ // linear interpolation
             target_dev=dev[i-1] + (dev[i]-dev[i-1]) * (target_tau-tau[i-1])/(tau[i]-tau[i-1]) ;
-            printf("%le %le\n", target_tau, target_dev);
+            printf("%le %le\n", target_tau/outscaletau, target_dev);
             return target_dev;
             }
         }
