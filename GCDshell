@@ -1,21 +1,22 @@
 #!/bin/sh
-GCoDev $1 $2 > acodev12.tmp
-GCoDev $2 $3 > acodev23.tmp
-GCoDev $3 $1 > acodev31.tmp
-Aver -q $1 $2 $3 > noise_ykt.tmp
-ADev noise_ykt.tmp > noise_adev.tmp
-ADev $1 > adev1.tmp
-Asymptote adev1.tmp > asym1.tmp
-Asym2Alpha adev1.tmp asym1.tmp > alpha1.tmp
-AVarDOF alpha1.tmp > edf1.tmp
-ADev $2 > adev2.tmp
-Asymptote adev2.tmp > asym2.tmp
-Asym2Alpha adev2.tmp asym2.tmp > alpha2.tmp
-AVarDOF alpha2.tmp > edf2.tmp
-ADev $3 > adev3.tmp
-Asymptote adev3.tmp > asym3.tmp
-Asym2Alpha adev3.tmp asym3.tmp > alpha3.tmp
-AVarDOF alpha3.tmp > edf3.tmp
-Aver edf1.tmp edf2.tmp edf3.tmp > edf123.tmp
-GCUncert acodev12.tmp acodev23.tmp acodev31.tmp noise_adev.tmp edf123.tmp $6 $4 $5
-3CHGraph $7 $4 $5 $6 noise_adev.tmp -m
+STPREFIX"st_"
+"$STPREFIX"GCoDev $1 $2 > acodev12.tmp
+"$STPREFIX"GCoDev $2 $3 > acodev23.tmp
+"$STPREFIX"GCoDev $3 $1 > acodev31.tmp
+"$STPREFIX"Aver -q $1 $2 $3 > noise_ykt.tmp
+"$STPREFIX"ADev noise_ykt.tmp > noise_adev.tmp
+"$STPREFIX"ADev $1 > adev1.tmp
+"$STPREFIX"Asymptote adev1.tmp > asym1.tmp
+"$STPREFIX"Asym2Alpha adev1.tmp asym1.tmp > alpha1.tmp
+"$STPREFIX"AVarDOF alpha1.tmp > edf1.tmp
+"$STPREFIX"ADev $2 > adev2.tmp
+"$STPREFIX"Asymptote adev2.tmp > asym2.tmp
+"$STPREFIX"Asym2Alpha adev2.tmp asym2.tmp > alpha2.tmp
+"$STPREFIX"AVarDOF alpha2.tmp > edf2.tmp
+"$STPREFIX"ADev $3 > adev3.tmp
+"$STPREFIX"Asymptote adev3.tmp > asym3.tmp
+"$STPREFIX"Asym2Alpha adev3.tmp asym3.tmp > alpha3.tmp
+"$STPREFIX"AVarDOF alpha3.tmp > edf3.tmp
+"$STPREFIX"Aver edf1.tmp edf2.tmp edf3.tmp > edf123.tmp
+"$STPREFIX"GCUncert acodev12.tmp acodev23.tmp acodev31.tmp noise_adev.tmp edf123.tmp $6 $4 $5
+"$STPREFIX"3CHGraph $7 $4 $5 $6 noise_adev.tmp -m

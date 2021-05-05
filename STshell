@@ -1,3 +1,4 @@
 #!/bin/sh
-./ADev $1 > /tmp/adev.tmp
-./uncertainties /tmp/adev.tmp $2
+STPREFIX="st_"
+"$STPREFIX"ADev $1 > /tmp/adev.tmp
+"$STPREFIX"uncertainties /tmp/adev.tmp $2

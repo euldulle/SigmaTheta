@@ -1,11 +1,12 @@
 #!/bin/sh
-ADev $1 > /tmp/adev.tmp
-Asymptote /tmp/adev.tmp > /tmp/asym.tmp
-Asym2Alpha /tmp/adev.tmp /tmp/asym.tmp > /tmp/alpha.tmp
-AVarDOF /tmp/alpha.tmp > /tmp/edf.tmp
-Asymptote /tmp/adev.tmp /tmp/edf.tmp > /tmp/asym.tmp
-Asym2Alpha /tmp/adev.tmp /tmp/asym.tmp > /tmp/alpha.tmp
-AVarDOF /tmp/alpha.tmp > /tmp/edf.tmp
-ADUncert /tmp/adev.tmp /tmp/edf.tmp > $2
-Asymptote $2 /tmp/edf.tmp > /tmp/asym.tmp
-ADGraph $2 /tmp/asym.tmp
+STPREFIX="st_"
+"$STPREFIX"ADev $1 > /tmp/adev.tmp
+"$STPREFIX"Asymptote /tmp/adev.tmp > /tmp/asym.tmp
+"$STPREFIX"Asym2Alpha /tmp/adev.tmp /tmp/asym.tmp > /tmp/alpha.tmp
+"$STPREFIX"AVarDOF /tmp/alpha.tmp > /tmp/edf.tmp
+"$STPREFIX"Asymptote /tmp/adev.tmp /tmp/edf.tmp > /tmp/asym.tmp
+"$STPREFIX"Asym2Alpha /tmp/adev.tmp /tmp/asym.tmp > /tmp/alpha.tmp
+"$STPREFIX"AVarDOF /tmp/alpha.tmp > /tmp/edf.tmp
+"$STPREFIX"ADUncert /tmp/adev.tmp /tmp/edf.tmp > $2
+"$STPREFIX"Asymptote $2 /tmp/edf.tmp > /tmp/asym.tmp
+"$STPREFIX"ADGraph $2 /tmp/asym.tmp
