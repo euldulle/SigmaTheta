@@ -872,15 +872,15 @@ int load_adev(char *source, double tau[], double adev[])
                 rep=fgets(gm,100,ofd);
                 if((gm[0]=='#')||(gm[0]=='%'))
                     continue;
-                if (sscanf(gm,"%lf %lf",&tau[i],&adev[i])==2)
+                if (rep!=NULL && sscanf(gm,"%lf %lf",&tau[i],&adev[i])==2)
                     i++;
             }
             while(!feof(ofd));
             fclose(ofd);
             N=i;
         }
-    }
     return(N);
+    }
 }
 
 int load_coef(char *source)
