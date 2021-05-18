@@ -1097,7 +1097,7 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
             fprintf(ofd,"A");
     }
     fprintf(ofd,"({/Symbol t})\"\n");
-    if (flag_display)
+    if (flag_display||plotflag & GPLPNG)
     {
         fprintf(ofd,"set style line 1 pt 2 ps 1 lc 7 lw 3\n");
         fprintf(ofd,"set style line 2 pt 2 ps 1 lc 7 lw 2\n");
