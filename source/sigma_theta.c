@@ -172,10 +172,10 @@ int main(int argc, char *argv[])
 	    N=serie_dev(nto, tau, dev);
 	    for(i=0;i<N;++i) avar[i]=dev[i]*dev[i];
 	    err=relatfit(N,tau,avar,tau,6);
-	    printf("# Asymptote coefficients:\n");
+/*	    printf("# Asymptote coefficients:\n");
 	    printf("# tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
 	    for(i=0;i<5;++i) printf("%12.6e \t ",coeff[i]);
-	    printf("\n");
+	    printf("\n");*/
             for(i=0;i<N;++i)
                 {
                 asympt=0;
@@ -300,9 +300,13 @@ int main(int argc, char *argv[])
 	      for(i=0;i<N;++i) avar[i]=adc[i]*adc[i];
 	    for(i=0;i<N;++i) w[i]=((double)1)/edf[i];
 	    err=relatfit(N,tau,avar,w,6);
-	    printf("# Asymptote coefficients:\n");
-	    printf("# tau^-3/2 \t tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
+	    printf("# Variance asymptote coefficients:\n");
+	    printf("# tau^-3 \t tau^-2   \t tau^-1 \t tau^0    \t tau^1  \t tau^2\n");
 	    for(i=0;i<6;++i) printf("%12.6e \t ",coeff[i]);
+	    printf("\n");
+	    printf("# Deviation asymptote coefficients:\n");
+	    printf("# tau^-3/2 \t tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
+	    for(i=0;i<6;++i) printf("%12.6e \t ",sqrt(coeff[i]));
 	    printf("\n");
 	    if (flag_graph)
 	        {
