@@ -1011,7 +1011,7 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
     // use a dummy terminal for initial plotting, the use replot to generate
     // requested output format(s)
     //
-    fprintf(ofd,"set terminal dumb \n");
+    fprintf(ofd,"\nset terminal dumb \n");
     fprintf(ofd,"set logscale xy\n");
     fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
     fprintf(ofd,"set grid\n");
@@ -1188,8 +1188,9 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
         if (flag_display)
             fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\nreplot\n");
         else {
-            fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+            fprintf(ofd,"\nset terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
             fprintf(ofd,"set output \"%s.pdf\"\n",outfile);
+            fprintf(ofd,"replot\n");
         }
     }
     else {
@@ -1249,11 +1250,12 @@ int gen_psdplt(char *outfile, int N, double freq[], double syf[])
     if (ofd==NULL) return(-1);
     //    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
     if (flag_display)
-        fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+        fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
     else
     {
-        fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+        fprintf(ofd,"\nset terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
         fprintf(ofd,"set output \"%s\"\n",psfile);
+        fprintf(ofd,"replot\n");
     }
     fprintf(ofd,"set logscale xy\n");
     fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
@@ -1332,11 +1334,12 @@ int gen_linplt(char *outfile, int N, double tt[], double xy[], int xory)
     if (ofd==NULL) return(-1);
     //    fprintf(ofd,"set terminal postscript landscape enhanced color solid \"Helvetica\" 18\n");
     if (flag_display)
-        fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+        fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
     else
     {
-        fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+        fprintf(ofd,"\nset terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
         fprintf(ofd,"set output \"%s\"\n",psfile);
+        fprintf(ofd,"replot\n");
     }
     fprintf(ofd,"set format xy \"%%g\"\n");
     //    fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
@@ -1412,11 +1415,12 @@ int gen_gcodplt(char *outfile, char names[][256], int N, int nbf, double tau[], 
     if (ofd==NULL) return(-1);
 
     if (flag_display)
-        fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+        fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
     else
     {
-        fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+        fprintf(ofd,"\nset terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
         fprintf(ofd,"set output \"%s\"\n",psfile);
+        fprintf(ofd,"replot\n");
     }
     fprintf(ofd,"set logscale xy\n");
     fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
@@ -1549,11 +1553,12 @@ int gen_3chplt(char input[][256], char *outfile, int N, double tau[], double gco
         return(-1);
     }
     if (flag_display)
-        fprintf(ofd,"set terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
+        fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\n");
     else
     {
-        fprintf(ofd,"set terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+        fprintf(ofd,"\nset terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
         fprintf(ofd,"set output \"%s\"\n",psfile);
+        fprintf(ofd,"replot\n");
     }
     fprintf(ofd,"set logscale xy\n");
     fprintf(ofd,"set format xy \"10^{%%+T}\"\n");
