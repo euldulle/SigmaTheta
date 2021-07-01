@@ -48,3 +48,9 @@ st_find_tau_xdev
 st_uncertainties
 testref
 testref.gnu
+3CHGraph
+3CorneredHat
+Aver
+DevGraph
+GCUncert
+GCoDev
