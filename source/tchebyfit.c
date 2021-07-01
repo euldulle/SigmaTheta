@@ -47,7 +47,7 @@
 #define db(x) ((double)(x))
 
 extern double *T, *Y;
-double coeff[10];
+extern double coeff[10];
 
 double (* phi[2]) (long,long);
 
