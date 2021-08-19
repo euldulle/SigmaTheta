@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     else
 	strcpy(source,*++argv);
 
-    N=load_ykt(source,scalex,scaley);
+    N=load_ykt(source,scalex,scaley,0);
     if (N==-1)
         printf("# File not found\n");
     else

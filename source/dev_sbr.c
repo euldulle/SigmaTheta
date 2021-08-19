@@ -59,7 +59,7 @@
 #define GVAR 4
 #endif
 
-extern double *T, *Y, *Y1, *Y2, ortau[], log_inc;
+extern double *T, *Y, *Y1, *Y2, *U, ortau[], log_inc;
 extern char flag_log_inc, flag_variance;
 extern int ntau;
 

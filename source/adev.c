@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 
     err=0;
 
-    N=load_ykt(source,scalex,0);
+    N=load_ykt(source,scalex,0,0);
 
     if (N==-1)
         printf("# File %s not found\n", source);

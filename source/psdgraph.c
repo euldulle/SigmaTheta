@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     flag_variance=fv;
     strcpy(psdfile,source);
     strcat(psdfile,".psd");
-    N=load_ykt(source,scalex,scaley);
+    N=load_ykt(source,scalex,scaley,0);
     if (N==-1)
       printf("# File %s not found\n",source);
     else

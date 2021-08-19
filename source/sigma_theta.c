@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
     }
 
     err=0;
-    nto=load_ykt(source,scalex,scaley);
+    nto=load_ykt(source,scalex,scaley,0);
 
     if (nto==-1)
         printf("# File not found\n");

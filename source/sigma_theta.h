@@ -70,7 +70,7 @@ struct conf_int
     };
 
 double coeff[10], ortau[10], log_inc;
-double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31;
+double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31, *U;
 char st_version[]=ST_VERSION;
 char st_date[]=ST_DATE;
 char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[6], flag_variance, flag_log_inc, flag_display;
@@ -98,7 +98,7 @@ double cdf_rayleigh(double , double);
 double dcdfr(double x, double nu);
 struct conf_int raylconfint(double);
 struct conf_int raylconfint1s(double);
-int load_ykt(char *, char, char);
+int load_ykt(char *, char, char, uint8_t);
 int load_2yk(char *, char *);
 int load_3yk(char *, char *, char *);
 int load_adev(char *, double *, double *);
