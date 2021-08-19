@@ -54,7 +54,7 @@
 #define GPLPDF (0x04)    // whether we include pdf as an output format to the gnuplot file
 #define GPLX11 (0x08)    // whether we include X11 as an output (opens a graphic window whan running the gnuplot file
 
-extern double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31, coeff[], ortau[], log_inc;
+extern double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31, *U, coeff[], ortau[], log_inc;
 extern char st_version[];
 extern char flag_graph, flag_conf, flag_bias, flag_title, flag_fit, flag_asymptote, flag_slopes[], flag_variance, flag_log_inc, flag_display;
 extern int ntau;
@@ -442,7 +442,7 @@ double scale(char code){
 }
 
 
-int load_ykt(char *source, char scalex, char scaley)
+int load_ykt(char *source, char scalex, char scaley, uint8_t uncert)
     /* Load the file pointed by 'source' and transfer its contain into the global 'T' and 'Y' tables. */
     /* Output values: -1 file not found       */
     /*                 0 unrecognized file    */
@@ -460,12 +460,14 @@ int load_ykt(char *source, char scalex, char scaley)
     // if those are 0 (decimal value 0, not char '0'), no scaling
     // applies ; see double scale(char) for details.
     //
+    // uncert is 0 by default ; if not 0, a third column is read as uncertainty
 {
     int i, nbv, N, linecount=0, valcount=0;
     char *rep;
     long int dtmx;
     double tst, xscale=1, yscale=1;
     size_t n;
+    uint8_t nbvaltoread=2;
     //char line[MAXLINELENGTH+1];
     char *line=NULL;
     FILE *ofd;
@@ -473,6 +475,12 @@ int load_ykt(char *source, char scalex, char scaley)
     dtmx=DATAMAX;
     T=(double *)malloc(dtmx*sizeof(double));
     Y=(double *)malloc(dtmx*sizeof(double));
+
+    if (uncert!=0){
+        U=(double *)malloc(dtmx*sizeof(double));
+        nbvaltoread=3;
+        }
+
     if (scalex!=0) xscale=scale(scalex);
     if (scaley!=0) yscale=scale(scaley);
     // fprintf(stderr,"# stio_sbr: xscale %le yscale %le\n", xscale, yscale);
@@ -498,14 +506,20 @@ int load_ykt(char *source, char scalex, char scaley)
                 // ignore comment lines
                 //
                 continue;
-            if ((valcount=sscanf(line,"%lf %lf",&T[i],&Y[i])==2)){
-                // reads 2 values out of line
-
+            if (uncert==0){
+                valcount=sscanf(line,"%lf %lf", &T[i], &Y[i]);
+            }
+            else{
+                valcount=sscanf(line,"%lf %lf %lf", &T[i], &Y[i], &U[i]);
+            }
+            if (valcount==nbvaltoread){
+                // reads 2 values out of line or 3 if uncert !=0
                 //
                 // proceed to rescaling if needed (scalex != 0 or scaley != 0)
                 //
                 if (scalex) T[i]*=xscale;
                 if (scaley) Y[i]*=yscale;
+                if (uncert) U[i]*=yscale;
                 i++;
                 if (i>=dtmx)
                 {
@@ -517,6 +531,8 @@ int load_ykt(char *source, char scalex, char scaley)
                     }
                     T=(double *)realloc(T,dtmx*sizeof(double));
                     Y=(double *)realloc(Y,dtmx*sizeof(double));
+                    if (uncert!=0)
+                        U=(double *)realloc(U,dtmx*sizeof(double));
                 }
             }
             else{

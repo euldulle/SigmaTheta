@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 //  else
 //  	strcpy(source,argv[optind]);
 
-	N=load_ykt(source,scalex,0);
+	N=load_ykt(source,scalex,0,0);
 	if (N==-1)
 		printf("# File not found\n");
 	else
