@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
                 else
                     for(i=0;i<N-1;++i)
                         fprintf(ofd,"%24.16e \t %24.16e\t %8.3e\n",
-                                    (T[i]-origin)/scale(outscale),
+                                    (T[i]-origin)/outscale,
                                     (Y[i+1]-Y[i])/(T[i+1]-T[i]), 
                                     sqrt(U[i+1]*U[i+1]+U[i]*U[i])/(T[i+1]-T[i]));
 
