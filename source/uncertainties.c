@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "cmnho:pdX")) != -1)
+    while ((c = getopt (argc, argv, ":cmnho:pdX")) != -1)
         switch (c)
         {
             case 'c': // classical Allan Dev
@@ -150,6 +150,11 @@ int main(int argc, char *argv[])
                 break;
 
             case 'h':
+                usage();
+                break;
+            
+            case ':':
+                fprintf (stderr, "option -%c needs a parameter.\n", optopt);
                 usage();
                 break;
 
