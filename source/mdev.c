@@ -74,6 +74,7 @@ void usage(void)
     printf("                    p : picosecond \n");
     printf("                  A file containing data as MJD.XXXXX vs freq_dev can be processed with \n");
     printf("                  MDev datafile -x d  \n\n");
+    printf("           -t : outputs TDEV instead of MDEV\n\n");
     printf("           -c : output to stdout only, TARGET file is ignored even if specified ;\n");
     printf("                this is the default if SOURCE is unspecified (stdin)\n\n");
     printf("           -h : this message\n\n");
@@ -85,23 +86,6 @@ void usage(void)
     printf("           FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n");                                   
 	printf("##############################################################################################################\n\n");
     exit(-1);
-printf("\n   Sigma-Theta %s %s - UTINAM/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE)\n\n",st_version,st_date);
-    printf("Usage: MDev [-t] SOURCE\n\n");
-    printf(" Computes the Modified Allan Deviations of a sequence of \n");
-    printf(" normalized frequency deviation measurements.\n\n");
-    printf("  options  \n");
-    printf("     -t : outputs TDEV instead of MDEV\n\n");
-
-    printf("  input file SOURCE is a 2-column table : \n");
-    printf("     . time values (timestamps, in seconds) in the first column \n");
-    printf("     . normalized frequency deviation measurements in the second column.\n\n");
-    printf("  output consists of a 2-column table containing : \n");
-    printf("     . tau values (integration time) in the first column  \n");
-    printf("     . Modified Allan deviation (or TDEV if -t) measurement in the second column \n");
-    printf("    which is sent to the standard output.\n\n");
-    printf(" A redirection should be used to save the results in a TARGET file: MDeV SOURCE > TARGET\n\n");
-    printf("SigmaTheta %s %s - FEMTO-ST/OSU THETA/Universite de Franche-Comte/CNRS - FRANCE\n",st_version,st_date);
-    exit(0);
     }
 
 int main(int argc, char *argv[])
