@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 
 #ifndef AVAR
 // Classical Allan variance
@@ -62,6 +63,7 @@
 extern double *T, *Y, *Y1, *Y2, *U, ortau[], log_inc;
 extern char flag_log_inc, flag_variance;
 extern int ntau;
+extern uint8_t forcetau, accred_gnss;
 
 double adev_y(int tau, int ny)
 /* adev_y(tau,ny) : compute the Allan deviation of the 'ny' frequency deviation elements of the vector 'Y' with an integration time 'tau'.*/
@@ -337,6 +339,19 @@ int serie_dev(int N, double *tau, double *dev)
 		}
 	nto=indt;
     }
+
+    if (forcetau){
+        nto=1;
+        toi[0]=ortau[0];
+        }
+    if (accred_gnss){
+        nto=5;
+        toi[0]=22;
+        toi[1]=45;
+        toi[2]=90;
+        toi[3]=180;
+        toi[4]=360;
+        }
     for(i=0;i<nto;++i) {
         tau[i]=((double)toi[i])*smpt;
         switch(flag_variance)

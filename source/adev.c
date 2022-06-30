@@ -86,7 +86,10 @@ void usage(void)
 	printf("                output tau are are in SI units (s) by default \n");
     printf("                should the output data be wanted in other units (MJD, ns, ...)\n");
     printf("                X option allows to properly normalize output taus \n");
-    printf("                see x option above for valid scaling factor\n");
+    printf("                see x option above for valid scaling factor\n\n");
+    printf("           -f forcetau : use forcetau as a scalar multiplier of tau0; the resulting tau (forcetau*tau[0]\n");
+    printf("                         is used to compute variance at this single value of tau\n");
+    printf("                         useful if you want to estimate the variance at a specific value of tau\n\n");
     printf("           -c : output to stdout only, TARGET file is ignored even if specified ;\n");
     printf("                this is the default if SOURCE is unspecified (stdin)\n\n");
     printf("           -h : this message\n\n");
@@ -116,10 +119,12 @@ int main(int argc, char *argv[])
     int8_t c;
     int16_t stridx, lensrc;
     uint8_t source[MAXCHAR]="", outfile[MAXCHAR]="";
+    forcetau=0;
+    accred_gnss=0;
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "hcx:X:")) != -1)
+    while ((c = getopt (argc, argv, "hcf:gx:X:")) != -1)
         switch (c)
         {
             case 'c':
@@ -127,6 +132,23 @@ int main(int argc, char *argv[])
                 break;
             case 'h':
                 usage();
+                break;
+            case 'f':
+                //
+                // forcetau is a scalar to be multiplied by tau0 
+                // to force serie_dev to compute the variance 
+                // only for the resulting tau=forcetau*tau[0]
+                // This is primarily intended for monthly certificates at ltfb
+                // (superseded by -g)
+                forcetau=atoi(optarg);
+                break;
+            case 'g':
+                //
+                // accred_gnss is a flag to produce special output
+                // as requested by accredited gnss certificates
+                //
+                // this option supersedes forcetau (-f)
+                accred_gnss=1;
                 break;
             case 'x':
                 scalex=optarg[0];
@@ -219,6 +241,18 @@ int main(int argc, char *argv[])
             }
             flag_variance=AVAR;
 
+            if (forcetau){
+                ntau=1;
+                ortau[0]=forcetau;
+                }
+             if (accred_gnss){
+                ntau=5;
+                ortau[0]=22;
+                ortau[1]=45;
+                ortau[2]=90;
+                ortau[3]=180;
+                ortau[4]=360;
+                }
             nto=serie_dev(N, tau, dev);
             
             outscaletau=scale(scaletau);
