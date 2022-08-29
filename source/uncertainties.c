@@ -81,6 +81,7 @@ void usage(void)
     printf("        -m : use the modified Allan variance.\n");
     printf("        -c : use the classical Allan variance.\n");
     printf("        -n : the plot is not built (gnuplot file(s) might still be generated).\n");
+    printf("        -N : dont write asymptote coefficients to stdout.\n");
     printf("        -o output : when reading from stdin, TARGET cannot be passed as arg : \n");
     printf("                    -o is the way user can specify the TARGET output \n");
     printf("                    If not specified, a random filename will be generated as TARGET.\n");
@@ -109,6 +110,12 @@ int main(int argc, char *argv[])
     FILE *ofd;
     int8_t c, stdo;
     uint8_t doplot=GPLDOPLOT; // by default, 1 (GPDDOPLOT flag on) will build gnuplot file and run it
+    //
+    // gadgets for gnss certificates at ltfb (might still prove useful elsewhere though)
+    uint8_t asymout=1;        // by default, output asymptotes coefficients on stdout ; specify -N option for no output
+                              //
+    uint8_t numlineout=0;     // by default, dont output numline to stdout ; specify -N option for no output
+    uint8_t numline[8]="";    // space for numline if needed
 
     char flagchar='a';
     int index, stridx;
@@ -116,12 +123,17 @@ int main(int argc, char *argv[])
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, ":cmnho:pdX")) != -1)
+    while ((c = getopt (argc, argv, ":cmnLNho:pdX")) != -1)
         switch (c)
         {
             case 'c': // classical Allan Dev
                 pre_flag_v=2;
                 flagchar='a';
+                break;
+
+            case 'L': // output line number as column 1 in the lines of dev and uncertainties values for each tau
+                      // WARNING : this disables gnuplot file and plot generation
+                numlineout=1;
                 break;
 
             case 'm': // modified Allan Dev
@@ -132,7 +144,11 @@ int main(int argc, char *argv[])
             case 'n': // clear DOPLT flag = no actual plot (gnuplot file might still be generated but not run)
                 doplot&=~GPLDOPLOT;
                 break;
-            
+
+            case 'N': // prevents the output of asymptote coefficients to stdout 
+                asymout=0;
+                break;
+
             case 'p': // term png : insert png generation in gnuplot file
                 doplot=doplot|GPLPNG;
                 break;
@@ -152,7 +168,7 @@ int main(int argc, char *argv[])
             case 'h':
                 usage();
                 break;
-            
+
             case ':':
                 fprintf (stderr, "option -%c needs a parameter.\n", optopt);
                 usage();
@@ -349,8 +365,11 @@ int main(int argc, char *argv[])
                 bi1s[i]=adev[i]*sqrt(edf[i])/rayl.sup_bound;
                 bx1s[i]=adev[i]*sqrt(edf[i])/rayl.inf_bound;
                 adc[i]=adev[i]/rayl.mean;
-                printf("%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
-                fprintf(ofd,"%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
+                if (numlineout!=0){
+                    snprintf(numline, 3, "%d ", i+1);
+                }
+                printf("%s%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",numline,tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
+                fprintf(ofd,"%s%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",numline,tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
             }
             if (ofd!=stderr)
                 fclose(ofd);
@@ -363,23 +382,32 @@ int main(int argc, char *argv[])
                 w[i]=((double)1)/edf[i];
 
             err=relatfit(N,tau,avar,w,6);
+            if (asymout!=0){
+                printf("# Asymptote coefficients:\n");
+                printf("# tau^-3/2 \t tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
 
-            printf("# Asymptote coefficients:\n");
-            printf("# tau^-3/2 \t tau^-1   \t tau^-1/2 \t tau^0    \t tau^1/2  \t tau^1\n");
+                for(i=0;i<6;++i) 
+                    printf("%12.6e \t ",coeff[i]);
 
-            for(i=0;i<6;++i) 
-                printf("%12.6e \t ",coeff[i]);
+                printf("\n");
+                }
             
-            printf("\n");
             /* Use of gnuplot for generating the graph as a ps file */
-            err=gener_gplt(outfile,N,tau,adev,bmax,"unbiased",doplot);
-            if (err) printf("# Error %d: ps file not created\n",err);
-            /*	    printf("tau: ");
-                    for(i=0;i<N;++i) printf("%12.6e \t ",tau[i]);
-                    printf("\n");
-                    printf("edf: ");
-                    for(i=0;i<N;++i) printf("%12.6e \t ",edf[i]);
-                    printf("\n");*/
+
+            if (numlineout==0){
+                err=gener_gplt(outfile,N,tau,adev,bmax,"unbiased",doplot);
+                if (err) 
+                    printf("# Error %d: ps file not created\n",err);
+                /*	    printf("tau: ");
+                        for(i=0;i<N;++i) printf("%12.6e \t ",tau[i]);
+                        printf("\n");
+                        printf("edf: ");
+                        for(i=0;i<N;++i) printf("%12.6e \t ",edf[i]);
+                        printf("\n");*/
+                }
+            else{
+                fprintf(stderr,"# Not generating gplot file since line numbers were requested on data lines with -L\n");
+            }
         }
     }
 }

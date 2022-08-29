@@ -1012,7 +1012,7 @@ int load_7col(char *source, double tau[], double adev[], double ubad[], double b
 int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[], char *est_typ, uint8_t plotflag)
     /* Generate a gnuplot file (.gnu) and (if doplot not 0) invoke gnuplot for creating a postscript file */
 {
-    int i,mii,mxi,err;
+    int i,mii,mxi,err=0;
     double minx, maxx, miny, maxy, lmix, lmax, lmiy, lmay, ltx, lty, lmx, lmy, rtmx, rtmy;
     char gptfile[MAXCHAR], outviewfile[MAXCHAR], gpt_cmd[65536], sys_cmd[MAXCHAR];
     FILE *ofd;
@@ -1205,8 +1205,11 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
             fprintf(ofd,"\nset terminal wxt size 1024,768 enhanced font \"Helvetica\" fontscale 1.5 persist\nreplot\n");
         else {
             fprintf(ofd,"\nset terminal pdfcairo size 172,128 enhanced color font \"Helvetica\" fontscale 18\n");
+
+            // master  
             fprintf(ofd,"set output \"%s.pdf\"\n",outfile);
             fprintf(ofd,"replot\n");
+            // ltfb branch : fprintf(ofd,"\nset output \"%s.pdf\"\nreplot\n",outfile);
         }
     }
     else {
@@ -1244,6 +1247,7 @@ int gener_gplt(char *outfile, int N, double tau[], double adev[], double bmax[],
     if (doplot==1){
         strcpy(sys_cmd,"gnuplot ");
         strcat(sys_cmd,gptfile);
+        fprintf(stderr,"# gener_gplt passing %s to system()\n", sys_cmd);
         err=system(sys_cmd);
     }
 
