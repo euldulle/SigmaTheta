@@ -80,6 +80,8 @@ void usage(void)
     printf("    Options :\n");
     printf("        -m : use the modified Allan variance.\n");
     printf("        -c : use the classical Allan variance.\n");
+    printf("        -L : specific ltfb output format (numline, tau, avar, 2.5%, 97.5%)\n");
+    printf("             consequently, -L inhibits plot generation by sigmatheta \n");
     printf("        -n : the plot is not built (gnuplot file(s) might still be generated).\n");
     printf("        -N : dont write asymptote coefficients to stdout.\n");
     printf("        -o output : when reading from stdin, TARGET cannot be passed as arg : \n");
@@ -115,7 +117,6 @@ int main(int argc, char *argv[])
     uint8_t asymout=1;        // by default, output asymptotes coefficients on stdout ; specify -N option for no output
                               //
     uint8_t numlineout=0;     // by default, dont output numline to stdout ; specify -N option for no output
-    uint8_t numline[8]="";    // space for numline if needed
 
     char flagchar='a';
     int index, stridx;
@@ -357,20 +358,41 @@ int main(int argc, char *argv[])
             }
             /*	    printf("# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
                     fprintf(ofd,"# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");*/
+            double plot_upperbound=1e-99, plot_lowerbound=1e99;
             for(i=0;i<N;++i) {
                 rayl=raylconfint(edf[i]);
                 bmin[i]=adev[i]*sqrt(edf[i])/rayl.sup_bound;
                 bmax[i]=adev[i]*sqrt(edf[i])/rayl.inf_bound;
+
+                if (bmin[i]<plot_lowerbound)
+                    plot_lowerbound=bmin[i];
+
+                if (bmax[i]>plot_upperbound)
+                    plot_upperbound=bmax[i];
+
                 rayl=raylconfint1s(edf[i]);
                 bi1s[i]=adev[i]*sqrt(edf[i])/rayl.sup_bound;
                 bx1s[i]=adev[i]*sqrt(edf[i])/rayl.inf_bound;
                 adc[i]=adev[i]/rayl.mean;
+
                 if (numlineout!=0){
-                    snprintf(numline, 3, "%d ", i+1);
+                    //
+                    // specific output format to be used in ltfb certificate processing
+                    // numline, tau, adev, 2.5%, 97.5% bounds
+                    //
+                    printf("%d %12.6e \t %12.6e \t %12.6e \t %12.6e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
+                    fprintf(ofd,"%d %12.6e \t %12.6e \t %12.6e \t %12.6e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
                 }
-                printf("%s%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",numline,tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
-                fprintf(ofd,"%s%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",numline,tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
+                else{
+                    // regular output, tau, adev, unbiased, 2.5%, 16%, 84%, 97.5% bounds
+                printf("%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
+                fprintf(ofd,"%12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e \t %12.6e\n",tau[i],adev[i],adc[i],bmin[i],bi1s[i],bx1s[i],bmax[i]);
+                }
             }
+            //
+            // output (commented out) gnuplot command in outfile for use by external process
+            //
+            fprintf(ofd, "# set yrange [%6.1e:%6.1e]\n", plot_lowerbound*.9, plot_upperbound*1.1);
             if (ofd!=stderr)
                 fclose(ofd);
 
