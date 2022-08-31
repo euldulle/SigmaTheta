@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 {
     int i,j,N,err,alpha[32];
     double tsas,asympt,tau[32], adev[32], avar[32], edf[32], bmin[32], bmax[32],bi1s[32],bx1s[32],adc[32],w[32];
-    char pre_flag_v, source[MAXCHAR]="", tmpoutfile[16]="st_unc_XXXXXX", outfile[MAXCHAR]="", command[32];
+    char pre_flag_v, source[MAXCHAR]="", tmpoutfile[16]="st_unc_XXXXXX", outfile[MAXCHAR]="", command[32], varname[32];
     struct conf_int rayl;
     FILE *ofd;
     int8_t c, stdo;
@@ -346,18 +346,19 @@ int main(int argc, char *argv[])
                 ofd=stderr;
                 }
 
-            if (flag_variance)
-            {
-                printf("# Tau       \t Mdev       \t Mdev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
-                fprintf(ofd,"# Tau       \t Mdev       \t Mdev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
+            strncpy(varname, "Adev", 5);
+            if (flag_variance) {
+                strncpy(varname, "Mdev", 5);
             }
-            else
-            {
-                printf("# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
-                fprintf(ofd,"# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
-            }
-            /*	    printf("# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");
-                    fprintf(ofd,"# Tau       \t Adev       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n");*/
+            if (numlineout==0){ // regular output header with all bounds
+                printf("# Tau       \t %4s       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n", varname);
+                fprintf(ofd,"# Tau       \t %4s       \t Adev unbiased\t 2.5 %% bound \t 16 %% bound \t 84 %% bound \t 97.5 %% bound\n", varname);
+                }
+            else{               // short output header only with 2 sigma bounds (ltfb)
+                printf("# num \tTau       \t %4s      \t 2.5 %% bound \t 97.5 %% bound\n", varname);
+                fprintf(ofd,"# num \tTau       \t %4s     \t 2.5 %% bound \t 97.5 %% bound\n", varname);
+                }
+
             double plot_upperbound=1e-99, plot_lowerbound=1e99;
             for(i=0;i<N;++i) {
                 rayl=raylconfint(edf[i]);
@@ -380,8 +381,8 @@ int main(int argc, char *argv[])
                     // specific output format to be used in ltfb certificate processing
                     // numline, tau, adev, 2.5%, 97.5% bounds
                     //
-                    printf("%d %12.6e \t %12.6e \t %12.6e \t %12.6e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
-                    fprintf(ofd,"%d %12.6e \t %12.6e \t %12.6e \t %12.6e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
+                    printf("%d \t%6.0f \t %6.2e \t %6.2e \t %6.2e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
+                    fprintf(ofd, "%d \t%6.0f \t %6.2e \t %6.2e \t %6.2e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
                 }
                 else{
                     // regular output, tau, adev, unbiased, 2.5%, 16%, 84%, 97.5% bounds
@@ -392,6 +393,7 @@ int main(int argc, char *argv[])
             //
             // output (commented out) gnuplot command in outfile for use by external process
             //
+            printf("# set yrange [%6.1e:%6.1e]\n", plot_lowerbound*.9, plot_upperbound*1.1);
             fprintf(ofd, "# set yrange [%6.1e:%6.1e]\n", plot_lowerbound*.9, plot_upperbound*1.1);
             if (ofd!=stderr)
                 fclose(ofd);
