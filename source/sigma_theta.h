@@ -70,7 +70,7 @@ struct conf_int
     };
 
 double coeff[10], ortau[10], log_inc;
-uint8_t forcetau, accred_gnss;
+uint8_t forcetau, accred_gnss, accred_clockhr, accred_clockmin;
 double *T, *Y, *Y1, *Y2, *Y12, *Y23, *Y31, *U;
 char st_version[]=ST_VERSION;
 char st_date[]=ST_DATE;

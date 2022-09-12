@@ -63,7 +63,7 @@
 extern double *T, *Y, *Y1, *Y2, *U, ortau[], log_inc;
 extern char flag_log_inc, flag_variance;
 extern int ntau;
-extern uint8_t forcetau, accred_gnss;
+extern uint8_t forcetau, accred_gnss, accred_clockhr, accred_clockmin;
 
 double adev_y(int tau, int ny)
 /* adev_y(tau,ny) : compute the Allan deviation of the 'ny' frequency deviation elements of the vector 'Y' with an integration time 'tau'.*/
@@ -351,6 +351,22 @@ int serie_dev(int N, double *tau, double *dev)
         toi[2]=90;
         toi[3]=180;
         toi[4]=360;
+        }
+    if (accred_clockmin){
+        nto=5;
+        toi[0]=360;
+        toi[1]=720;
+        toi[2]=1440;
+        toi[3]=2880;
+        toi[4]=5760;
+        }
+    if (accred_clockhr){
+        nto=5;
+        toi[0]=6;
+        toi[1]=12;
+        toi[2]=24;
+        toi[3]=48;
+        toi[4]=96;
         }
     for(i=0;i<nto;++i) {
         tau[i]=((double)toi[i])*smpt;

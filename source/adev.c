@@ -121,10 +121,12 @@ int main(int argc, char *argv[])
     uint8_t source[MAXCHAR]="", outfile[MAXCHAR]="";
     forcetau=0;
     accred_gnss=0;
+    accred_clockhr=0;
+    accred_clockmin=0;
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "hcf:gx:X:")) != -1)
+    while ((c = getopt (argc, argv, "hcf:gHMx:X:")) != -1)
         switch (c)
         {
             case 'c':
@@ -149,6 +151,22 @@ int main(int argc, char *argv[])
                 //
                 // this option supersedes forcetau (-f)
                 accred_gnss=1;
+                break;
+            case 'H':
+                //
+                // accred_clockhr is a flag to produce special output
+                // as requested by accredited clock certificates with hourly data
+                //
+                // this option supersedes forcetau (-f)
+                accred_clockhr=1;
+                break;
+            case 'M':
+                //
+                // accred_clockmin is a flag to produce special output
+                // as requested by accredited clock certificates with minute-spaced data
+                //
+                // this option supersedes forcetau (-f)
+                accred_clockmin=1;
                 break;
             case 'x':
                 scalex=optarg[0];
@@ -260,7 +278,7 @@ int main(int argc, char *argv[])
 
 
             for(i=0;i<nto;++i)
-                fprintf(ofd,"%24.16e \t %24.16e\n",tau[i]/outscaletau,dev[i]);
+                fprintf(ofd,"%.3e %.2e\n",tau[i]/outscaletau,dev[i]);
 
             printf ("# Output file %s = %d lines\n", outfile, nto);
 

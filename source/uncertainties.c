@@ -381,8 +381,8 @@ int main(int argc, char *argv[])
                     // specific output format to be used in ltfb certificate processing
                     // numline, tau, adev, 2.5%, 97.5% bounds
                     //
-                    printf("%d \t%6.0f \t %6.2e \t %6.2e \t %6.2e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
-                    fprintf(ofd, "%d \t%6.0f \t %6.2e \t %6.2e \t %6.2e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
+                    printf("%d \t%8.2f \t %6.2e \t %6.2e \t %6.2e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
+                    fprintf(ofd, "%d \t%8.2f \t %6.2e \t %6.2e \t %6.2e\n",i+1,tau[i],adev[i],bmin[i],bmax[i]);
                 }
                 else{
                     // regular output, tau, adev, unbiased, 2.5%, 16%, 84%, 97.5% bounds
