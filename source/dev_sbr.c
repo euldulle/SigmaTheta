@@ -345,12 +345,13 @@ int serie_dev(int N, double *tau, double *dev)
         toi[0]=ortau[0];
         }
     if (accred_gnss){
-        nto=5;
+        nto=6;
         toi[0]=22;
         toi[1]=45;
         toi[2]=90;
         toi[3]=180;
         toi[4]=360;
+        toi[5]=720;
         }
     if (accred_clockmin){
         nto=5;
