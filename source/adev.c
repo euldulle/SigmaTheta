@@ -63,13 +63,13 @@ void usage(void)
     {                                                                                                                      
 	printf("##############################################################################################################\n\n");
     printf(" ADev : a tool from the SigmaTheta suite\n\n");
-    printf("     Usage: ADev [-ch] [-x xscalingfactor] [SOURCE [TARGET]]\n\n");
+    printf("     Usage: ADev [-ch] [-x xscalingfactor] [-f forcetau] -[gHM] [SOURCE [TARGET]]\n\n");
     printf("        Computes the Allan Deviations of a sequence of \n");
     printf("        normalized frequency deviation measurements.\n\n");
     printf("      Default behaviour (no file specified) is a filter, taking stdin as input and stdout as output.\n\n");
 	printf("      If SOURCE and TARGET are specified, output goes to TARGET unless -c option (output to stdout) is given \n");
 	printf("      If only SOURCE is specified, output goes to SOURCE.adev unless -c option (output to stdout) is given \n\n");
-    printf("           -x input xscalingfactor\n");
+    printf("           -x input-xscalingfactor\n");
 	printf("                Units are SI units (s) by default ; should the input data be in other units (MJD, ns, ...)\n");
     printf("                x option allows to properly normalize output : \n");
     printf("                scaling factor is one of : \n");
@@ -82,14 +82,17 @@ void usage(void)
     printf("                    p : picosecond \n");
     printf("                  A file containing data as MJD.XXXXX vs freq_dev can be processed with \n");
     printf("                  ADev datafile -x d  \n\n");
-    printf("           -X output scalingfactor\n");
-	printf("                output tau are are in SI units (s) by default \n");
+    printf("           -X output-xscalingfactor\n");
+	printf("                output tau are are in SI units (s) by default; \n");
     printf("                should the output data be wanted in other units (MJD, ns, ...)\n");
     printf("                X option allows to properly normalize output taus \n");
     printf("                see x option above for valid scaling factor\n\n");
     printf("           -f forcetau : use forcetau as a scalar multiplier of tau0; the resulting tau (forcetau*tau[0]\n");
     printf("                         is used to compute variance at this single value of tau\n");
     printf("                         useful if you want to estimate the variance at a specific value of tau\n\n");
+    printf("           -g : uses a specific set of taus, suited for CGGTTS-formatted (16mn tau0) processing\n");
+    printf("           -H : uses a specific set of taus, suited for hourly data (1hr tau0) processing\n");
+    printf("           -M : uses a specific set of taus, suited for minute data (1mn tau0) processing\n\n");
     printf("           -c : output to stdout only, TARGET file is ignored even if specified ;\n");
     printf("                this is the default if SOURCE is unspecified (stdin)\n\n");
     printf("           -h : this message\n\n");
@@ -276,7 +279,6 @@ int main(int argc, char *argv[])
             outscaletau=scale(scaletau);
             fprintf (stderr, "# scaletau %d outscaletau %lf \n", scaletau, outscaletau);
 
-
             for(i=0;i<nto;++i)
                 fprintf(ofd,"%.3e %.2e\n",tau[i]/outscaletau,dev[i]);
 
@@ -287,4 +289,3 @@ int main(int argc, char *argv[])
         }
     }
 }
-
