@@ -6,19 +6,19 @@ Contributor: François Vernotte, UTINAM/OSU THETA (2012/07/17)
 Contact: francois.vernotte@obs-besancon.fr
 
 This software, SigmaTheta, is a collection of computer programs for
-time and frequency metrology. 
+time and frequency metrology.
 
 This software is governed by the CeCILL license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
+abiding by the rules of distribution of free software.  You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability. 
+liability.
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -27,9 +27,9 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
@@ -38,22 +38,34 @@ knowledge of the CeCILL license and that you accept its terms.
 Installation Instructions
 =========================
 
-SigmaTheta follows the standard GNU installation procedure. 
+SigmaTheta follows the standard GNU installation procedure.
 
-To compile SigmaTheta you will need the gnu gcc C-compiler, the GSL 
+To compile SigmaTheta you will need the gnu gcc C-compiler, the GSL
 library (Gnu Scientific Library, see http://www.gnu.org/software/gsl/)
 as well as libfftw3.
 
-gnuplot must also be installed on the computer in order to run 
+gnuplot must also be installed on the computer in order to run
 SigmaTheta (see http://www.gnuplot.info/)
 
-After unpacking the distribution the Makefiles will build 
-the binaries using the make command,
+After unpacking, BEFORE BUILDING, make sure to check that both INSTALLDIR
+and BINPREFIX are set to your needs in Makefile.
+
+INSTALLDIR is the directory where binaries will be copied by make install.
+
+Optional BINPREFIX can be set to have 'make install' build
+symlinks pointing to the SigmaTheta binaries through a generic
+identification string ("st_" is a natural suggestion).
+This is a  convenient  way  to  have  shell  completion  show  all
+available SigmaTheta executables when working from command line
+by typing "st_" and tab twice. No symlink created if left empty.
+
+Once Makefile has been reviewed, SigmaTheta binaries can be build
+using the make command:
 
   make
 
-If you intend to place the binaries into the /usr/bin/ 
-directory, tape as root:
+If you intend to place the binaries into the INSTALLDIR
+directory, type (as root if needed, eg if INSTALLDIR=/usr/bin) :
 
   make install
 
@@ -86,10 +98,10 @@ The following data should be printed on screen:
 3.276800e+05 	 1.943544e-12 	 3.668176e-12 	 8.671105e-13 	 1.383235e-12 	 9.626581e-12 	 6.201880e-11
 # Asymptote coefficients:
 # tau^-1   	 tau^-1/2 	 tau^0    	 tau^1/2  	 tau^1
-2.174317e-25 	 9.832043e-26 	 2.319278e-27 	 1.501548e-30 	 3.418445e-35 
+2.174317e-25 	 9.832043e-26 	 2.319278e-27 	 1.501548e-30 	 3.418445e-35
 
 
-Moreover, 2 files should be created: nt.adv.gnu and nt.adv.pdf. 
+Moreover, 2 files should be created: nt.adv.gnu and nt.adv.pdf.
 The first one is a gnuplot command file which should contain:
 
 set terminal pdfcairo size 172,128 enhanced color font "Helvetica" fontscale 18
