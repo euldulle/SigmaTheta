@@ -1,3 +1,6 @@
+2023-01-19, FM: * moved again to gitlab https://gitlab.com/fm-ltfb/SigmaTheta
+            branch ltfb merged/deleted, 
+            branch hp3 deleted (still present on github for some time, just in case...)
 2021-06-14, FM: * moved to github https://github.com/euldulle/SigmaTheta
 2020-10-26, FV: extension of AVarDOF, ADUncert and ADGraph to Hadamard and parabolic variances
 2020-08-19, FV: implementation of errorbars and confidence intervals for PVAR
