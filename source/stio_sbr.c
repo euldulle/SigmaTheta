@@ -936,8 +936,16 @@ int load_3col(char *source, double tau[], double adev[], double ubad[])
     char tst[512], *rep;
     char gm[256];
     FILE *ofd;
+    uint8_t stdo=0; // flag for stdin input ; 0 means regular file, 1 means stdin.
 
-    ofd=fopen(source, "r");
+    if (!strncmp(source,"stdin",8)){
+        stdo=1;
+        ofd=stdin;
+    }
+    else{
+        ofd=fopen(source, "r");
+    }
+
     if (ofd==NULL)
         return(-1);
     else
@@ -961,7 +969,8 @@ int load_3col(char *source, double tau[], double adev[], double ubad[])
                 i++;
             }
             while(fgets(gm,256,ofd)!=NULL);
-            fclose(ofd);
+            if (!stdo) // close file if not stdin
+                fclose(ofd);
             N=i;
         }
     }
