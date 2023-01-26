@@ -75,6 +75,10 @@ INSTALL = install
 CC = gcc
 GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
 GIT_DATE := "$(shell git log | head -3 | grep Date | sed 's/Date:   //')"
+#
+# -O3 (optimization) can cause strange behaviours, notably when debugging
+#   changing -O3 to -Og should solve those issues
+#
 CFLAGS = -g -O3 -DST_VERSION=\"$(GIT_VERSION)\" -DST_DATE=\"$(GIT_DATE)\"
 # link statically against libfftw3
 #FFTW3 = -static -lfftw3
