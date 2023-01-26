@@ -965,6 +965,8 @@ int load_3col(char *source, double tau[], double adev[], double ubad[])
             do
             {
                 if (nbv==2) ubad[i]=-1;
+                if((gm[0]=='#')||(gm[0]=='%'))
+                    continue;
                 nbv=sscanf(gm,"%lf %lf %lf %s",&tau[i],&adev[i],&ubad[i],tst);
                 i++;
             }
